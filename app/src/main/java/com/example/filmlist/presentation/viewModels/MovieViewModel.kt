@@ -1,4 +1,4 @@
-package com.example.filmlist.presentation
+package com.example.filmlist.presentation.viewModels
 
 import android.app.Application
 import android.util.Log
@@ -14,6 +14,7 @@ class MovieViewModel(application: Application):AndroidViewModel(application) {
 
     private val db = MovieDatabase.getInstance(application)
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    val movieList = db.movieInfoDao().getMovieList()
 
 
     init {

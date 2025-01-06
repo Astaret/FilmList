@@ -1,4 +1,4 @@
-package com.example.filmlist.api
+package com.example.filmlist.data.webDb.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -11,6 +11,6 @@ object ApiFactory {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-    val api:ApiService = retrofit.create(ApiService::class.java)
+    val api: ApiService = retrofit.create(ApiService::class.java)
 
 }

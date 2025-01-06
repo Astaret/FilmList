@@ -1,6 +1,6 @@
-package com.example.filmlist.api
+package com.example.filmlist.data.webDb.api
 
-import com.example.filmlist.pojo.TopMovieList
+import com.example.filmlist.data.webDb.pojo.TopMovieList
 import retrofit2.http.GET
 import retrofit2.http.Header
 
@@ -9,7 +9,7 @@ interface ApiService {
     suspend fun getTopRatedMovies(
         @Header("Authorization") authHeader: String,
         @Header("accept") acceptHeader: String = ACCEPT_HEADER_KEY
-    ):TopMovieList
+    ): TopMovieList
 
     companion object {
         private const val ACCEPT_HEADER_KEY = "application/json"

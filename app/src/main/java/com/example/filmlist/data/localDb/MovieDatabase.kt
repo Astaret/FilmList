@@ -14,6 +14,7 @@ abstract class MovieDatabase:RoomDatabase() {
         private var db: MovieDatabase? = null
         private var LOCK = Any()
         private const val DB_NAME = "main_movie.db"
+
         fun getInstance(context:Context):MovieDatabase{
             synchronized(LOCK){
                 db?.let {

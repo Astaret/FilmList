@@ -1,11 +1,11 @@
-package com.example.filmlist.data.localDb
+package com.example.filmlist.data.local.db
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.filmlist.data.webDb.pojo.MovieEntity
+import com.example.filmlist.data.local.enteties.MovieEntity
 
 @Dao
 interface MovieInfoDao {

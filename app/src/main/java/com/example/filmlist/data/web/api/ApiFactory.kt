@@ -1,4 +1,4 @@
-package com.example.filmlist.data.webDb.api
+package com.example.filmlist.data.web.api
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

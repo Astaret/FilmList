@@ -1,11 +1,12 @@
-package com.example.filmlist.data.mappers
+package com.example.filmlist.presentation.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filmlist.R
-import com.example.filmlist.data.webDb.pojo.MovieEntity
+import com.example.filmlist.data.local.enteties.MovieEntity
+import com.example.filmlist.data.web.dtos.MovieDto
 import com.example.filmlist.databinding.MovieCardBinding
 
 class RvMovieListAdapter(private val context: Context):RecyclerView.Adapter<RvMovieListAdapter.MovieListViewHolder>() {

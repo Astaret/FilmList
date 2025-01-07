@@ -1,10 +1,10 @@
-package com.example.filmlist.data.localDb
+package com.example.filmlist.data.local.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.filmlist.data.webDb.pojo.MovieEntity
+import com.example.filmlist.data.local.enteties.MovieEntity
 
 @Database(entities = [MovieEntity::class], version = 1, exportSchema = false)
 abstract class MovieDatabase:RoomDatabase() {
@@ -15,7 +15,7 @@ abstract class MovieDatabase:RoomDatabase() {
         private var LOCK = Any()
         private const val DB_NAME = "main_movie.db"
 
-        fun getInstance(context:Context):MovieDatabase{
+        fun getInstance(context:Context): MovieDatabase {
             synchronized(LOCK){
                 db?.let {
                     return it

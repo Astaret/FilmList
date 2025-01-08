@@ -36,6 +36,12 @@ class RvMovieListAdapter(private val context: Context):RecyclerView.Adapter<RvMo
                 tittleOfMovie.text = String.format(titleTemplate,title)
                 overviewOfMovie.text = String.format(overViewTemplate,overview)
                 langOfMovie.text = String.format(langTemplate,movie.origLang)
+                when(movie.rating.toFloat()){
+                    in 1.0..3.0 -> ratingOfMovie.setTextColor(context.getColor(R.color.red))
+                    in 4.0..5.0 -> ratingOfMovie.setTextColor(context.getColor(R.color.orange))
+                    in 6.0..7.0 -> ratingOfMovie.setTextColor(context.getColor(R.color.light_green))
+                    in 8.0..10.0 -> ratingOfMovie.setTextColor(context.getColor(R.color.green))
+                }
                 ratingOfMovie.text = String.format(ratingTemplate,movie.rating)
                 Picasso.get().load(this.poster).into(imageOfMovie)
             }

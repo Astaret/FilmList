@@ -4,9 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.filmlist.R
 import com.example.filmlist.data.local.enteties.MovieEntity
-import com.example.filmlist.databinding.MovieCardBinding
+import com.example.myapp.R
+import com.example.myapp.databinding.MovieCardBinding
 import com.squareup.picasso.Picasso
 
 class RvMovieListAdapter(private val context: Context):RecyclerView.Adapter<RvMovieListAdapter.MovieListViewHolder>() {

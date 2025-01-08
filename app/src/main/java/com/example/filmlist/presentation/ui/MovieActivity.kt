@@ -1,18 +1,17 @@
 package com.example.filmlist.presentation.ui
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.filmlist.R
-import com.example.filmlist.databinding.ActivityMovieBinding
 import com.example.filmlist.presentation.adapters.MovieApp
 import com.example.filmlist.presentation.adapters.RvMovieListAdapter
 import com.example.filmlist.presentation.viewModels.MovieViewModel
 import com.example.filmlist.presentation.viewModels.MovieViewModelFactory
+import com.example.myapp.R
+import com.example.myapp.databinding.ActivityMovieBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,7 +36,6 @@ class MovieActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

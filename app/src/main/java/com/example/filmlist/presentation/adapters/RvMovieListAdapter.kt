@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filmlist.R
 import com.example.filmlist.data.local.enteties.MovieEntity
-import com.example.filmlist.data.web.dtos.MovieDto
 import com.example.filmlist.databinding.MovieCardBinding
 import com.squareup.picasso.Picasso
 

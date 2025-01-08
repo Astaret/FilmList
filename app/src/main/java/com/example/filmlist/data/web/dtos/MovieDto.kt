@@ -1,5 +1,6 @@
 package com.example.filmlist.data.web.dtos
 
+import com.example.filmlist.data.web.api.ApiFactory.IMG_URL
 import com.google.gson.annotations.SerializedName
 
 
@@ -13,5 +14,7 @@ data class MovieDto(
     @SerializedName("poster_path")
     val poster: String,
     @SerializedName("title")
-    val title: String
+    val title: String,
+    @SerializedName("vote_average")
+    val rating:String
 )

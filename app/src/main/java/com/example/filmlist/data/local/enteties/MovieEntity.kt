@@ -13,5 +13,6 @@ data class MovieEntity(
     val origLang: String,
     val overview: String,
     val poster: String,
-    val title: String
+    val title: String,
+    val rating:String
 )

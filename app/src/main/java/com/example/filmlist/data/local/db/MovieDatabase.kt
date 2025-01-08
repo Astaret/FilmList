@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.filmlist.data.local.enteties.MovieEntity
 
-@Database(entities = [MovieEntity::class], version = 1, exportSchema = false)
+@Database(entities = [MovieEntity::class], version = 2, exportSchema = false)
 abstract class MovieDatabase:RoomDatabase() {
     abstract fun movieInfoDao(): MovieInfoDao
 

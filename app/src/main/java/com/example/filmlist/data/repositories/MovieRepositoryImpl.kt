@@ -12,13 +12,16 @@ import javax.inject.Inject
 class MovieRepositoryImpl @Inject constructor(
     private val movieDao: MovieInfoDao
 ) : MovieRepository {
+
     private val movieListEntity = mutableListOf<MovieEntity>()
+    //TODO найди способ обойтись без этого поля
 
     override suspend fun loadData(token: String) {
         Log.d("Movie", "onCreate: coroutine")
         try {
             Log.d("Movie", "onCreate: try")
             val response = ApiFactory.api.getTopRatedMovies(token)
+            //TODO сделай так чтобы apiService инжектился в конструктор репозитория, как movieDao
             with(response) {
                 MovieList.forEach {
                     Log.d("Movie", "onCreateView: $it")
@@ -31,6 +34,8 @@ class MovieRepositoryImpl @Inject constructor(
             Log.e("Movie", "onCreateView: Exception occurred", e)
         }
     }
+    //TODO а если у тебя будет 10, или 100 функций? Каждую отдельно оборачивать в свой try-catch?
+    //TODO придумай как этого избежать
 
     override fun getMovieInfoList(): LiveData<List<MovieEntity>> {
         return movieDao.getMovieList()

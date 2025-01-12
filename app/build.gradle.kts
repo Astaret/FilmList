@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    id ("com.google.dagger.hilt.android") version ("2.48") apply false
+    id("com.google.dagger.hilt.android") version ("2.48") apply false
 }
 
 android {
@@ -16,6 +16,9 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField("String", "BASE_API_URL", "\" https://api.themoviedb.org/3/ \"")
+        buildConfigField("String", "IMG_API_URL", "\" https://image.tmdb.org/t/p/w500/ \"")
+
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
@@ -24,9 +27,9 @@ android {
             jvmTarget = "1.8"
         }
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
-        dataBinding = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -55,10 +58,10 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
 
-    implementation ("com.squareup.picasso:picasso:2.8")
+    implementation("com.squareup.picasso:picasso:2.8")
 
-    implementation ("com.squareup.retrofit2:retrofit:2.10.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.10.0")
+    implementation("com.squareup.retrofit2:retrofit:2.10.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.10.0")
 
     implementation("com.google.dagger:dagger:2.48")
     ksp("com.google.dagger:dagger-compiler:2.48")

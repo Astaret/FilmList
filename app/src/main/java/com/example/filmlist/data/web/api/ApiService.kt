@@ -6,7 +6,7 @@ import retrofit2.http.Header
 
 interface ApiService {
 
-    @GET("movie/top_rated?language=en-US&page=1")
+    @GET("movie/top_rated?language=ru-RU&page1")
     suspend fun getTopRatedMovies(): TopMovieListDto
 
 }

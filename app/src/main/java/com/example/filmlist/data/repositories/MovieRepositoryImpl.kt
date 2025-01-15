@@ -1,7 +1,6 @@
 package com.example.filmlist.data.repositories
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import com.example.filmlist.data.dsl.errorHandled
 import com.example.filmlist.data.local.db.MovieInfoDao
 import com.example.filmlist.data.local.enteties.MovieEntity
@@ -11,6 +10,7 @@ import com.example.filmlist.domain.repositories.MovieRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -37,7 +37,7 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getMovieInfoList(): LiveData<List<MovieEntity>> {
+    override fun getMovieInfoList(): Flow<List<MovieEntity>> {
         return movieDao.getMovieList()
     }
 }

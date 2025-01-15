@@ -2,7 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android") version ("2.48") apply false
+    id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -68,7 +69,7 @@ dependencies {
 
     implementation("com.google.dagger:dagger:2.48")
     ksp("com.google.dagger:dagger-compiler:2.48")
-
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("com.google.dagger:hilt-android:2.48")
     ksp("com.google.dagger:hilt-compiler:2.48")
 

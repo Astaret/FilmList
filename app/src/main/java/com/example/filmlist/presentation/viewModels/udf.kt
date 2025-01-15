@@ -8,12 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.filmlist.presentation.ui.Compose.MovieCard
-import com.example.myapp.R
-import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
-fun MovieScreen(viewModel: MovieViewModel) {
+fun MovieScreen(viewModel: MovieViewModel = viewModel()) {
     val movieList = viewModel.movieList.collectAsState(emptyList()).value
 
     LazyColumn(

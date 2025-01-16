@@ -24,7 +24,7 @@ fun MovieScreen(movieList: List<MovieEntity>,
 {
     Column {
         Button(onClick = { onNavigateToSearch() }) {
-            Text(text = "Go to Search")
+            Text(text = "\uD83D\uDD0E")
         }
         Text("MainScreen")
         MovieList(movieList)

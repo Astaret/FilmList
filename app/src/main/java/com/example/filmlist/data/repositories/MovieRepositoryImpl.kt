@@ -11,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -20,7 +21,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    override  fun loadData() {
+    override fun loadData() {
         Log.d("Movie", "onCreate: coroutine")
         coroutineScope.errorHandled {
             Log.d("Movie", "onCreate: try")
@@ -34,6 +35,16 @@ class MovieRepositoryImpl @Inject constructor(
                 Log.d("Movie", "loadData: SUCCES!!!")
             }
 
+        }
+    }
+
+    override suspend fun loadDataFromSearch(query: String): Flow<List<MovieEntity>> {
+        return flow {
+            val movieList = apiService.searchMovies(query).MovieList.map {
+                it.dtoToMovieEntity()
+            }
+            movieDao.insertMovieList(movieList)
+            emit(movieList)
         }
     }
 

@@ -7,6 +7,8 @@ interface MovieRepository {
 
     fun loadData()
 
+    suspend fun loadDataFromSearch(query: String): Flow<List<MovieEntity>>
+
     fun getMovieInfoList(): Flow<List<MovieEntity>>
 
 }

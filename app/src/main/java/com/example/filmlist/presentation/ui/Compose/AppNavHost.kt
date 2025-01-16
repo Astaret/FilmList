@@ -8,10 +8,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.filmlist.presentation.viewModels.MovieViewModel
+import com.example.filmlist.presentation.viewModels.SearchMovieViewModel
 
 @Composable
 fun AppNavHost(
     viewModel: MovieViewModel = viewModel(),
+    viewModelSearch: SearchMovieViewModel = viewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val movieList = viewModel.movieList.collectAsState(emptyList()).value
@@ -27,8 +29,8 @@ fun AppNavHost(
 
         composable("search_screen") {
             SearchScreen(
-                movieList = movieList,
-                onBack = { navController.popBackStack() })
+                viewModel = viewModelSearch
+            )
         }
     }
 }

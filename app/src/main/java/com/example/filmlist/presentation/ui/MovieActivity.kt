@@ -4,19 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.example.filmlist.presentation.adapters.MovieApp
-import com.example.filmlist.presentation.viewModels.MovieScreen
+import com.example.filmlist.presentation.ui.Compose.MovieScreen
 import com.example.filmlist.presentation.viewModels.MovieViewModel
-import com.example.filmlist.presentation.viewModels.MovieViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MovieActivity : ComponentActivity() {
@@ -33,9 +29,6 @@ class MovieActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         component.inject(this)
 
-        coroutineScope.launch {
-            viewModel.loadData()
-        }
 
         setContent{
             MovieScreen(viewModel)

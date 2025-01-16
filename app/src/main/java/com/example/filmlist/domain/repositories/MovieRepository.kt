@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
 
-    suspend fun loadData()
+    fun loadData()
 
     fun getMovieInfoList(): Flow<List<MovieEntity>>
 

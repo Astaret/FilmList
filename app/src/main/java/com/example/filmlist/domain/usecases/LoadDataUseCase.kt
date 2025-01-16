@@ -6,5 +6,5 @@ import javax.inject.Inject
 class LoadDataUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
-    suspend fun loadData() = repository.loadData()
+    fun loadData() = repository.loadData()
 }

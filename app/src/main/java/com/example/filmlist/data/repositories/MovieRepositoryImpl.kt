@@ -20,7 +20,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    override suspend fun loadData() {
+    override  fun loadData() {
         Log.d("Movie", "onCreate: coroutine")
         coroutineScope.errorHandled {
             Log.d("Movie", "onCreate: try")

@@ -1,4 +1,4 @@
-package com.example.filmlist.presentation.viewModels
+package com.example.filmlist.presentation.ui.Compose
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.filmlist.presentation.ui.Compose.MovieCard
+import com.example.filmlist.presentation.viewModels.MovieViewModel
 
 @Composable
 fun MovieScreen(viewModel: MovieViewModel = viewModel()) {
@@ -22,24 +22,14 @@ fun MovieScreen(viewModel: MovieViewModel = viewModel()) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(movieList.size) {
-            Card(
-                tittle = movieList[it].title,
-                lang = movieList[it].origLang,
-                rating = movieList[it].rating,
-                overview = movieList[it].overview,
-                res = movieList[it].poster
+            MovieCard(
+                movieList[it].title,
+                movieList[it].origLang,
+                movieList[it].rating,
+                movieList[it].overview,
+                movieList[it].poster
             )
         }
     }
 }
 
-@Composable
-fun Card(tittle: String, lang: String, rating: String, overview: String, res: String) {
-    MovieCard(
-        title = tittle,
-        language = "язык: $lang",
-        rating = "рейтинг: $rating",
-        overview = "$overview",
-        imageRes = res
-    )
-}

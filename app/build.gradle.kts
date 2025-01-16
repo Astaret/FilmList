@@ -101,6 +101,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha11")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0")
 
     //for download image`s
 // For Glide integration

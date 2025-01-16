@@ -106,5 +106,9 @@ dependencies {
 // For Glide integration
     implementation("com.github.skydoves:landscapist-glide:2.4.0")
 
+    //paging
+    implementation ("androidx.paging:paging-compose:1.0.0-alpha10")
+    implementation ("androidx.paging:paging-runtime:3.1.1")
+
 
 }

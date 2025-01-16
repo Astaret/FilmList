@@ -1,6 +1,6 @@
 package com.example.filmlist.presentation.ui.Compose
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,28 +9,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.filmlist.data.local.enteties.MovieEntity
+import com.example.filmlist.domain.models.Movie
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MovieCard(
-    title: String,
-    language: String,
-    rating: String,
-    overview: String,
-    imageRes: String
+    movie: Movie
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
     ) {
         ConstraintLayout(
             modifier = Modifier
@@ -45,7 +40,7 @@ fun MovieCard(
 
 
             GlideImage(
-                imageModel = { imageRes },
+                imageModel = { movie.poster },
                 modifier = Modifier
                     .size(width = 100.dp, height = 150.dp)
                     .constrainAs(image) {
@@ -56,7 +51,7 @@ fun MovieCard(
             )
 
             Text(
-                text = title,
+                text = movie.title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.constrainAs(titleText) {
@@ -68,7 +63,7 @@ fun MovieCard(
             )
 
             Text(
-                text = language,
+                text = movie.origLang,
                 fontSize = 14.sp,
                 color = Color.Gray,
                 modifier = Modifier.constrainAs(langText) {
@@ -78,7 +73,7 @@ fun MovieCard(
             )
 
             Text(
-                text = rating,
+                text = movie.rating,
                 fontSize = 14.sp,
                 color = Color(0xFF4CAF50),
                 modifier = Modifier.constrainAs(ratingText) {
@@ -88,7 +83,7 @@ fun MovieCard(
             )
 
             Text(
-                text = overview,
+                text = movie.overview,
                 fontSize = 14.sp,
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,

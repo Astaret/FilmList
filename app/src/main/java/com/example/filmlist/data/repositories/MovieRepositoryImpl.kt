@@ -37,6 +37,7 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
+
     override fun getMovieInfoList(): Flow<List<MovieEntity>> {
         return movieDao.getMovieList()
     }

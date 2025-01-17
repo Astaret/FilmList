@@ -2,16 +2,12 @@ package com.example.filmlist.presentation.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.data.local.enteties.MovieEntity
 import com.example.filmlist.domain.usecases.LoadDataFromSearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,34 +16,33 @@ class SearchMovieViewModel @Inject constructor(
     private val loadDataFromSearchUseCase: LoadDataFromSearchUseCase,
 ) : ViewModel() {
 
-    private val _movieList = MutableStateFlow<List<MovieEntity>>(emptyList())
-    val movieList: StateFlow<List<MovieEntity>> get() = _movieList
+    private val _searchState = MutableStateFlow(SearchState())
+    val searchState: StateFlow<SearchState> = _searchState
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> get() = _searchQuery
+    fun send(event: SearchEvents) {
+        when (event) {
+            is SearchChange -> onSearchQueryChange(event.newSearch)
+        }
+    }
 
-    val searchResult: StateFlow<List<MovieEntity>> =
-        _searchQuery
-            .debounce(300)
-            .combine(_movieList) { searchQuery, movies ->
-                when {
-                    searchQuery.isNotEmpty() -> movies.filter { movie ->
-                        movie.title.contains(searchQuery, ignoreCase = true)
-                    }
+    private fun onSearchQueryChange(newQuery: String) {
+        _searchState.value = _searchState.value.copy(
+            searchQuery = newQuery
+        )
+    }
 
-                    else -> movies
-                }
-            }.stateIn(
-                scope = viewModelScope,
-                initialValue = emptyList(),
-                started = SharingStarted.WhileSubscribed(5000)
-            )
-
-    fun loadDataFromSearch(query: String) {
+    private fun loadDataFromSearch(query: String) {
         viewModelScope.launch {
             loadDataFromSearchUseCase.loadDataFromSearch(query)
                 .collect { movies ->
-                    _movieList.value = movies
+                    _searchState.value = _searchState.value.copy(
+                        movieList = movies,
+                        searchResult = if (query.isNotEmpty()) {
+                            movies.filter { it.title.contains(query, ignoreCase = true) }
+                        } else {
+                            movies
+                        }
+                    )
                 }
         }
     }
@@ -58,21 +53,16 @@ class SearchMovieViewModel @Inject constructor(
 
     private fun observeSearchQuery() {
         viewModelScope.launch {
-            _searchQuery
+            _searchState
                 .debounce(300)
                 .distinctUntilChanged()
-                .collect { query ->
-                    if (query.isNotEmpty()) {
-                        loadDataFromSearch(query)
+                .collect { state ->
+                    if (state.searchQuery.isNotEmpty()) {
+                        loadDataFromSearch(state.searchQuery)
                     } else {
-                        _movieList.value = emptyList()
+                        _searchState.value = state.copy(searchResult = emptyList())
                     }
                 }
         }
     }
-
-    fun onSearchQueryChange(newQuery: String) {
-        _searchQuery.value = newQuery
-    }
-
 }

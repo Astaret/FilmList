@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.filmlist.domain.usecases.GetMovieInfoListUseCase
 import com.example.filmlist.domain.usecases.LoadDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,9 +19,12 @@ class MovieViewModel @Inject constructor(
         loadData()
     }
 
-    val movieList = getMovieListUseCase.getMovieInfoList()
+    private val _moviesState = MutableStateFlow(TopMovieState(
+        movieList = getMovieListUseCase.getMovieInfoList()))
+    val movieState = _moviesState
 
-    fun loadData() {
+
+    private fun loadData() {
         viewModelScope.launch {
             loadDataUseCase.loadData()
         }

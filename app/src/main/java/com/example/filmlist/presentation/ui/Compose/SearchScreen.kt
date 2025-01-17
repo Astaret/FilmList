@@ -3,9 +3,7 @@ package com.example.filmlist.presentation.ui.Compose
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBar
@@ -17,25 +15,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.filmlist.data.local.enteties.MovieEntity
+import com.example.filmlist.presentation.viewModels.SearchChange
 import com.example.filmlist.presentation.viewModels.SearchMovieViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchScreen(
-    viewModel: SearchMovieViewModel = hiltViewModel()
+    vm: SearchMovieViewModel = hiltViewModel()
 ) {
-    val searchResult by viewModel.searchResult.collectAsState()
-    val searchQuery by viewModel.searchQuery.collectAsState()
-
+    val searchState by vm.searchState.collectAsState()
 
     SearchScreen(
-        searchQuery = searchQuery,
-        searchResults = searchResult,
-        onSearchQueryChange = { viewModel.onSearchQueryChange(it) }
+        searchQuery = searchState.searchQuery,
+        searchResults = searchState.searchResult,
+        onSearchQueryChange = { vm.send(SearchChange(it)) }
     )
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +40,6 @@ fun SearchScreen(
     searchResults: List<MovieEntity>,
     onSearchQueryChange: (String) -> Unit
 ) {
-
     SearchBar(
         query = searchQuery,
         onQueryChange = onSearchQueryChange,
@@ -74,5 +68,4 @@ fun SearchScreen(
         onActiveChange = {},
         tonalElevation = 0.dp
     )
-
 }

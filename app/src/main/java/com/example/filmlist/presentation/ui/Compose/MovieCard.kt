@@ -17,15 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.filmlist.data.local.enteties.MovieEntity
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MovieCard(
-    title: String,
-    language: String,
-    rating: String,
-    overview: String,
-    imageRes: String
+    movie: MovieEntity
 ) {
     Card(
         modifier = Modifier
@@ -45,7 +42,7 @@ fun MovieCard(
 
 
             GlideImage(
-                imageModel = { imageRes },
+                imageModel = { movie.poster },
                 modifier = Modifier
                     .size(width = 100.dp, height = 150.dp)
                     .constrainAs(image) {
@@ -56,7 +53,7 @@ fun MovieCard(
             )
 
             Text(
-                text = title,
+                text = movie.title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.constrainAs(titleText) {
@@ -68,7 +65,7 @@ fun MovieCard(
             )
 
             Text(
-                text = language,
+                text = movie.origLang,
                 fontSize = 14.sp,
                 color = Color.Gray,
                 modifier = Modifier.constrainAs(langText) {
@@ -78,7 +75,7 @@ fun MovieCard(
             )
 
             Text(
-                text = rating,
+                text = movie.rating,
                 fontSize = 14.sp,
                 color = Color(0xFF4CAF50),
                 modifier = Modifier.constrainAs(ratingText) {
@@ -88,7 +85,7 @@ fun MovieCard(
             )
 
             Text(
-                text = overview,
+                text = movie.overview,
                 fontSize = 14.sp,
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,

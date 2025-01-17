@@ -19,11 +19,7 @@ fun MovieList(movieList: List<MovieEntity>){
     ) {
         items(movieList.size) {
             MovieCard(
-                movieList[it].title,
-                movieList[it].origLang,
-                movieList[it].rating,
-                movieList[it].overview,
-                movieList[it].poster
+                movieList[it]
             )
         }
     }

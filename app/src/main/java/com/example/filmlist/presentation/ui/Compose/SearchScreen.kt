@@ -26,10 +26,11 @@ fun SearchScreen(
     viewModel: SearchMovieViewModel
 ) {
     val searchResult by viewModel.searchResult.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
 
 
     SearchScreen(
-        searchQuery = viewModel.searchQuery,
+        searchQuery = searchQuery,
         searchResults = searchResult,
         onSearchQueryChange = { viewModel.onSearchQueryChange(it) }
     )
@@ -63,7 +64,7 @@ fun SearchScreen(
                     key = { index -> searchResults[index].id },
                     itemContent = { index ->
                         val movie = searchResults[index]
-                        MovieListItem(movie = movie)
+                        MovieCard(movie = movie)
                     }
                 )
             }

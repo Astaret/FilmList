@@ -1,20 +1,16 @@
 package com.example.filmlist.presentation.viewModels
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.filmlist.data.local.enteties.MovieEntity
-import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.usecases.LoadDataFromSearchUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,11 +23,12 @@ class SearchMovieViewModel @Inject constructor(
     private val _movieList = MutableStateFlow<List<MovieEntity>>(emptyList())
     val movieList: StateFlow<List<MovieEntity>> get() = _movieList
 
-    var searchQuery by mutableStateOf("")
-        private set
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> get() = _searchQuery
 
     val searchResult: StateFlow<List<MovieEntity>> =
-        snapshotFlow { searchQuery }
+        _searchQuery
+            .debounce(300)
             .combine(_movieList) { searchQuery, movies ->
                 when {
                     searchQuery.isNotEmpty() -> movies.filter { movie ->
@@ -55,8 +52,27 @@ class SearchMovieViewModel @Inject constructor(
         }
     }
 
+    init {
+        observeSearchQuery()
+    }
+
+    private fun observeSearchQuery() {
+        viewModelScope.launch {
+            _searchQuery
+                .debounce(300)
+                .distinctUntilChanged()
+                .collect { query ->
+                    if (query.isNotEmpty()) {
+                        loadDataFromSearch(query)
+                    } else {
+                        _movieList.value = emptyList()
+                    }
+                }
+        }
+    }
+
     fun onSearchQueryChange(newQuery: String) {
-        searchQuery = newQuery
+        _searchQuery.value = newQuery
     }
 
 }

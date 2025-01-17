@@ -43,7 +43,6 @@ class MovieRepositoryImpl @Inject constructor(
             val movieList = apiService.searchMovies(query).MovieList.map {
                 it.dtoToMovieEntity()
             }
-            movieDao.insertMovieList(movieList)
             emit(movieList)
         }
     }

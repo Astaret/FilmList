@@ -13,15 +13,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.filmlist.data.local.enteties.MovieEntity
 import com.example.filmlist.presentation.viewModels.MovieViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MovieScreen(movieList: List<MovieEntity>,
+fun MovieScreen(viewModel: MovieViewModel = hiltViewModel(),
                 onNavigateToSearch: () -> Unit)
 {
+    val movieList = viewModel.movieList.collectAsState(emptyList()).value
     Column {
         Button(onClick = { onNavigateToSearch() }) {
             Text(text = "\uD83D\uDD0E")

@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.filmlist.data.local.enteties.MovieEntity
 import com.example.filmlist.presentation.viewModels.SearchMovieViewModel
@@ -23,7 +24,7 @@ import com.example.filmlist.presentation.viewModels.SearchMovieViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchScreen(
-    viewModel: SearchMovieViewModel
+    viewModel: SearchMovieViewModel = hiltViewModel()
 ) {
     val searchResult by viewModel.searchResult.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()

@@ -14,7 +14,7 @@ interface ApiService {
     suspend fun searchMovies(
         @Query("query") query: String,
         @Query("include_adult") includeAdult: Boolean = false,
-        @Query("language") language: String = "en-US",
+        @Query("language") language: String = "ru-RU",
         @Query("page") page: Int = 1
     ): TopMovieListDto
 

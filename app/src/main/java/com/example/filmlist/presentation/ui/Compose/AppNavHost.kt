@@ -1,5 +1,6 @@
 package com.example.filmlist.presentation.ui.Compose
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -14,11 +15,15 @@ fun AppNavHost(
 
         composable("main_screen") {
             MovieScreen(
-                onNavigateToSearch = { navController.navigate("search_screen") })
+                onNavigateToSearch = { navController.navigate("search_screen") }
+            )
         }
 
         composable("search_screen") {
             SearchScreen()
+            BackHandler {
+                navController.navigateUp()
+            }
         }
     }
 }

@@ -1,101 +1,79 @@
 package com.example.filmlist.presentation.ui.Compose
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.example.filmlist.data.local.enteties.MovieEntity
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MovieCard(
-    movie: MovieEntity
+    movie: MovieEntity,
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(1.5.dp)
     ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ) {
-            val (image,
-                titleText,
-                langText,
-                ratingText,
-                overviewText) = createRefs()
+        Row {
+            Column {
+                GlideImage(
+                    imageModel = { movie.poster },
+                    modifier = Modifier
+                        .size(width = 100.dp, height = 150.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .padding(6.dp)
+                )
+            }
+            Column{
+                Text(
+                    text = movie.title,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    modifier = Modifier.padding(4.dp)
+                )
 
+                Text(
+                    text = "Оригинальный язык: ${movie.origLang}",
+                    fontSize = 14.sp,
+                    color = Color.Gray,
+                )
 
-            GlideImage(
-                imageModel = { movie.poster },
-                modifier = Modifier
-                    .size(width = 100.dp, height = 150.dp)
-                    .constrainAs(image) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                    }
-            )
-
-            Text(
-                text = movie.title,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.constrainAs(titleText) {
-                    start.linkTo(image.end, margin = 8.dp)
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
+                Row {
+                    Text(
+                        text = "Рейтинг: ",
+                        fontSize = 14.sp,
+                        color = Color.Gray
+                    )
+                    Text(
+                        text = movie.rating,
+                        fontSize = 14.sp,
+                        color = if (movie.rating.toFloat() >= 8) Color(0xFF4CAF50) else Color.Red
+                    )
                 }
-            )
 
-            Text(
-                text = movie.origLang,
-                fontSize = 14.sp,
-                color = Color.Gray,
-                modifier = Modifier.constrainAs(langText) {
-                    start.linkTo(titleText.start)
-                    top.linkTo(titleText.bottom, margin = 4.dp)
-                }
-            )
-
-            Text(
-                text = movie.rating,
-                fontSize = 14.sp,
-                color = Color(0xFF4CAF50),
-                modifier = Modifier.constrainAs(ratingText) {
-                    start.linkTo(langText.end, margin = 16.dp)
-                    top.linkTo(titleText.bottom, margin = 4.dp)
-                }
-            )
-
-            Text(
-                text = movie.overview,
-                fontSize = 14.sp,
-                maxLines = 5,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.constrainAs(overviewText) {
-                    start.linkTo(titleText.start)
-                    top.linkTo(langText.bottom, margin = 8.dp)
-                    end.linkTo(parent.end, margin = 8.dp)
-                    width = Dimension.fillToConstraints
-                }
-            )
+                Text(
+                    text = movie.overview,
+                    fontSize = 14.sp,
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.filmlist.data.local.enteties.MovieEntity
 import com.example.filmlist.presentation.viewModels.SearchMovieViewModel
 
@@ -46,6 +45,7 @@ fun SearchScreen(
     searchResults: List<MovieEntity>,
     onSearchQueryChange: (String) -> Unit
 ) {
+
     SearchBar(
         query = searchQuery,
         onQueryChange = onSearchQueryChange,
@@ -74,18 +74,5 @@ fun SearchScreen(
         onActiveChange = {},
         tonalElevation = 0.dp
     )
-}
 
-@Composable
-fun MovieListItem(
-    movie: MovieEntity,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(text = movie.title)
-        Text(text = movie.rating)
-    }
 }

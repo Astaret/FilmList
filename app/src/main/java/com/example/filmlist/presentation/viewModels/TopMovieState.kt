@@ -4,5 +4,7 @@ import com.example.filmlist.data.local.enteties.MovieEntity
 import kotlinx.coroutines.flow.Flow
 
 data class TopMovieState(
-    val movieList : Flow<List<MovieEntity>>
+    val movieList : List<MovieEntity>,
+    val currentPage: Int,
+    val totalPages: Int
 )

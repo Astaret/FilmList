@@ -5,9 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
 
-    fun loadData()
+    suspend fun loadData(page: Int): List<MovieEntity>
 
     suspend fun loadDataFromSearch(query: String): Flow<List<MovieEntity>>
+
+    suspend fun getTotalPages(): Int
 
     fun getMovieInfoList(): Flow<List<MovieEntity>>
 

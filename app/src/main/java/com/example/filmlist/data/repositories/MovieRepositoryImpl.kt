@@ -19,22 +19,14 @@ class MovieRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : MovieRepository {
 
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    override fun loadData() {
-        Log.d("Movie", "onCreate: coroutine")
-        coroutineScope.errorHandled {
-            Log.d("Movie", "onCreate: try")
-            with(apiService.getTopRatedMovies()) {
-                movieDao.insertMovieList(
-                    MovieList.map {
-                        Log.d("Movie", "onCreateView: $it")
-                        it.dtoToMovieEntity()
-                    }
-                )
-                Log.d("Movie", "loadData: SUCCES!!!")
+    override suspend fun loadData(loadPage: Int): List<MovieEntity> {
+        return with(apiService.getTopRatedMovies(page = loadPage)) {
+            val movieList = MovieList.map { it.dtoToMovieEntity() }
+            movieList.forEach{
+                Log.d("Movie", "loadData SUCCES! -> $it")
             }
-
+            movieList
         }
     }
 
@@ -45,6 +37,10 @@ class MovieRepositoryImpl @Inject constructor(
             }
             emit(movieList)
         }
+    }
+
+    override suspend fun getTotalPages(): Int {
+        return apiService.getTopRatedMovies(page = 1).totalPages.toInt()
     }
 
 

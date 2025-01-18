@@ -7,8 +7,11 @@ import retrofit2.http.Query
 
 interface ApiService {
 
-    @GET("movie/top_rated?language=ru-RU&page1")
-    suspend fun getTopRatedMovies(): TopMovieListDto
+    @GET("movie/top_rated")
+    suspend fun getTopRatedMovies(
+        @Query("language") language: String = "us-US",
+        @Query("page") page: Int
+    ): TopMovieListDto
 
     @GET("search/movie")
     suspend fun searchMovies(

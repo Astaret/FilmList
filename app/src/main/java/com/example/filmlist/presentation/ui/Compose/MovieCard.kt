@@ -1,5 +1,6 @@
 package com.example.filmlist.presentation.ui.Compose
 
+import android.widget.ToggleButton
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,13 +41,15 @@ fun MovieCard(
                 )
             }
             Column{
-                Text(
-                    text = movie.title,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
-                    modifier = Modifier.padding(4.dp)
-                )
+                Row {
+                    Text(
+                        text = movie.title,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
 
                 Text(
                     text = "Оригинальный язык: ${movie.origLang}",

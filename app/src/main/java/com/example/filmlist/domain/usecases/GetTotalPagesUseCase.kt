@@ -3,8 +3,8 @@ package com.example.filmlist.domain.usecases
 import com.example.filmlist.domain.repositories.MovieRepository
 import javax.inject.Inject
 
-class LoadDataUseCase @Inject constructor(
+class GetTotalPagesUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
-    suspend fun loadData(page: Int) = repository.loadData(page)
+    suspend fun getTotalPages() = repository.getTotalPages()
 }

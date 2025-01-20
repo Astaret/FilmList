@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
+    id("kotlin-parcelize")
 
 }
 
@@ -66,6 +67,7 @@ dependencies {
 
     implementation("com.squareup.retrofit2:retrofit:2.10.0")
     implementation("com.squareup.retrofit2:converter-gson:2.10.0")
+    implementation ("com.google.code.gson:gson:2.8.9")
 
     implementation("com.google.dagger:dagger:2.48")
     ksp("com.google.dagger:dagger-compiler:2.48")

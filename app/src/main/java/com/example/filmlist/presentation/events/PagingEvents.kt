@@ -1,4 +1,4 @@
-package com.example.filmlist.presentation.viewModels
+package com.example.filmlist.presentation.events
 
 interface PagingEvents
 

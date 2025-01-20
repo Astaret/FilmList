@@ -1,12 +1,12 @@
 package com.example.filmlist.data.local.enteties
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-import javax.inject.Inject
+import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "movie_entity")
+@Parcelize
 data class MovieEntity(
     @PrimaryKey
     val id: Int,
@@ -15,4 +15,4 @@ data class MovieEntity(
     val poster: String,
     val title: String,
     val rating:String
-)
+): Parcelable

@@ -6,6 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.filmlist.domain.usecases.GetMovieInfoListUseCase
 import com.example.filmlist.domain.usecases.GetTotalPagesUseCase
 import com.example.filmlist.domain.usecases.LoadDataUseCase
+import com.example.filmlist.presentation.events.PagingEvents
+import com.example.filmlist.presentation.events.loadingData
+import com.example.filmlist.presentation.events.loadingNextPage
+import com.example.filmlist.presentation.states.TopMovieState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

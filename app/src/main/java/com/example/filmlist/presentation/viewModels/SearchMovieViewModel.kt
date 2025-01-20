@@ -3,6 +3,9 @@ package com.example.filmlist.presentation.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.filmlist.domain.usecases.LoadDataFromSearchUseCase
+import com.example.filmlist.presentation.events.SearchChange
+import com.example.filmlist.presentation.events.SearchEvents
+import com.example.filmlist.presentation.states.SearchState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

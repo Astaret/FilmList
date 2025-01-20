@@ -9,7 +9,7 @@ interface ApiService {
 
     @GET("movie/top_rated")
     suspend fun getTopRatedMovies(
-        @Query("language") language: String = "us-US",
+        @Query("language") language: String = "ru-RU",
         @Query("page") page: Int
     ): TopMovieListDto
 

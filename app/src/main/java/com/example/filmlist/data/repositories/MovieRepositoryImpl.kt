@@ -26,6 +26,7 @@ class MovieRepositoryImpl @Inject constructor(
             movieList.forEach{
                 Log.d("Movie", "loadData SUCCES! -> $it")
             }
+            movieDao.insertMovieList(movieList)
             movieList
         }
     }
@@ -35,6 +36,7 @@ class MovieRepositoryImpl @Inject constructor(
             val movieList = apiService.searchMovies(query).MovieList.map {
                 it.dtoToMovieEntity()
             }
+            movieDao.insertMovieList(movieList)
             emit(movieList)
         }
     }
@@ -46,5 +48,9 @@ class MovieRepositoryImpl @Inject constructor(
 
     override fun getMovieInfoList(): Flow<List<MovieEntity>> {
         return movieDao.getMovieList()
+    }
+
+    override suspend fun getMovieInfo(id: Int): MovieEntity {
+        return movieDao.getMovieInfo(id)
     }
 }

@@ -1,4 +1,4 @@
-package com.example.filmlist.presentation.ui.Compose
+package com.example.filmlist.presentation.ui.Compose.Screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
@@ -14,13 +14,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.filmlist.presentation.ui.Compose.MovieList
 import com.example.filmlist.presentation.viewModels.MovieViewModel
-import com.example.filmlist.presentation.viewModels.loadingNextPage
+import com.example.filmlist.presentation.events.loadingNextPage
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MovieScreen(
     viewModel: MovieViewModel = hiltViewModel(),
+    navController: NavController,
     onNavigateToSearch: () -> Unit
 ) {
     val topMovieState by viewModel.movieState.collectAsState()
@@ -52,8 +55,7 @@ fun MovieScreen(
                 Text(text = "\uD83D\uDD0E")
             }
         }
-        MovieList(movieList = movieList,
-            listState = listState)
+        MovieList(movieList = movieList, listState = listState, navController = navController)
     }
 
 

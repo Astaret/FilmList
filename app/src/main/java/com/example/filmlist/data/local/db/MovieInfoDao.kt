@@ -13,9 +13,9 @@ interface MovieInfoDao {
     fun getMovieList(): Flow<List<MovieEntity>>
 
     @Query("SELECT * FROM movie_entity WHERE id == :id LIMIT 1")
-    fun getMovieInfo(id: Int): Flow<MovieEntity>
+    suspend fun getMovieInfo(id: Int): MovieEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertMovieList(movieList: List<MovieEntity>)
+    suspend fun insertMovieList(movieList: List<MovieEntity>)
 
 }

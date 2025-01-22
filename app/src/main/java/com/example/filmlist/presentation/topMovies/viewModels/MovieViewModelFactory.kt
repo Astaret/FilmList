@@ -1,4 +1,4 @@
-package com.example.filmlist.presentation.viewModels
+package com.example.filmlist.presentation.topMovies.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

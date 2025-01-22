@@ -1,18 +1,31 @@
 package com.example.filmlist.data.web.api
 
+import com.example.filmlist.data.web.dtos.MovieDto
 import com.example.filmlist.data.web.dtos.TopMovieListDto
 import retrofit2.http.GET
-import retrofit2.http.Header
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
-    @GET("movie/top_rated?language=en-US&page=1")
+
+    @GET("movie/top_rated")
     suspend fun getTopRatedMovies(
-        @Header("Authorization") authHeader: String,
-        @Header("accept") acceptHeader: String = ACCEPT_HEADER_KEY
+        @Query("language") language: String = "ru-RU",
+        @Query("page") page: Int
     ): TopMovieListDto
 
+    @GET("search/movie")
+    suspend fun searchMovies(
+        @Query("query") query: String,
+        @Query("include_adult") includeAdult: Boolean = false,
+        @Query("language") language: String = "ru-RU",
+        @Query("page") page: Int = 1
+    ): TopMovieListDto
 
-    companion object {
-        private const val ACCEPT_HEADER_KEY = "application/json"
-    }
+    @GET("movie/{id}")
+    suspend fun getMovieInfo(
+        @Path("id") movieId: Int,
+        @Query("language") language: String = "ru-RU"
+    ): MovieDto
+
 }

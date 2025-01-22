@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">FilmList</string>
-    <string name="title">Name: %s</string>
-    <string name="overview">Overview: %s</string>
-    <string name="lang">lang: %s</string>
-    <string name="rating">rating: %s</string>
+    <string name="title"> %s</string>
+    <string name="overview"> %s</string>
+    <string name="lang"> %s</string>
+    <string name="rating">рейтинг: %s</string>
 </resources>

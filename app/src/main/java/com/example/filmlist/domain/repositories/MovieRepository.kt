@@ -1,9 +1,20 @@
 package com.example.filmlist.domain.repositories
 
-import androidx.lifecycle.LiveData
-import com.example.filmlist.data.local.enteties.MovieEntity
+import com.example.filmlist.domain.models.Movie
+import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
-    suspend fun loadData(token:String)
-    fun getMovieInfoList(): LiveData<List<MovieEntity>>
+
+    suspend fun loadData(page: Int): List<Movie>
+
+    suspend fun loadDataFromSearch(query: String): Flow<List<Movie>> //flow
+
+    suspend fun getTotalPages(): Int
+
+    suspend fun getMovieInfo(id: Int): Movie
+
+    suspend fun loadMovieToDb(movie: Movie)
+
+    suspend fun getFavoriteMovie(): List<Movie>
+
 }

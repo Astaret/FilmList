@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.filmlist.data.local.enteties.MovieEntity
+import com.example.filmlist.data.local.enteties.MovieIdEntity
 
-@Database(entities = [MovieEntity::class], version = 2, exportSchema = false)
+@Database(entities = [MovieIdEntity::class], version = 2, exportSchema = false)
 abstract class MovieDatabase:RoomDatabase() {
     abstract fun movieInfoDao(): MovieInfoDao
 

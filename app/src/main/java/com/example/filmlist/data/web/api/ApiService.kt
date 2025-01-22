@@ -1,8 +1,9 @@
 package com.example.filmlist.data.web.api
 
+import com.example.filmlist.data.web.dtos.MovieDto
 import com.example.filmlist.data.web.dtos.TopMovieListDto
 import retrofit2.http.GET
-import retrofit2.http.Header
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -20,5 +21,11 @@ interface ApiService {
         @Query("language") language: String = "ru-RU",
         @Query("page") page: Int = 1
     ): TopMovieListDto
+
+    @GET("movie/{id}")
+    suspend fun getMovieInfo(
+        @Path("id") movieId: Int,
+        @Query("language") language: String = "ru-RU"
+    ): MovieDto
 
 }

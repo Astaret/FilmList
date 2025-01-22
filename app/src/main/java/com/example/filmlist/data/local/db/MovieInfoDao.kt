@@ -4,18 +4,17 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.filmlist.data.local.enteties.MovieEntity
-import kotlinx.coroutines.flow.Flow
+import com.example.filmlist.data.local.enteties.MovieIdEntity
 
 @Dao
 interface MovieInfoDao {
     @Query("SELECT * FROM movie_entity ORDER BY id DESC")
-    fun getMovieList(): Flow<List<MovieEntity>>
+    suspend fun getMovieList(): List<MovieIdEntity>
 
     @Query("SELECT * FROM movie_entity WHERE id == :id LIMIT 1")
-    suspend fun getMovieInfo(id: Int): MovieEntity
+    suspend fun getMovieById(id: Int):MovieIdEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMovieList(movieList: List<MovieEntity>)
+    suspend fun insertInMovieList(movieId: MovieIdEntity)
 
 }

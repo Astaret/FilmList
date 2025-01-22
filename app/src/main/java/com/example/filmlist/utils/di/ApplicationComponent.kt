@@ -1,7 +1,7 @@
 package com.example.filmlist.utils.di
 
 import android.app.Application
-import com.example.filmlist.presentation.ui.MovieActivity
+import com.example.filmlist.presentation.core.MovieActivity
 import dagger.BindsInstance
 import dagger.Component
 

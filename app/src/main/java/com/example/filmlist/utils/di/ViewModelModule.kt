@@ -1,7 +1,7 @@
 package com.example.filmlist.utils.di
 
 import androidx.lifecycle.ViewModel
-import com.example.filmlist.presentation.viewModels.MovieViewModel
+import com.example.filmlist.presentation.topMovies.viewModels.MovieViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

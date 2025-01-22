@@ -9,6 +9,7 @@ import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScree
 import com.example.filmlist.presentation.searchMovies.ui.compose.Screens.SearchScreen
 import com.example.filmlist.presentation.detailMovies.ui.compose.Screens.movieDetailScreen
 import com.example.filmlist.presentation.favoritesMovies.ui.compose.Screens.favoriteMoviesScreen
+import com.example.filmlist.presentation.storeMovies.ui.Compose.Screens.StoreScreen
 
 @Composable
 fun AppNavHost() {
@@ -20,7 +21,8 @@ fun AppNavHost() {
             MovieScreen(
                 navController = navController,
                 onNavigateToSearch = { navController.navigate("search_screen")},
-                onNavigateToFavorite = {navController.navigate("favorite_movie_screen")}
+                onNavigateToFavorite = {navController.navigate("favorite_movie_screen")},
+                onNavigateToStore = {navController.navigate("store_screen")}
             )
         }
 
@@ -41,6 +43,15 @@ fun AppNavHost() {
         composable("favorite_movie_screen") {
             favoriteMoviesScreen(navController = navController,
                 onNavigateToSearch = { navController.navigate("search_screen")},
+                onNavigateToBackMain = {navController.navigate("main_screen")}
+            )
+            BackHandler {
+                navController.navigateUp()
+            }
+        }
+
+        composable("store_screen") {
+            StoreScreen(
                 onNavigateToBackMain = {navController.navigate("main_screen")}
             )
             BackHandler {

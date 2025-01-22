@@ -26,7 +26,8 @@ fun MovieScreen(
     viewModel: MovieViewModel = hiltViewModel(),
     navController: NavController,
     onNavigateToSearch: () -> Unit,
-    onNavigateToFavorite: () -> Unit
+    onNavigateToFavorite: () -> Unit,
+    onNavigateToStore: () -> Unit
 ) {
     val topMovieState by viewModel.movieState.collectAsState()
 
@@ -54,6 +55,16 @@ fun MovieScreen(
             Button(
                 onClick = { onNavigateToFavorite() }) {
                 Text(text = "⭐")
+            }
+
+            Button(
+                onClick = { onNavigateToFavorite() }) {
+                Text(text = "\uFE0F\uD83C\uDF9E\uFE0F ")
+            }
+
+            Button(
+                onClick = { onNavigateToStore() }) {
+                Text(text = "\uD83D\uDED2 ")
             }
 
             Button(

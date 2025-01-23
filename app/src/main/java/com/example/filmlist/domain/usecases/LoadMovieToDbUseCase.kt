@@ -4,8 +4,8 @@ import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.repositories.MovieRepository
 import javax.inject.Inject
 
-class LoadMovieToDbUseCase @Inject constructor(
+class LoadFavMovieToDbUseCase @Inject constructor(
     private val movieRepository: MovieRepository
 ) {
-    suspend fun loadMovieToDb(movie: Movie) = movieRepository.loadMovieToDb(movie)
+    suspend fun loadFavMovieToDb(movie: Movie) = movieRepository.loadFavMovieToDb(movie)
 }

@@ -43,12 +43,17 @@ class MovieRepositoryImpl @Inject constructor(
         return apiService.getMovieInfo(movieId = id).dtoToMovie()
     }
 
-    override suspend fun loadMovieToDb(mov: Movie) {
-        movieDao.insertInMovieList(mov.movieToMovieEntity())
+    override suspend fun loadFavMovieToDb(mov: Movie) {
+        if (movieDao.getMovieById(mov.id).id == )
+        val updatedMovie = mov.movieToMovieEntity().apply { isFavorite = 1 }
+        Log.d("Movie", "loadFavMovieToDb: $updatedMovie")
+        movieDao.insertInMovieList(updatedMovie)
+        movieDao.updateMovie(updatedMovie)
     }
 
     override suspend fun getFavoriteMovie(): List<Movie>{
-        return with(movieDao.getMovieList()){
+        Log.d("Movie", "getFavoriteMovie: ${movieDao.getFavoriteMovieList()}")
+        return with(movieDao.getFavoriteMovieList()){
             val movieList = this.map {
                 apiService.getMovieInfo(it.id).dtoToMovie()
             }

@@ -14,6 +14,10 @@ fun MovieDto.dtoToMovie() = Movie(
     rating = rating
 )
 
-fun Movie.movieToMovieEntity() = MovieIdEntity(
-    id = id
-)
+fun Movie.movieToMovieEntity(isFavorite: Int? = null, isInStore: Int? = null): MovieIdEntity {
+    return MovieIdEntity(
+        id = id,
+        isFavorite = isFavorite ?: 0,
+        isInStore = isInStore ?: 0
+    )
+}

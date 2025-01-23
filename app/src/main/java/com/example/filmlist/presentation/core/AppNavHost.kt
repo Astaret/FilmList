@@ -52,7 +52,8 @@ fun AppNavHost() {
 
         composable("store_screen") {
             StoreScreen(
-                onNavigateToBackMain = {navController.navigate("main_screen")}
+                onNavigateToBackMain = {navController.navigate("main_screen")},
+                navController = navController
             )
             BackHandler {
                 navController.navigateUp()

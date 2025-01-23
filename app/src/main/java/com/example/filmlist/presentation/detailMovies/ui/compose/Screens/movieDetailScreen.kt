@@ -65,6 +65,13 @@ fun movieDetailScreen(
             ){
                 Text(text = "⭐")
             }
+            Button (
+                onClick = { vm.send(MovieInfoEvent.addMovieToStore()) },
+                modifier = Modifier.align(Alignment.BottomEnd),
+                enabled = !movieInfoState.isBought
+            ){
+                Text(text = "\uD83D\uDED2")
+            }
         }
         Column(
             modifier = Modifier

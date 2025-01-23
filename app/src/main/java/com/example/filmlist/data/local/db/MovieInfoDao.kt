@@ -22,8 +22,11 @@ interface MovieInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInMovieList(movieId: MovieIdEntity)
 
-    @Update
-    suspend fun updateMovie(movieId: MovieIdEntity)
+    @Query("UPDATE movie_entity SET isFavorite = :newVal WHERE id = :id")
+    suspend fun updateFavField(id: Int, newVal: Int)
+
+    @Query("UPDATE movie_entity SET isInStore = :newVal WHERE id = :id")
+    suspend fun updateStoreField(id: Int, newVal: Int)
 
     @Delete
     suspend fun deleteMovie(movieId: MovieIdEntity)

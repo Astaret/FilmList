@@ -44,11 +44,24 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun loadFavMovieToDb(mov: Movie) {
-        if (movieDao.getMovieById(mov.id).id == )
-        val updatedMovie = mov.movieToMovieEntity().apply { isFavorite = 1 }
-        Log.d("Movie", "loadFavMovieToDb: $updatedMovie")
-        movieDao.insertInMovieList(updatedMovie)
-        movieDao.updateMovie(updatedMovie)
+        if (movieDao.getMovieById(mov.id) == null ) {
+            Log.d("Movie", "loadFavMovieToDb: insert")
+            movieDao.insertInMovieList(mov.movieToMovieEntity().apply { isFavorite = 1 })
+        }else {
+            Log.d("Movie", "loadFavMovieToDb: update")
+            movieDao.updateFavField(mov.id, 1)
+        }
+    }
+
+    override suspend fun loadStoreMovieToDb(movie: Movie) {
+        if (movieDao.getMovieById(movie.id) == null ) {
+            Log.d("Movie", "loadFavMovieToDb: insert")
+            movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
+            Log.d("Movie", "loadStoreMovieToDb: SUCCES!! INSERT ")
+        }else {
+            movieDao.updateStoreField(movie.id, 1)
+            Log.d("Movie", "loadStoreMovieToDb: SUCCES!! UPDATE ")
+        }
     }
 
     override suspend fun getFavoriteMovie(): List<Movie>{
@@ -60,4 +73,15 @@ class MovieRepositoryImpl @Inject constructor(
             movieList
         }
     }
+
+    override suspend fun getStoreMovie(): List<Movie> {
+        Log.d("Movie", "getStoreMovie: ${movieDao.getFromStoreMovieList()}")
+        return with(movieDao.getFromStoreMovieList()){
+            val movieList = this.map {
+                apiService.getMovieInfo(it.id).dtoToMovie()
+            }
+            movieList
+        }
+    }
+
 }

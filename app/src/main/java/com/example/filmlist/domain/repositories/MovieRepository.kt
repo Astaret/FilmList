@@ -17,4 +17,8 @@ interface MovieRepository {
 
     suspend fun getFavoriteMovie(): List<Movie>
 
+    suspend fun getStoreMovie(): List<Movie>
+
+    suspend fun loadStoreMovieToDb(movie: Movie)
+
 }

@@ -18,8 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailMovieViewModel @Inject constructor(
     private val getMovieinfoUseCase: GetMovieinfoUseCase,
-    private val loadFavMovieToDb: LoadFavMovieToDbUseCase,
-    private val loadStoreMovieToDb: LoadStoreMovieToDbUseCase
+    private val loadFavMovieToDbUseCase: LoadFavMovieToDbUseCase,
+    private val loadStoreMovieToDbUseCase: LoadStoreMovieToDbUseCase
 ) : ViewModel() {
 
 
@@ -44,7 +44,7 @@ class DetailMovieViewModel @Inject constructor(
     private fun addMovieToFav() {
         Log.d("Movie", "addMovieToFav: ${_movieInfoState.value.movieEntity.movieToMovieEntity()}")
         viewModelScope.launch {
-            loadFavMovieToDb.loadFavMovieToDb(_movieInfoState.value.movieEntity)
+            loadFavMovieToDbUseCase.loadFavMovieToDb(_movieInfoState.value.movieEntity)
             _movieInfoState.value = _movieInfoState.value.copy(
                 isFavorite = true
             )
@@ -54,7 +54,7 @@ class DetailMovieViewModel @Inject constructor(
     private fun addMovieToStore() {
         Log.d("Movie", "addMovieToFav: ${_movieInfoState.value.movieEntity}")
         viewModelScope.launch {
-            loadStoreMovieToDb.loadStoreMovie(_movieInfoState.value.movieEntity)
+            loadStoreMovieToDbUseCase.putStoreMovieToDb(_movieInfoState.value.movieEntity)
             _movieInfoState.value = _movieInfoState.value.copy(
                 isBought = true
             )

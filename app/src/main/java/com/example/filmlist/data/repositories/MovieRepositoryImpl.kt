@@ -7,6 +7,9 @@ import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.data.web.api.ApiService
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.repositories.MovieRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -43,43 +46,39 @@ class MovieRepositoryImpl @Inject constructor(
         return apiService.getMovieInfo(movieId = id).dtoToMovie()
     }
 
-    override suspend fun loadFavMovieToDb(mov: Movie) {
-        if (movieDao.getMovieById(mov.id) == null ) {
-            Log.d("Movie", "loadFavMovieToDb: insert")
-            movieDao.insertInMovieList(mov.movieToMovieEntity().apply { isFavorite = 1 })
-        }else {
-            Log.d("Movie", "loadFavMovieToDb: update")
-            movieDao.updateFavField(mov.id, 1)
-        }
+    override suspend fun saveFavMovieToDb(mov: Movie) {
+        Log.d("Movie", "loadFavMovieToDb: insert")
+        movieDao.insertInMovieList(mov.movieToMovieEntity().apply { isFavorite = 1 })
+
     }
 
-    override suspend fun loadStoreMovieToDb(movie: Movie) {
-        if (movieDao.getMovieById(movie.id) == null ) {
-            Log.d("Movie", "loadFavMovieToDb: insert")
-            movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
-            Log.d("Movie", "loadStoreMovieToDb: SUCCES!! INSERT ")
-        }else {
-            movieDao.updateStoreField(movie.id, 1)
-            Log.d("Movie", "loadStoreMovieToDb: SUCCES!! UPDATE ")
-        }
+    override suspend fun putStoreMovieToDb(movie: Movie) {
+        Log.d("Movie", "loadFavMovieToDb: insert")
+        movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
+        Log.d("Movie", "loadStoreMovieToDb: SUCCES!! INSERT ")
     }
 
-    override suspend fun getFavoriteMovie(): List<Movie>{
+    override suspend fun getFavoriteMovies(): List<Movie> {
         Log.d("Movie", "getFavoriteMovie: ${movieDao.getFavoriteMovieList()}")
-        return with(movieDao.getFavoriteMovieList()){
-            val movieList = this.map {
-                apiService.getMovieInfo(it.id).dtoToMovie()
-            }
+        return coroutineScope {
+            val movieList = movieDao.getFavoriteMovieList().map { favoriteMovie ->
+                async {
+                    apiService.getMovieInfo(favoriteMovie.id).dtoToMovie()
+                }
+            }.awaitAll()
             movieList
         }
     }
 
     override suspend fun getStoreMovie(): List<Movie> {
         Log.d("Movie", "getStoreMovie: ${movieDao.getFromStoreMovieList()}")
-        return with(movieDao.getFromStoreMovieList()){
-            val movieList = this.map {
-                apiService.getMovieInfo(it.id).dtoToMovie()
-            }
+
+        return coroutineScope {
+            val movieList = movieDao.getFromStoreMovieList().map { storeMovie ->
+                async {
+                    apiService.getMovieInfo(storeMovie.id).dtoToMovie()
+                }
+            }.awaitAll()
             movieList
         }
     }

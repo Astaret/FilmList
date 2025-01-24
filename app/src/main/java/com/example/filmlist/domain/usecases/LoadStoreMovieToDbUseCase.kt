@@ -7,5 +7,5 @@ import javax.inject.Inject
 class LoadStoreMovieToDbUseCase @Inject constructor(
     private val movieRepository: MovieRepository
 ) {
-    suspend fun loadStoreMovie(movie: Movie) = movieRepository.loadStoreMovieToDb(movie)
+    suspend fun putStoreMovieToDb(movie: Movie) = movieRepository.putStoreMovieToDb(movie)
 }

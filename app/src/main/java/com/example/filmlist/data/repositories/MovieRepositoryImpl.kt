@@ -52,10 +52,16 @@ class MovieRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun putStoreMovieToDb(movie: Movie) {
+    override suspend fun saveStoreMovieToDb(movie: Movie) {
         Log.d("Movie", "loadFavMovieToDb: insert")
         movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
         Log.d("Movie", "loadStoreMovieToDb: SUCCES!! INSERT ")
+    }
+
+    override suspend fun saveBoughtMovieToDb(movie: Movie) {
+        movieDao.insertInMovieList(movie.movieToMovieEntity().apply {
+            isBought = 1
+        })
     }
 
     override suspend fun getFavoriteMovies(): List<Movie> {
@@ -64,6 +70,19 @@ class MovieRepositoryImpl @Inject constructor(
             val movieList = movieDao.getFavoriteMovieList().map { favoriteMovie ->
                 async {
                     apiService.getMovieInfo(favoriteMovie.id).dtoToMovie()
+                }
+            }.awaitAll()
+            movieList
+        }
+    }
+
+    override suspend fun getBoughtMovies(): List<Movie> {
+        Log.d("Movie", "getBoughtMovies: ${movieDao.getFromStoreMovieList()}")
+
+        return coroutineScope {
+            val movieList = movieDao.getFromBoughtMovieList().map { storeMovie ->
+                async {
+                    apiService.getMovieInfo(storeMovie.id).dtoToMovie()
                 }
             }.awaitAll()
             movieList

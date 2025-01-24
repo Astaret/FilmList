@@ -1,8 +1,7 @@
 package com.example.filmlist.presentation.searchMovies.viewModels
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.LoadDataFromSearchUseCase
+import com.example.filmlist.domain.usecases.LoadUseCases.LoadDataFromSearchUseCase
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.states.SearchState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel

@@ -42,7 +42,7 @@ fun SearchScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+private fun SearchScreen(
     searchQuery: String,
     searchResults: List<Movie>,
     navController: NavController,

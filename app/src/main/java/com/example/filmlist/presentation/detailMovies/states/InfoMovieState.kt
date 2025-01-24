@@ -8,3 +8,7 @@ data class InfoMovieState(
     val isFavorite: Boolean,
     val isBought: Boolean
 )
+
+enum class StatusMovie(){
+
+}

@@ -16,6 +16,9 @@ interface MovieInfoDao {
     @Query("SELECT * FROM movie_entity WHERE isInStore == 1")
     suspend fun getFromStoreMovieList(): List<MovieIdEntity>
 
+    @Query("SELECT * FROM movie_entity WHERE isBought == 1")
+    suspend fun getFromBoughtMovieList(): List<MovieIdEntity>
+
     @Query("SELECT * FROM movie_entity WHERE id == :id LIMIT 1")
     suspend fun getMovieById(id: Int):MovieIdEntity
 
@@ -27,6 +30,9 @@ interface MovieInfoDao {
 
     @Query("UPDATE movie_entity SET isInStore = :newVal WHERE id = :id")
     suspend fun updateStoreField(id: Int, newVal: Int)
+
+    @Query("UPDATE movie_entity SET isBought = :newVal WHERE id = :id")
+    suspend fun updateBoughtField(id: Int, newVal: Int)
 
     @Delete
     suspend fun deleteMovie(movieId: MovieIdEntity)

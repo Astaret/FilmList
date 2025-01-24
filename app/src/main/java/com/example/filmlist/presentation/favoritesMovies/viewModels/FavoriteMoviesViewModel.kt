@@ -2,7 +2,7 @@ package com.example.filmlist.presentation.favoritesMovies.viewModels
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.GetFavoriteMovieUseCase
+import com.example.filmlist.domain.usecases.GetUseCase.GetFavoriteMovieUseCase
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
@@ -34,7 +34,7 @@ class FavoriteMoviesViewModel @Inject constructor(
             Log.d("Movie", "showAllFavorites: $updatedMovieList")
             _favState.value = _favState.value.copy(
                 movieList = updatedMovieList,
-                empty = false
+                empty = updatedMovieList.isEmpty()
             )
             Log.d("Movie", "showAllFavorites: ${_favState.value}")
 

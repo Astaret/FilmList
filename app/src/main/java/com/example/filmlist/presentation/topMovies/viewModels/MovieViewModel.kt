@@ -3,8 +3,8 @@ package com.example.filmlist.presentation.topMovies.viewModels
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.GetTotalPagesUseCase
-import com.example.filmlist.domain.usecases.LoadDataUseCase
+import com.example.filmlist.domain.usecases.GetUseCase.GetTotalPagesUseCase
+import com.example.filmlist.domain.usecases.LoadUseCases.LoadDataUseCase
 import com.example.filmlist.presentation.topMovies.states.TopMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents

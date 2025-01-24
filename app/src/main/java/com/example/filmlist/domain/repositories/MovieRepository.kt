@@ -15,10 +15,14 @@ interface MovieRepository {
 
     suspend fun saveFavMovieToDb(movie: Movie)
 
+    suspend fun saveStoreMovieToDb(movie: Movie)
+
+    suspend fun saveBoughtMovieToDb(movie: Movie)
+
     suspend fun getFavoriteMovies(): List<Movie>
 
     suspend fun getStoreMovie(): List<Movie>
 
-    suspend fun putStoreMovieToDb(movie: Movie)
+    suspend fun getBoughtMovies(): List<Movie>
 
 }

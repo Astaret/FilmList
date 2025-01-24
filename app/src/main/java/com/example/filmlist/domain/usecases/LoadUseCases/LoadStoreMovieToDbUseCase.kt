@@ -1,4 +1,4 @@
-package com.example.filmlist.domain.usecases
+package com.example.filmlist.domain.usecases.LoadUseCases
 
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.repositories.MovieRepository
@@ -7,5 +7,5 @@ import javax.inject.Inject
 class LoadStoreMovieToDbUseCase @Inject constructor(
     private val movieRepository: MovieRepository
 ) {
-    suspend fun putStoreMovieToDb(movie: Movie) = movieRepository.putStoreMovieToDb(movie)
+    suspend fun putStoreMovieToDb(movie: Movie) = movieRepository.saveStoreMovieToDb(movie)
 }

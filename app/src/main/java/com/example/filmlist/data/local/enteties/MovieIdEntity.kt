@@ -11,5 +11,6 @@ data class MovieIdEntity(
     @PrimaryKey
     val id: Int,
     var isFavorite: Int,
-    var isInStore: Int
+    var isInStore: Int,
+    var isBought: Int
 ): Parcelable

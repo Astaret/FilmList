@@ -3,12 +3,11 @@ package com.example.filmlist.presentation.storeMovies.viewModels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.GetStoreMovieUseCase
-import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
+import com.example.filmlist.domain.usecases.GetUseCase.GetStoreMovieUseCase
+import com.example.filmlist.domain.usecases.LoadUseCases.LoadBoughtMovieToDbUseCase
 import com.example.filmlist.presentation.storeMovies.events.PurchaseEvent
 import com.example.filmlist.presentation.storeMovies.states.StoreMovState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StoreViewModel @Inject constructor(
-    private val getStoreMovieUseCase: GetStoreMovieUseCase
+    private val getStoreMovieUseCase: GetStoreMovieUseCase,
+    private val loadBoughtMovieToDbUseCase: LoadBoughtMovieToDbUseCase
 ) : ViewModel() {
 
     private val _storeState = MutableStateFlow(StoreMovState())
@@ -26,6 +26,17 @@ class StoreViewModel @Inject constructor(
     fun send(event: PurchaseEvent) {
         when (event) {
             is PurchaseEvent.ShowAllPurchases -> showAllMoviesInStore()
+            is PurchaseEvent.BuyMovie -> buyMovieFun()
+        }
+    }
+
+    private fun buyMovieFun() {
+        viewModelScope.launch {
+            getStoreMovieUseCase.getStoreMovie().forEach {
+                loadBoughtMovieToDbUseCase.saveBoughtMovies(it)
+                Log.d("Movie", "buyMovieFun: BOUGHT")
+            }
+
         }
     }
 
@@ -40,7 +51,7 @@ class StoreViewModel @Inject constructor(
             _storeState.value = _storeState.value.copy(
                 movieList = updatedMovieList,
                 totalPrice = totalSum,
-                empty = false
+                empty = updatedMovieList.isEmpty()
             )
             Log.d("Movie", "showAllMoviesInStore: ${_storeState.value}")
 

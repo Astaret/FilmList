@@ -1,4 +1,4 @@
-package com.example.filmlist.domain.usecases
+package com.example.filmlist.domain.usecases.GetUseCase
 
 import com.example.filmlist.domain.repositories.MovieRepository
 import javax.inject.Inject

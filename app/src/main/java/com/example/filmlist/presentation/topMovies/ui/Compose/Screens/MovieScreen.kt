@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.filmlist.presentation.core.Screen
 import com.example.filmlist.presentation.ui_kit.components.MovieList
 import com.example.filmlist.presentation.topMovies.viewModels.MovieViewModel
 import com.example.filmlist.presentation.ui_kit.events.loadingData
@@ -33,10 +34,7 @@ import com.example.filmlist.presentation.ui_kit.events.loadingNextPage
 @Composable
 fun MovieScreen(
     viewModel: MovieViewModel = hiltViewModel(),
-    navController: NavController,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToFavorite: () -> Unit,
-    onNavigateToStore: () -> Unit
+    navController: NavController
 ) {
     val topMovieState by viewModel.movieState.collectAsState()
 
@@ -62,7 +60,7 @@ fun MovieScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = { onNavigateToFavorite() }
+                onClick = {navController.navigate(Screen.FavoriteScreen.route) }
             ){
                 Icon(
                     imageVector = Icons.Default.Favorite,
@@ -72,7 +70,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = { onNavigateToFavorite() }
+                onClick = { navController.navigate(Screen.LibraryScreen.route)}
             ){
                 Icon(
                     imageVector = Icons.Default.List,
@@ -82,7 +80,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = { onNavigateToStore() }
+                onClick = {navController.navigate(Screen.StoreScreen.route) }
             ){
                 Icon(
                     imageVector = Icons.Default.ShoppingCart,
@@ -92,7 +90,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = { onNavigateToSearch() }
+                onClick = { navController.navigate(Screen.SearchScreen.route)}
             ){
                 Icon(
                     imageVector = Icons.Default.Search,

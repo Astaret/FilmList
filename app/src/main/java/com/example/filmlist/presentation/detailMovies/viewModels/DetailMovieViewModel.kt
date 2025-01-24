@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.domain.models.Movie
-import com.example.filmlist.domain.usecases.GetMovieinfoUseCase
-import com.example.filmlist.domain.usecases.LoadFavMovieToDbUseCase
-import com.example.filmlist.domain.usecases.LoadStoreMovieToDbUseCase
+import com.example.filmlist.domain.usecases.GetUseCase.GetMovieinfoUseCase
+import com.example.filmlist.domain.usecases.LoadUseCases.LoadFavMovieToDbUseCase
+import com.example.filmlist.domain.usecases.LoadUseCases.LoadStoreMovieToDbUseCase
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,7 +44,7 @@ class DetailMovieViewModel @Inject constructor(
     private fun addMovieToFav() {
         Log.d("Movie", "addMovieToFav: ${_movieInfoState.value.movieEntity.movieToMovieEntity()}")
         viewModelScope.launch {
-            loadFavMovieToDbUseCase.loadFavMovieToDb(_movieInfoState.value.movieEntity)
+            loadFavMovieToDbUseCase.putFavMovieToDb(_movieInfoState.value.movieEntity)
             _movieInfoState.value = _movieInfoState.value.copy(
                 isFavorite = true
             )

@@ -2,6 +2,7 @@ package com.example.filmlist.data.repositories
 
 import android.util.Log
 import com.example.filmlist.data.local.db.MovieInfoDao
+import com.example.filmlist.data.local.enteties.MovieIdEntity
 import com.example.filmlist.data.mappers.dtoToMovie
 import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.data.web.api.ApiService
@@ -48,20 +49,33 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun saveFavMovieToDb(mov: Movie) {
         Log.d("Movie", "loadFavMovieToDb: insert")
-        movieDao.insertInMovieList(mov.movieToMovieEntity().apply { isFavorite = 1 })
-
+        if (movieDao.getMovieById(mov.id) != null) {
+            movieDao.updateFavField(mov.id, 1)
+            movieDao.updateStoreField(mov.id, 0)
+        } else {
+            movieDao.insertInMovieList(mov.movieToMovieEntity().apply { isFavorite = 1 })
+        }
     }
 
     override suspend fun saveStoreMovieToDb(movie: Movie) {
         Log.d("Movie", "loadFavMovieToDb: insert")
-        movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
+        if (movieDao.getMovieById(movie.id) != null) {
+            movieDao.updateStoreField(movie.id, 1)
+            movieDao.updateFavField(movie.id, 0)
+        } else {
+            movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
+        }
         Log.d("Movie", "loadStoreMovieToDb: SUCCES!! INSERT ")
     }
 
     override suspend fun saveBoughtMovieToDb(movie: Movie) {
-        movieDao.insertInMovieList(movie.movieToMovieEntity().apply {
-            isBought = 1
-        })
+        if (movieDao.getMovieById(movie.id) != null) {
+            movieDao.updateBoughtField(movie.id, 1)
+            movieDao.updateStoreField(movie.id, 0)
+            movieDao.updateFavField(movie.id, 0)
+        } else {
+            movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isBought = 1 })
+        }
     }
 
     override suspend fun getFavoriteMovies(): List<Movie> {
@@ -86,6 +100,12 @@ class MovieRepositoryImpl @Inject constructor(
                 }
             }.awaitAll()
             movieList
+        }
+    }
+
+    override suspend fun getMovieByIdFromBd(id: Int): MovieIdEntity {
+        return coroutineScope {
+            movieDao.getMovieById(id)
         }
     }
 

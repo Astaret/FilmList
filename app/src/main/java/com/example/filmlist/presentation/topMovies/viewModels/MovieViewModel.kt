@@ -50,7 +50,7 @@ class MovieViewModel @Inject constructor(
                 val newMovies = loadDataUseCase.loadData(page)
                 val totalPages = getTotalPagesUseCase.getTotalPages()
                 _moviesState.value = _moviesState.value.copy(
-                    movieList = _moviesState.value.movieList + newMovies,
+                    movieList = (_moviesState.value.movieList + newMovies).distinctBy { it.id },
                     currentPage = page,
                     totalPages = totalPages
                 )

@@ -4,5 +4,6 @@ sealed interface MovieInfoEvent{
     class getMovieInfo(val newId: String): MovieInfoEvent
     class addMovieToFavorite():MovieInfoEvent
     class addMovieToStore():MovieInfoEvent
+    class isMovieInBdCheck(val id: Int): MovieInfoEvent
 }
 

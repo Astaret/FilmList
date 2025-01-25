@@ -1,5 +1,6 @@
 package com.example.filmlist.domain.repositories
 
+import com.example.filmlist.data.local.enteties.MovieIdEntity
 import com.example.filmlist.domain.models.Movie
 import kotlinx.coroutines.flow.Flow
 
@@ -24,5 +25,7 @@ interface MovieRepository {
     suspend fun getStoreMovie(): List<Movie>
 
     suspend fun getBoughtMovies(): List<Movie>
+
+    suspend fun getMovieByIdFromBd(id:Int): MovieIdEntity
 
 }

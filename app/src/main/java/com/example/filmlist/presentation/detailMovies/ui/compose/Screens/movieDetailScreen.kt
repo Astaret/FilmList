@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,11 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
+import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
 import com.skydoves.landscapist.glide.GlideImage
 
@@ -41,9 +44,11 @@ fun movieDetailScreen(
 ) {
     LaunchedEffect(movieId) {
         vm.send(MovieInfoEvent.getMovieInfo(movieId))
+        vm.send(MovieInfoEvent.isMovieInBdCheck(movieId.toInt()))
     }
 
     val movieInfoState by vm.movieInfoState
+
 
     val movie = movieInfoState.movieEntity
 
@@ -67,52 +72,69 @@ fun movieDetailScreen(
                         shape = RoundedCornerShape(5.dp)
                     )
             )
-            IconButton(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                enabled = !movieInfoState.isBought,
-                onClick = { vm.send(MovieInfoEvent.addMovieToStore()) },
-                colors = IconButtonColors(
-                    containerColor = Color.White, contentColor = Color.Black,
-                    disabledContentColor = Color.Transparent, disabledContainerColor = Color.Transparent
-                )
-            ){
-                if (movieInfoState.isBought){
+            if (movieInfoState.statusMovie != StatusMovie.BOUGHT){
+                IconButton(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    onClick = { vm.send(MovieInfoEvent.addMovieToStore()) },
+                    colors = IconButtonColors(
+                        containerColor = Color.White, contentColor = Color.Black,
+                        disabledContentColor = Color.Transparent, disabledContainerColor = Color.Transparent
+                    )
+                ){
+                    if (movieInfoState.statusMovie == StatusMovie.INSTORE){
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "BOUGHT",
+                            tint = Color.Green
+                        )
+                    }else{
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "BUY",
+                            tint = Color.Black
+                        )
+                    }
+                }
+                IconButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    onClick = { vm.send(MovieInfoEvent.addMovieToFavorite()) },
+                    colors = IconButtonColors(
+                        containerColor = Color.White, contentColor = Color.Black,
+                        disabledContentColor = Color.White, disabledContainerColor = Color.Transparent
+                    )
+                ){
+                    if (movieInfoState.statusMovie == StatusMovie.FAVORITE){
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "BACK",
+                            tint = Color.Red
+                        )
+                    }else{
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = "BACK",
+                            tint = Color.Black
+                        )
+                    }
+
+                }
+            }else{
+                Row(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Куплено",
+                        modifier = Modifier
+                            .background(Color.Green),
+                        color = Color.Black
+                    )
                     Icon(
                         imageVector = Icons.Default.Check,
                         contentDescription = "BOUGHT",
-                        tint = Color.Green
-                    )
-                }else{
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "BUY",
-                        tint = Color.Black
+                        tint = Color.Green,
                     )
                 }
-            }
-            IconButton(
-                modifier = Modifier.align(Alignment.TopEnd),
-                enabled = !movieInfoState.isFavorite,
-                onClick = { vm.send(MovieInfoEvent.addMovieToFavorite()) },
-                colors = IconButtonColors(
-                    containerColor = Color.White, contentColor = Color.Black,
-                    disabledContentColor = Color.White, disabledContainerColor = Color.Transparent
-                )
-            ){
-                if (movieInfoState.isFavorite){
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "BACK",
-                        tint = Color.Red
-                    )
-                }else{
-                    Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = "BACK",
-                        tint = Color.Black
-                    )
-                }
-
             }
         }
         Column(

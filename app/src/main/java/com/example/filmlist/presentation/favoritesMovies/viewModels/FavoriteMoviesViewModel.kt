@@ -2,7 +2,9 @@ package com.example.filmlist.presentation.favoritesMovies.viewModels
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.GetUseCase.GetFavoriteMovieUseCase
+import com.example.filmlist.domain.states.ListMovieState
+import com.example.filmlist.domain.states.MovieState
+import com.example.filmlist.domain.usecases.GetUseCase.GetMovieListFromBdUseCase
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
@@ -14,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteMoviesViewModel @Inject constructor(
-    private val getFavoriteMovieUseCase: GetFavoriteMovieUseCase
+    private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
 ) : BasedViewModel<FavoriteState, FavoriteEvent>() {
 
     private val _favState = MutableStateFlow(FavoriteState())
@@ -30,13 +32,14 @@ class FavoriteMoviesViewModel @Inject constructor(
 
     private fun showAllFavorites() {
         viewModelScope.launch {
-            val updatedMovieList = getFavoriteMovieUseCase.getFavoriteMovie()
-            Log.d("Movie", "showAllFavorites: $updatedMovieList")
+            val updatedMovieList = getMovieListFromBdUseCase.getMovieListFromBd(
+                ListMovieState.ISFAVORITE)
+            Log.d("Movie", "showAllFavorites: ${updatedMovieList.map { it.title }}")
             _favState.value = _favState.value.copy(
                 movieList = updatedMovieList,
                 empty = updatedMovieList.isEmpty()
             )
-            Log.d("Movie", "showAllFavorites: ${_favState.value}")
+            Log.d("Movie", "showAllFavorites: ${_favState.value.movieList.map { it.title }}")
 
         }
     }

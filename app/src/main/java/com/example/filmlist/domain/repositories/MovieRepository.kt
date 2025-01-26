@@ -2,6 +2,8 @@ package com.example.filmlist.domain.repositories
 
 import com.example.filmlist.data.local.enteties.MovieIdEntity
 import com.example.filmlist.domain.models.Movie
+import com.example.filmlist.domain.states.ListMovieState
+import com.example.filmlist.domain.states.MovieState
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
@@ -14,18 +16,10 @@ interface MovieRepository {
 
     suspend fun getMovieInfo(id: Int): Movie
 
-    suspend fun saveFavMovieToDb(movie: Movie)
-
-    suspend fun saveStoreMovieToDb(movie: Movie)
-
-    suspend fun saveBoughtMovieToDb(movie: Movie)
-
-    suspend fun getFavoriteMovies(): List<Movie>
-
-    suspend fun getStoreMovie(): List<Movie>
-
-    suspend fun getBoughtMovies(): List<Movie>
-
     suspend fun getMovieByIdFromBd(id:Int): MovieIdEntity
+
+    suspend fun getMovieListFromBd(state: ListMovieState): List<Movie>
+
+    suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState)
 
 }

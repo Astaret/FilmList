@@ -7,7 +7,9 @@ import com.example.filmlist.data.mappers.dtoToMovie
 import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.data.web.api.ApiService
 import com.example.filmlist.domain.models.Movie
+import com.example.filmlist.domain.states.MovieState
 import com.example.filmlist.domain.repositories.MovieRepository
+import com.example.filmlist.domain.states.ListMovieState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -47,61 +49,6 @@ class MovieRepositoryImpl @Inject constructor(
         return apiService.getMovieInfo(movieId = id).dtoToMovie()
     }
 
-    override suspend fun saveFavMovieToDb(mov: Movie) {
-        Log.d("Movie", "loadFavMovieToDb: insert")
-        if (movieDao.getMovieById(mov.id) != null) {
-            movieDao.updateFavField(mov.id, 1)
-            movieDao.updateStoreField(mov.id, 0)
-        } else {
-            movieDao.insertInMovieList(mov.movieToMovieEntity().apply { isFavorite = 1 })
-        }
-    }
-
-    override suspend fun saveStoreMovieToDb(movie: Movie) {
-        Log.d("Movie", "loadFavMovieToDb: insert")
-        if (movieDao.getMovieById(movie.id) != null) {
-            movieDao.updateStoreField(movie.id, 1)
-            movieDao.updateFavField(movie.id, 0)
-        } else {
-            movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
-        }
-        Log.d("Movie", "loadStoreMovieToDb: SUCCES!! INSERT ")
-    }
-
-    override suspend fun saveBoughtMovieToDb(movie: Movie) {
-        if (movieDao.getMovieById(movie.id) != null) {
-            movieDao.updateBoughtField(movie.id, 1)
-            movieDao.updateStoreField(movie.id, 0)
-            movieDao.updateFavField(movie.id, 0)
-        } else {
-            movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isBought = 1 })
-        }
-    }
-
-    override suspend fun getFavoriteMovies(): List<Movie> {
-        Log.d("Movie", "getFavoriteMovie: ${movieDao.getFavoriteMovieList()}")
-        return coroutineScope {
-            val movieList = movieDao.getFavoriteMovieList().map { favoriteMovie ->
-                async {
-                    apiService.getMovieInfo(favoriteMovie.id).dtoToMovie()
-                }
-            }.awaitAll()
-            movieList
-        }
-    }
-
-    override suspend fun getBoughtMovies(): List<Movie> {
-        Log.d("Movie", "getBoughtMovies: ${movieDao.getFromStoreMovieList()}")
-
-        return coroutineScope {
-            val movieList = movieDao.getFromBoughtMovieList().map { storeMovie ->
-                async {
-                    apiService.getMovieInfo(storeMovie.id).dtoToMovie()
-                }
-            }.awaitAll()
-            movieList
-        }
-    }
 
     override suspend fun getMovieByIdFromBd(id: Int): MovieIdEntity {
         return coroutineScope {
@@ -109,16 +56,23 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getStoreMovie(): List<Movie> {
-        Log.d("Movie", "getStoreMovie: ${movieDao.getFromStoreMovieList()}")
-
+    override suspend fun getMovieListFromBd(state: ListMovieState): List<Movie> {
         return coroutineScope {
-            val movieList = movieDao.getFromStoreMovieList().map { storeMovie ->
+            val movieList = movieDao.getMovieListFromBd(state).map { storeMovie ->
                 async {
                     apiService.getMovieInfo(storeMovie.id).dtoToMovie()
                 }
             }.awaitAll()
             movieList
+        }
+    }
+
+    override suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState) {
+        Log.d("Movie", "putMovieToDb: ${movie.title} to ${stateOfMovie.name}")
+        if (movieDao.getMovieById(movie.id) != null) {
+            movieDao.updateMovieField(movie.id, stateOfMovie.name)
+        } else {
+            movieDao.insertInMovieList(movie.movieToMovieEntity().apply { stateOfMovie.name })
         }
     }
 

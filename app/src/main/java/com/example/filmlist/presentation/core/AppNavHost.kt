@@ -5,12 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScreen
-import com.example.filmlist.presentation.searchMovies.ui.compose.Screens.SearchScreen
-import com.example.filmlist.presentation.detailMovies.ui.compose.Screens.movieDetailScreen
+import com.example.filmlist.presentation.detailMovies.ui.compose.Screens.MovieDetailScreen
 import com.example.filmlist.presentation.favoritesMovies.ui.compose.Screens.favoriteMoviesScreen
 import com.example.filmlist.presentation.libraryMovies.ui.compose.screens.LibraryScreen
+import com.example.filmlist.presentation.searchMovies.ui.compose.Screens.SearchScreen
 import com.example.filmlist.presentation.storeMovies.ui.Compose.Screens.StoreScreen
+import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScreen
 
 @Composable
 fun AppNavHost() {
@@ -34,7 +34,7 @@ fun AppNavHost() {
         composable(route = Screen.DetailScreen.route) {
             val movieId = it.arguments?.getString("id")
             movieId?.let {
-                movieDetailScreen(movieId = it)
+                MovieDetailScreen(movieId = it)
             }
         }
 

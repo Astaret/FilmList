@@ -3,7 +3,9 @@ package com.example.filmlist.presentation.libraryMovies.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.GetUseCase.GetBoughtMoviesUseCase
+import com.example.filmlist.domain.states.ListMovieState
+import com.example.filmlist.domain.states.MovieState
+import com.example.filmlist.domain.usecases.GetUseCase.GetMovieListFromBdUseCase
 import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
 import com.example.filmlist.presentation.libraryMovies.states.LibraryState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryMoviesViewModel @Inject constructor(
-    private val getBoughtMoviesUseCase: GetBoughtMoviesUseCase
+    private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
 ):ViewModel() {
     private val _librState = MutableStateFlow(LibraryState())
     val librState: StateFlow<LibraryState> = _librState
@@ -28,7 +30,8 @@ class LibraryMoviesViewModel @Inject constructor(
 
     private fun showAllBought(){
         viewModelScope.launch {
-            val updatedMovieList = getBoughtMoviesUseCase.getBoughtMovies()
+            val updatedMovieList = getMovieListFromBdUseCase.getMovieListFromBd(
+                ListMovieState.ISBOUGHT)
             Log.d("Movie", "showAllBoughtMovies: $updatedMovieList")
             _librState.value = _librState.value.copy(
                 movieList = updatedMovieList,

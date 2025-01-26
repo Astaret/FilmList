@@ -8,8 +8,6 @@ import com.example.filmlist.domain.usecases.LoadUseCases.LoadDataUseCase
 import com.example.filmlist.presentation.topMovies.states.TopMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
-import com.example.filmlist.presentation.ui_kit.events.loadingData
-import com.example.filmlist.presentation.ui_kit.events.loadingNextPage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -39,8 +37,8 @@ class MovieViewModel @Inject constructor(
 
     override fun send(event: PagingEvents) {
         when (event) {
-            is loadingData -> loadData(page)
-            is loadingNextPage -> loadNextPage()
+            is PagingEvents.loadingData -> loadData(page)
+            is PagingEvents.loadingNextPage -> loadNextPage()
         }
     }
 
@@ -57,7 +55,7 @@ class MovieViewModel @Inject constructor(
                 savedStateHandle["movieList"] = _moviesState.value.movieList
                 savedStateHandle["currentPage"] = page
                 savedStateHandle["totalPages"] = totalPages
-                Log.d("Movie", "loadData -> ${_moviesState.value.movieList} ")
+                Log.d("Movie", "loadData -> ${_moviesState.value.movieList.map { it.title }} ")
             } catch (e: Exception) {
                 Log.d("Movie", "loadData: FAILED $e")
             }

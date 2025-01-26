@@ -12,22 +12,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,16 +36,16 @@ import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieView
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
-fun movieDetailScreen(
+fun MovieDetailScreen(
     movieId: String,
     vm: DetailMovieViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(movieId) {
+    LaunchedEffect(Unit) {
         vm.send(MovieInfoEvent.getMovieInfo(movieId))
         vm.send(MovieInfoEvent.isMovieInBdCheck(movieId.toInt()))
     }
 
-    val movieInfoState by vm.movieInfoState
+    val movieInfoState by vm.movieInfoState.collectAsState()
 
 
     val movie = movieInfoState.movieEntity
@@ -72,22 +70,26 @@ fun movieDetailScreen(
                         shape = RoundedCornerShape(5.dp)
                     )
             )
-            if (movieInfoState.statusMovie != StatusMovie.BOUGHT){
+            if (movieInfoState.statusMovie != StatusMovie.BOUGHT) {
                 IconButton(
                     modifier = Modifier.align(Alignment.BottomEnd),
-                    onClick = { vm.send(MovieInfoEvent.addMovieToStore()) },
+                    onClick = {
+                        vm.send(MovieInfoEvent.addMovieToStore())
+                    },
                     colors = IconButtonColors(
-                        containerColor = Color.White, contentColor = Color.Black,
-                        disabledContentColor = Color.Transparent, disabledContainerColor = Color.Transparent
+                        containerColor = Color.White,
+                        contentColor = Color.Black,
+                        disabledContentColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent
                     )
-                ){
-                    if (movieInfoState.statusMovie == StatusMovie.INSTORE){
+                ) {
+                    if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = "BOUGHT",
                             tint = Color.Green
                         )
-                    }else{
+                    } else {
                         Icon(
                             imageVector = Icons.Default.ShoppingCart,
                             contentDescription = "BUY",
@@ -97,19 +99,23 @@ fun movieDetailScreen(
                 }
                 IconButton(
                     modifier = Modifier.align(Alignment.TopEnd),
-                    onClick = { vm.send(MovieInfoEvent.addMovieToFavorite()) },
+                    onClick = {
+                        vm.send(MovieInfoEvent.addMovieToFavorite())
+                    },
                     colors = IconButtonColors(
-                        containerColor = Color.White, contentColor = Color.Black,
-                        disabledContentColor = Color.White, disabledContainerColor = Color.Transparent
+                        containerColor = Color.White,
+                        contentColor = Color.Black,
+                        disabledContentColor = Color.White,
+                        disabledContainerColor = Color.Transparent
                     )
-                ){
-                    if (movieInfoState.statusMovie == StatusMovie.FAVORITE){
+                ) {
+                    if (movieInfoState.statusMovie == StatusMovie.FAVORITE) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "BACK",
                             tint = Color.Red
                         )
-                    }else{
+                    } else {
                         Icon(
                             imageVector = Icons.Default.FavoriteBorder,
                             contentDescription = "BACK",
@@ -118,7 +124,7 @@ fun movieDetailScreen(
                     }
 
                 }
-            }else{
+            } else {
                 Row(
                     modifier = Modifier.align(Alignment.BottomEnd),
                     verticalAlignment = Alignment.CenterVertically
@@ -179,6 +185,7 @@ fun movieDetailScreen(
             fontWeight = FontWeight.Bold,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(6.dp)
+                .align(Alignment.CenterHorizontally)
         )
     }
 }

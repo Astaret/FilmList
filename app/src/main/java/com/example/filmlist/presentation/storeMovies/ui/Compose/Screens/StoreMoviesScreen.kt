@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
@@ -54,15 +55,18 @@ fun StoreScreen(
     navController: NavController,
 ) {
 
-    val storeState by viewModel.storeState.collectAsState()
+    val storeState = remember { mutableStateOf(StoreMovState()) }
     val listState = rememberLazyListState()
     var showModalSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.send(PurchaseEvent.ShowAllPurchases)
+        viewModel.storeState.collect{
+            storeState.value = it
+        }
     }
 
-    if (storeState.empty) {
+    if (storeState.value.empty) {
         EmptyStoreScreen(
             {navController.navigate(Screen.MainScreen.route)}
         )
@@ -90,7 +94,7 @@ fun StoreScreen(
                         text = "Сумма к оплате:"
                     )
                     Text(
-                        text = String.format("%.2f", storeState.totalPrice)
+                        text = String.format("%.2f", storeState.value.totalPrice)
                     )
                 }
 
@@ -110,7 +114,7 @@ fun StoreScreen(
                     .fillMaxWidth(),
                 state = listState
             ) {
-                items(storeState.movieList.chunked(2)) {
+                items(storeState.value.movieList.chunked(2)) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -145,7 +149,7 @@ fun StoreScreen(
                             )
 
                             Text(
-                                text = "${String.format("%.2f", storeState.totalPrice)}",
+                                text = "${String.format("%.2f", storeState.value.totalPrice)}",
                                 fontSize = 32.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Black,
@@ -155,6 +159,7 @@ fun StoreScreen(
                             Button(
                                 onClick = {
                                     viewModel.send(PurchaseEvent.BuyMovie)
+                                    showModalSheet = false
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()

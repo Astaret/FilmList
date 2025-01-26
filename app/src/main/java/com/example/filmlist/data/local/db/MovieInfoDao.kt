@@ -5,8 +5,9 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.example.filmlist.data.local.enteties.MovieIdEntity
+import com.example.filmlist.domain.states.ListMovieState
+import com.example.filmlist.domain.states.MovieState
 
 @Dao
 interface MovieInfoDao {
@@ -19,20 +20,39 @@ interface MovieInfoDao {
     @Query("SELECT * FROM movie_entity WHERE isBought == 1")
     suspend fun getFromBoughtMovieList(): List<MovieIdEntity>
 
+    suspend fun getMovieListFromBd(state: ListMovieState): List<MovieIdEntity>{
+        return when(state){
+            ListMovieState.ISFAVORITE -> getFavoriteMovieList()
+            ListMovieState.INSTORE -> getFromStoreMovieList()
+            ListMovieState.ISBOUGHT -> getFromBoughtMovieList()
+        }
+    }
+
     @Query("SELECT * FROM movie_entity WHERE id == :id LIMIT 1")
     suspend fun getMovieById(id: Int):MovieIdEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInMovieList(movieId: MovieIdEntity)
 
-    @Query("UPDATE movie_entity SET isFavorite = :newVal WHERE id = :id")
-    suspend fun updateFavField(id: Int, newVal: Int)
-
-    @Query("UPDATE movie_entity SET isInStore = :newVal WHERE id = :id")
-    suspend fun updateStoreField(id: Int, newVal: Int)
-
-    @Query("UPDATE movie_entity SET isBought = :newVal WHERE id = :id")
-    suspend fun updateBoughtField(id: Int, newVal: Int)
+    @Query("""
+    UPDATE movie_entity 
+    SET 
+        isFavorite = CASE 
+            WHEN :field = 'ISFAVORITE' THEN 1 
+            ELSE 0
+        END,
+        
+        isBought = CASE 
+            WHEN :field = 'ISBOUGHT' THEN 1 
+            ELSE 0 
+        END,
+        
+        isInStore = CASE 
+            WHEN :field = 'INSTORE' THEN 1 
+            ELSE 0 
+        END
+    WHERE id = :id """)
+    suspend fun updateMovieField(id: Int, field: String)
 
     @Delete
     suspend fun deleteMovie(movieId: MovieIdEntity)

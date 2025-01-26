@@ -8,14 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,10 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.presentation.core.Screen
-import com.example.filmlist.presentation.ui_kit.components.MovieList
 import com.example.filmlist.presentation.topMovies.viewModels.MovieViewModel
-import com.example.filmlist.presentation.ui_kit.events.loadingData
-import com.example.filmlist.presentation.ui_kit.events.loadingNextPage
+import com.example.filmlist.presentation.ui_kit.components.MovieList
+import com.example.filmlist.presentation.ui_kit.events.PagingEvents
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -43,14 +39,15 @@ fun MovieScreen(
     val isAtEnd = listState.layoutInfo.visibleItemsInfo
         .lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 3
 
+
     LaunchedEffect(isAtEnd) {
         if (isAtEnd) {
-            viewModel.send(loadingNextPage())
+            viewModel.send(PagingEvents.loadingNextPage())
         }
     }
 
     LaunchedEffect(Unit) {
-        viewModel.send(loadingData())
+        viewModel.send(PagingEvents.loadingData())
     }
 
     Column {

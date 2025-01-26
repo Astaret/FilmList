@@ -1,6 +1,7 @@
 package com.example.filmlist.presentation.ui_kit.events
 
-interface PagingEvents
+sealed interface PagingEvents{
+    class loadingData: PagingEvents
+    class loadingNextPage: PagingEvents
+}
 
-class loadingData: PagingEvents
-class loadingNextPage: PagingEvents

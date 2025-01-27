@@ -7,7 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,7 +38,7 @@ fun favoriteMoviesScreen(
 ) {
 
     LaunchedEffect(Unit) {
-        vm.send(FavoriteEvent.showAllFavorites)
+        vm.send(FavoriteEvent.ShowAllFavorites)
 
     }
     val favMovieState by vm.favState.collectAsState()
@@ -66,13 +71,23 @@ fun favoriteListMovie(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(
-                onClick = { onNavigateToBackMain() }) {
-                Text(text = "◀")
+            IconButton(
+                onClick = { onNavigateToBackMain() }
+            ){
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "BACK",
+                    tint = Color.Black
+                )
             }
-            Button(
-                onClick = { onNavigateToSearch() }) {
-                Text(text = "\uD83D\uDD0E")
+            IconButton(
+                onClick = { onNavigateToSearch() }
+            ){
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "BACK",
+                    tint = Color.Black
+                )
             }
         }
         MovieList(
@@ -86,9 +101,14 @@ fun favoriteListMovie(
 @Composable
 fun EmptyFavoriteScreen(onNavigateToBackMain: () -> Unit) {
     Column {
-        Button(
-            onClick = { onNavigateToBackMain() }) {
-            Text(text = "◀")
+        IconButton(
+            onClick = { onNavigateToBackMain() }
+        ){
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "BACK",
+                tint = Color.Black
+            )
         }
         Box(
             modifier = Modifier

@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.usecases.GetMovieinfoUseCase
-import com.example.filmlist.domain.usecases.LoadMovieToDbUseCase
+import com.example.filmlist.domain.usecases.LoadFavMovieToDbUseCase
+import com.example.filmlist.domain.usecases.LoadStoreMovieToDbUseCase
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailMovieViewModel @Inject constructor(
     private val getMovieinfoUseCase: GetMovieinfoUseCase,
-    private val loadMovieToDb: LoadMovieToDbUseCase
+    private val loadFavMovieToDbUseCase: LoadFavMovieToDbUseCase,
+    private val loadStoreMovieToDbUseCase: LoadStoreMovieToDbUseCase
 ) : ViewModel() {
 
 
@@ -24,7 +27,8 @@ class DetailMovieViewModel @Inject constructor(
         InfoMovieState(
             id = "",
             movieEntity = Movie(0, "", "", "", "", 0.0.toString()),
-            isFavorite = false
+            isFavorite = false,
+            isBought = false
         )
     )
     val movieInfoState = _movieInfoState
@@ -33,15 +37,26 @@ class DetailMovieViewModel @Inject constructor(
         when (event) {
             is MovieInfoEvent.getMovieInfo -> getMovieInfoById(event.newId)
             is MovieInfoEvent.addMovieToFavorite -> addMovieToFav()
+            is MovieInfoEvent.addMovieToStore -> addMovieToStore()
         }
     }
 
     private fun addMovieToFav() {
-        Log.d("Movie", "addMovieToFav: ${_movieInfoState.value.movieEntity}")
+        Log.d("Movie", "addMovieToFav: ${_movieInfoState.value.movieEntity.movieToMovieEntity()}")
         viewModelScope.launch {
-            loadMovieToDb.loadMovieToDb(_movieInfoState.value.movieEntity)
+            loadFavMovieToDbUseCase.loadFavMovieToDb(_movieInfoState.value.movieEntity)
             _movieInfoState.value = _movieInfoState.value.copy(
                 isFavorite = true
+            )
+        }
+    }
+
+    private fun addMovieToStore() {
+        Log.d("Movie", "addMovieToFav: ${_movieInfoState.value.movieEntity}")
+        viewModelScope.launch {
+            loadStoreMovieToDbUseCase.putStoreMovieToDb(_movieInfoState.value.movieEntity)
+            _movieInfoState.value = _movieInfoState.value.copy(
+                isBought = true
             )
         }
     }

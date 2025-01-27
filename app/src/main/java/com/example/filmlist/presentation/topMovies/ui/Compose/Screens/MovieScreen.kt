@@ -6,13 +6,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.presentation.ui_kit.components.MovieList
@@ -52,24 +61,44 @@ fun MovieScreen(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(
-                onClick = { onNavigateToFavorite() }) {
-                Text(text = "⭐")
+            IconButton(
+                onClick = { onNavigateToFavorite() }
+            ){
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Favorite_screen",
+                    tint = Color.Black
+                )
             }
 
-            Button(
-                onClick = { onNavigateToFavorite() }) {
-                Text(text = "\uFE0F\uD83C\uDF9E\uFE0F ")
+            IconButton(
+                onClick = { onNavigateToFavorite() }
+            ){
+                Icon(
+                    imageVector = Icons.Default.List,
+                    contentDescription = "Library_screen",
+                    tint = Color.Black
+                )
             }
 
-            Button(
-                onClick = { onNavigateToStore() }) {
-                Text(text = "\uD83D\uDED2 ")
+            IconButton(
+                onClick = { onNavigateToStore() }
+            ){
+                Icon(
+                    imageVector = Icons.Default.ShoppingCart,
+                    contentDescription = "Store_screen",
+                    tint = Color.Black
+                )
             }
 
-            Button(
-                onClick = { onNavigateToSearch() }) {
-                Text(text = "\uD83D\uDD0E")
+            IconButton(
+                onClick = { onNavigateToSearch() }
+            ){
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search_screen",
+                    tint = Color.Black
+                )
             }
         }
         MovieList(movieList = movieList, listState = listState, navController = navController)

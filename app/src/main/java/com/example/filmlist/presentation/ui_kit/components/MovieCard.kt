@@ -26,11 +26,12 @@ fun MovieCard(
     movie: Movie,
     modifier: Modifier = Modifier,
     navController: NavController,
+    moviePrice: Float = 0.0f
 ) {
     Card(
         modifier = modifier
             .width(160.dp)
-            .height(260.dp)
+            .height(if (moviePrice > 0) 280.dp else 260.dp)
             .padding(5.dp)
             .clickable {
                 navController.navigate("movieDetail_screen/${movie.id}")
@@ -66,5 +67,15 @@ fun MovieCard(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(bottom = 4.dp)
         )
+        if (moviePrice > 0){
+            Text(
+                text = String.format("%.2f", moviePrice),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
     }
 }

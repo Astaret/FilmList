@@ -7,6 +7,9 @@ import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.data.web.api.ApiService
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.repositories.MovieRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -43,16 +46,41 @@ class MovieRepositoryImpl @Inject constructor(
         return apiService.getMovieInfo(movieId = id).dtoToMovie()
     }
 
-    override suspend fun loadMovieToDb(mov: Movie) {
-        movieDao.insertInMovieList(mov.movieToMovieEntity())
+    override suspend fun saveFavMovieToDb(mov: Movie) {
+        Log.d("Movie", "loadFavMovieToDb: insert")
+        movieDao.insertInMovieList(mov.movieToMovieEntity().apply { isFavorite = 1 })
+
     }
 
-    override suspend fun getFavoriteMovie(): List<Movie>{
-        return with(movieDao.getMovieList()){
-            val movieList = this.map {
-                apiService.getMovieInfo(it.id).dtoToMovie()
-            }
+    override suspend fun putStoreMovieToDb(movie: Movie) {
+        Log.d("Movie", "loadFavMovieToDb: insert")
+        movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
+        Log.d("Movie", "loadStoreMovieToDb: SUCCES!! INSERT ")
+    }
+
+    override suspend fun getFavoriteMovies(): List<Movie> {
+        Log.d("Movie", "getFavoriteMovie: ${movieDao.getFavoriteMovieList()}")
+        return coroutineScope {
+            val movieList = movieDao.getFavoriteMovieList().map { favoriteMovie ->
+                async {
+                    apiService.getMovieInfo(favoriteMovie.id).dtoToMovie()
+                }
+            }.awaitAll()
             movieList
         }
     }
+
+    override suspend fun getStoreMovie(): List<Movie> {
+        Log.d("Movie", "getStoreMovie: ${movieDao.getFromStoreMovieList()}")
+
+        return coroutineScope {
+            val movieList = movieDao.getFromStoreMovieList().map { storeMovie ->
+                async {
+                    apiService.getMovieInfo(storeMovie.id).dtoToMovie()
+                }
+            }.awaitAll()
+            movieList
+        }
+    }
+
 }

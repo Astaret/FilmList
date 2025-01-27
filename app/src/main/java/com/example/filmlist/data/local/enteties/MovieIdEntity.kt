@@ -9,5 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MovieIdEntity(
     @PrimaryKey
-    val id: Int
+    val id: Int,
+    var isFavorite: Int,
+    var isInStore: Int
 ): Parcelable

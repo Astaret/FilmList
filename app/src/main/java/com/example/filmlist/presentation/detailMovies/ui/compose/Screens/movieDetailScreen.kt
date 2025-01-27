@@ -7,7 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,12 +67,52 @@ fun movieDetailScreen(
                         shape = RoundedCornerShape(5.dp)
                     )
             )
-            Button (
-                onClick = { vm.send(MovieInfoEvent.addMovieToFavorite()) },
-                modifier = Modifier.align(Alignment.TopEnd),
-                enabled = !movieInfoState.isFavorite
+            IconButton(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                enabled = !movieInfoState.isBought,
+                onClick = { vm.send(MovieInfoEvent.addMovieToStore()) },
+                colors = IconButtonColors(
+                    containerColor = Color.White, contentColor = Color.Black,
+                    disabledContentColor = Color.Transparent, disabledContainerColor = Color.Transparent
+                )
             ){
-                Text(text = "⭐")
+                if (movieInfoState.isBought){
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = "BOUGHT",
+                        tint = Color.Green
+                    )
+                }else{
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = "BUY",
+                        tint = Color.Black
+                    )
+                }
+            }
+            IconButton(
+                modifier = Modifier.align(Alignment.TopEnd),
+                enabled = !movieInfoState.isFavorite,
+                onClick = { vm.send(MovieInfoEvent.addMovieToFavorite()) },
+                colors = IconButtonColors(
+                    containerColor = Color.White, contentColor = Color.Black,
+                    disabledContentColor = Color.White, disabledContainerColor = Color.Transparent
+                )
+            ){
+                if (movieInfoState.isFavorite){
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "BACK",
+                        tint = Color.Red
+                    )
+                }else{
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "BACK",
+                        tint = Color.Black
+                    )
+                }
+
             }
         }
         Column(

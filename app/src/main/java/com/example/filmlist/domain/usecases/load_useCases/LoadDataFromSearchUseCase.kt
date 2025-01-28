@@ -15,7 +15,7 @@ class LoadDataFromSearchUseCase @Inject constructor(
     override suspend fun invoke(params: GetName): Flow<OutListMovie> {
         return launchFlow(
             process = { repository.loadDataFromSearch(params.name) },
-            onCuccess = { OutListMovie(it) }
+            onSuccess = { OutListMovie(it) }
         )
     }
 }

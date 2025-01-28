@@ -15,7 +15,7 @@ class GetMovieInfoUseCase @Inject constructor(
     override suspend fun invoke(params: GetIdForInfo): Flow<PutMovie> {
         return launchFlow(
             process = {repository.getMovieInfo(params.id)},
-            onCuccess = {PutMovie(it)}
+            onSuccess = {PutMovie(it)}
         )
     }
 }

@@ -10,9 +10,9 @@ abstract class BaseUseCase<In: BaseUseCase.In,Out: BaseUseCase.Out> {
 
     protected suspend fun <T>launchFlow(
         process: suspend () -> T,
-        onCuccess: (T) -> Out
+        onSuccess: (T) -> Out
     ) = flow {
-        emit(onCuccess(process()))
+        emit(onSuccess(process()))
     }
 
     interface In

@@ -11,14 +11,21 @@ import com.example.filmlist.domain.states.MovieState
 
 @Dao
 interface MovieInfoDao {
-    @Query("SELECT * FROM movie_entity WHERE isFavorite == 1")
-    suspend fun getFavoriteMovieList(): List<MovieIdEntity>
 
-    @Query("SELECT * FROM movie_entity WHERE isInStore == 1")
-    suspend fun getFromStoreMovieList(): List<MovieIdEntity>
+    @Query("SELECT * FROM movie_entity WHERE entityState = :state")
+    suspend fun getMoviesByState(state: EntityState): List<MovieIdEntity>
 
-    @Query("SELECT * FROM movie_entity WHERE isBought == 1")
-    suspend fun getFromBoughtMovieList(): List<MovieIdEntity>
+    suspend fun getFavoriteMovieList(): List<MovieIdEntity> {
+        return getMoviesByState(EntityState.ISFAVORITE)
+    }
+
+    suspend fun getFromStoreMovieList(): List<MovieIdEntity> {
+        return getMoviesByState(EntityState.INSTORE)
+    }
+
+    suspend fun getFromBoughtMovieList(): List<MovieIdEntity> {
+        return getMoviesByState(EntityState.ISBOUGHT)
+    }
 
     suspend fun getMovieListFromBd(state: ListMovieState): List<MovieIdEntity>{
         return when(state){
@@ -36,23 +43,9 @@ interface MovieInfoDao {
 
     @Query("""
     UPDATE movie_entity 
-    SET 
-        isFavorite = CASE 
-            WHEN :field = 'ISFAVORITE' THEN 1 
-            ELSE 0
-        END,
-        
-        isBought = CASE 
-            WHEN :field = 'ISBOUGHT' THEN 1 
-            ELSE 0 
-        END,
-        
-        isInStore = CASE 
-            WHEN :field = 'INSTORE' THEN 1 
-            ELSE 0 
-        END
+    SET entityState = :field
     WHERE id = :id """)
-    suspend fun updateMovieField(id: Int, field: String)
+    suspend fun updateMovieField(id: Int, field: EntityState)
 
     @Delete
     suspend fun deleteMovie(movieId: MovieIdEntity)

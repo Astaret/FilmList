@@ -20,6 +20,6 @@ interface MovieRepository {
 
     suspend fun getMovieListFromBd(state: ListMovieState): List<Movie>
 
-    suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState):String
+    suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState)
 
 }

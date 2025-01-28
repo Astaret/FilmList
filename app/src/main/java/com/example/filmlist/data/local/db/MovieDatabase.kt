@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.filmlist.data.local.enteties.MovieIdEntity
 
-@Database(entities = [MovieIdEntity::class], version = 3, exportSchema = false)
+@Database(entities = [MovieIdEntity::class], version = 4, exportSchema = false)
+@TypeConverters(Converters::class)
 abstract class MovieDatabase : RoomDatabase() {
     abstract fun movieInfoDao(): MovieInfoDao
 

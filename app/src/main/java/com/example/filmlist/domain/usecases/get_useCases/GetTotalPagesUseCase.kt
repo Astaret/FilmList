@@ -15,7 +15,7 @@ class GetTotalPagesUseCase @Inject constructor(
     override suspend operator fun invoke(params: Params): Flow<putPages> {
         return launchFlow(
             process = {repository.getTotalPages()},
-            onCuccess = {putPages(it)}
+            onSuccess = {putPages(it)}
         )
     }
 

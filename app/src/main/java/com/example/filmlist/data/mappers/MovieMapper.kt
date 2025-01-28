@@ -1,5 +1,6 @@
 package com.example.filmlist.data.mappers
 
+import com.example.filmlist.data.local.db.EntityState
 import com.example.filmlist.data.local.enteties.MovieIdEntity
 import com.example.filmlist.data.web.api.ApiFactory.IMG_URL
 import com.example.filmlist.data.web.dtos.MovieDto
@@ -16,13 +17,18 @@ fun MovieDto.dtoToMovie() = Movie(
 )
 
 fun Movie.movieToMovieEntity(
-    isFavorite: Int = 0,
-    isInStore: Int = 0,
-    isBought: Int = 0
+    entityState: EntityState = EntityState.EMPTY
 ) = MovieIdEntity(
     id = id,
-    isFavorite = isFavorite,
-    isInStore = isInStore,
-    isBought = isBought)
+    entityState = entityState)
 
+fun List<MovieDto>.listMovieDtoToListMovie() = map { it.dtoToMovie() }
 
+fun MovieState.toEntityState(): EntityState {
+    return when (this) {
+        MovieState.ISFAVORITE -> EntityState.ISFAVORITE
+        MovieState.ISBOUGHT -> EntityState.ISBOUGHT
+        MovieState.INSTORE -> EntityState.INSTORE
+        MovieState.EMPTY -> EntityState.EMPTY
+    }
+}

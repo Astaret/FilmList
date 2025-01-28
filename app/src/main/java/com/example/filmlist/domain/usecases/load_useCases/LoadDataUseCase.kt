@@ -15,7 +15,7 @@ class LoadDataUseCase @Inject constructor(
     override suspend fun invoke(params: getPage): Flow<putListMovies> {
         return launchFlow(
             process = {repository.loadData(params.page)},
-            onCuccess = {putListMovies(it)}
+            onSuccess = {putListMovies(it)}
         )
     }
 }

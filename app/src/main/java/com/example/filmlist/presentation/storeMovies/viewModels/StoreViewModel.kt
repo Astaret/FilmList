@@ -36,15 +36,13 @@ class StoreViewModel @Inject constructor(
     }
 
     private fun buyMovieFun() {
-        viewModelScope.launch {
+        launchInScope {
             getMovieListFromBdUseCase(getListMovieState(ListMovieState.INSTORE))
                 .collect { result ->
                     val remainingMovies = result.listMovies
 
                     remainingMovies.forEach {
-                        putMovieToDbUseCase(getMovieInfo(it, MovieState.ISBOUGHT)).collect{
-                            Log.d("Movie", "buyMovieFun: ${it.status.first()}")
-                        }
+                        putMovieToDbUseCase(getMovieInfo(it, MovieState.ISBOUGHT)).collect{}
                         Log.d("Movie", "buyMovieFun: BOUGHT ${it.title}")
                     }
 
@@ -60,7 +58,7 @@ class StoreViewModel @Inject constructor(
     }
 
     private fun showAllMoviesInStore() {
-        viewModelScope.launch {
+        launchInScope {
             val updatedMovieList = getMovieListFromBdUseCase(
                 getListMovieState(
                     ListMovieState.INSTORE

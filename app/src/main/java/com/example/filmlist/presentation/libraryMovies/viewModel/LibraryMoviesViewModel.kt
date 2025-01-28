@@ -26,7 +26,7 @@ class LibraryMoviesViewModel @Inject constructor(
     }
 
     private fun showAllBought(){
-        viewModelScope.launch {
+        launchInScope {
             val updatedMovieList = getMovieListFromBdUseCase(
                 getListMovieState(ListMovieState.ISBOUGHT)
             ).first().listMovies

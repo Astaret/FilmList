@@ -16,7 +16,7 @@ class GetMovieListFromBdUseCase @Inject constructor(
     override suspend fun invoke(params: getListMovieState): Flow<outListOfMovies> {
         return launchFlow(
             process = {repository.getMovieListFromBd(params.state)},
-            onCuccess = { outListOfMovies(it) }
+            onSuccess = { outListOfMovies(it) }
         )
     }
 }

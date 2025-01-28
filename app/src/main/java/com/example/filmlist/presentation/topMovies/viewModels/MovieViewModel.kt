@@ -37,7 +37,7 @@ class MovieViewModel @Inject constructor(
     }
 
     private fun loadData(page: Int) {
-        viewModelScope.launch {
+        launchInScope {
             try {
                 loadDataUseCase(getPage(page)).collect { newMovies ->
                     val totalPages = getTotalPagesUseCase(Params(Unit)).first().pages

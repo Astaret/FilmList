@@ -26,7 +26,7 @@ class FavoriteMoviesViewModel @Inject constructor(
 
     private fun showAllFavorites() {
         Log.d("Movie", "showAllFavorites: start")
-        viewModelScope.launch {
+        launchInScope {
             Log.d("Movie", "showAllFavorites: continue")
             getMovieListFromBdUseCase(
                 getListMovieState(ListMovieState.ISFAVORITE)

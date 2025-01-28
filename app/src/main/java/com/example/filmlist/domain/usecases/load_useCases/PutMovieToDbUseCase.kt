@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 data class getMovieInfo(val movie: Movie, val movieState: MovieState) : BaseUseCase.In
-data class putMovieStatus(val status:String) : BaseUseCase.Out
+data class putMovieStatus(val unit:Unit) : BaseUseCase.Out
 
 
 class PutMovieToDbUseCase @Inject constructor(
@@ -17,7 +17,7 @@ class PutMovieToDbUseCase @Inject constructor(
     override suspend fun invoke(params: getMovieInfo): Flow<putMovieStatus> {
         return launchFlow(
             process = {movieRepository.putMovieToDb(params.movie, params.movieState)},
-            onCuccess = {putMovieStatus(it)}
+            onSuccess = {putMovieStatus(Unit)}
         )
     }
 }

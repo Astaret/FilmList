@@ -31,7 +31,7 @@ class SearchMovieViewModel @Inject constructor(
     }
 
     private fun loadDataFromSearch(query: String) {
-        viewModelScope.launch {
+        launchInScope {
             loadDataFromSearchUseCase(GetName(query))
                 .collect { outListMovie ->
                     val movies = outListMovie.movieList
@@ -54,7 +54,7 @@ class SearchMovieViewModel @Inject constructor(
     }
 
     private fun observeSearchQuery() {
-        viewModelScope.launch {
+        launchInScope {
             state
                 .debounce(300)
                 .distinctUntilChanged()

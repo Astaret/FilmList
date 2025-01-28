@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -25,7 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
-import com.example.filmlist.presentation.core.Screen
+import com.example.filmlist.presentation.core.MainScreen
+import com.example.filmlist.presentation.core.SearchScreen
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.viewModels.FavoriteMoviesViewModel
 import com.example.filmlist.presentation.ui_kit.components.MovieList
@@ -40,11 +40,11 @@ fun favoriteMoviesScreen(
         vm.send(FavoriteEvent.ShowAllFavorites)
 
     }
-    val favMovieState by vm.favState.collectAsState()
+    val favMovieState by vm.state.collectAsState()
     val movieList = favMovieState.movieList
 
     if (favMovieState.empty){
-        EmptyFavoriteScreen({navController.navigate(Screen.MainScreen.route)})
+        EmptyFavoriteScreen({navController.navigate(MainScreen)})
     }else{
         favoriteListMovie(
             movieList = movieList,
@@ -67,7 +67,7 @@ private fun favoriteListMovie(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick =  {navController.navigate(Screen.MainScreen.route)}
+                onClick =  {navController.navigate(MainScreen)}
             ){
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -76,7 +76,7 @@ private fun favoriteListMovie(
                 )
             }
             IconButton(
-                onClick = { navController.navigate(Screen.SearchScreen.route)}
+                onClick = { navController.navigate(SearchScreen)}
             ){
                 Icon(
                     imageVector = Icons.Default.Search,

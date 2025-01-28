@@ -21,7 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.filmlist.presentation.core.Screen
+import com.example.filmlist.presentation.core.FavoriteScreen
+import com.example.filmlist.presentation.core.LibraryScreen
+import com.example.filmlist.presentation.core.SearchScreen
+import com.example.filmlist.presentation.core.StoreScreen
 import com.example.filmlist.presentation.topMovies.viewModels.MovieViewModel
 import com.example.filmlist.presentation.ui_kit.components.MovieList
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
@@ -32,7 +35,7 @@ fun MovieScreen(
     viewModel: MovieViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val topMovieState by viewModel.movieState.collectAsState()
+    val topMovieState by viewModel.state.collectAsState()
 
     val movieList = topMovieState.movieList
     val listState = rememberLazyListState()
@@ -57,7 +60,7 @@ fun MovieScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = {navController.navigate(Screen.FavoriteScreen.route) }
+                onClick = {navController.navigate(FavoriteScreen) }
             ){
                 Icon(
                     imageVector = Icons.Default.Favorite,
@@ -67,7 +70,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = { navController.navigate(Screen.LibraryScreen.route)}
+                onClick = { navController.navigate(LibraryScreen)}
             ){
                 Icon(
                     imageVector = Icons.Default.List,
@@ -77,7 +80,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = {navController.navigate(Screen.StoreScreen.route) }
+                onClick = {navController.navigate(StoreScreen) }
             ){
                 Icon(
                     imageVector = Icons.Default.ShoppingCart,
@@ -87,7 +90,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = { navController.navigate(Screen.SearchScreen.route)}
+                onClick = { navController.navigate(SearchScreen)}
             ){
                 Icon(
                     imageVector = Icons.Default.Search,

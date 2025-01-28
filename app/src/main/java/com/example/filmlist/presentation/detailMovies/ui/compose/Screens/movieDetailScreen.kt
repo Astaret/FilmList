@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.filmlist.domain.states.MovieState
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
@@ -45,7 +46,7 @@ fun MovieDetailScreen(
         vm.send(MovieInfoEvent.isMovieInBdCheck(movieId.toInt()))
     }
 
-    val movieInfoState by vm.movieInfoState.collectAsState()
+    val movieInfoState by vm.state.collectAsState()
 
 
     val movie = movieInfoState.movieEntity
@@ -74,7 +75,7 @@ fun MovieDetailScreen(
                 IconButton(
                     modifier = Modifier.align(Alignment.BottomEnd),
                     onClick = {
-                        vm.send(MovieInfoEvent.addMovieToStore())
+                        vm.send(MovieInfoEvent.addMovieToDataBase(MovieState.INSTORE))
                     },
                     colors = IconButtonColors(
                         containerColor = Color.White,
@@ -100,7 +101,7 @@ fun MovieDetailScreen(
                 IconButton(
                     modifier = Modifier.align(Alignment.TopEnd),
                     onClick = {
-                        vm.send(MovieInfoEvent.addMovieToFavorite())
+                        vm.send(MovieInfoEvent.addMovieToDataBase(MovieState.ISFAVORITE))
                     },
                     colors = IconButtonColors(
                         containerColor = Color.White,

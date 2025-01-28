@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.filmlist.presentation.detailMovies.ui.compose.Screens.MovieDetailScreen
 import com.example.filmlist.presentation.favoritesMovies.ui.compose.Screens.favoriteMoviesScreen
 import com.example.filmlist.presentation.libraryMovies.ui.compose.screens.LibraryScreen
@@ -16,36 +17,34 @@ import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScree
 fun AppNavHost() {
     val navController = rememberNavController()
     NavHost(navController = navController,
-        startDestination = Screen.MainScreen.route) {
+        startDestination = MainScreen) {
 
-        composable(route = Screen.MainScreen.route) {
+        composable<MainScreen> {
             MovieScreen(
                 navController = navController
             )
         }
 
-        composable(route = Screen.SearchScreen.route) {
+        composable<SearchScreen> {
             SearchScreen(navController = navController)
             BackHandler {
                 navController.navigateUp()
             }
         }
 
-        composable(route = Screen.DetailScreen.route) {
-            val movieId = it.arguments?.getString("id")
-            movieId?.let {
-                MovieDetailScreen(movieId = it)
-            }
+        composable<DetailScreen> {
+            val movieId: DetailScreen = it.toRoute()
+            MovieDetailScreen(movieId = movieId.id.toString())
         }
 
-        composable(route = Screen.FavoriteScreen.route) {
+        composable<FavoriteScreen> {
             favoriteMoviesScreen(navController = navController)
             BackHandler {
                 navController.navigateUp()
             }
         }
 
-        composable(route = Screen.StoreScreen.route) {
+        composable<StoreScreen> {
             StoreScreen(
                 navController = navController
             )
@@ -54,7 +53,7 @@ fun AppNavHost() {
             }
         }
 
-        composable(route = Screen.LibraryScreen.route) {
+        composable<LibraryScreen> {
             LibraryScreen(
                 navController = navController
             )

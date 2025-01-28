@@ -4,6 +4,7 @@ import com.example.filmlist.data.local.enteties.MovieIdEntity
 import com.example.filmlist.data.web.api.ApiFactory.IMG_URL
 import com.example.filmlist.data.web.dtos.MovieDto
 import com.example.filmlist.domain.models.Movie
+import com.example.filmlist.domain.states.MovieState
 
 fun MovieDto.dtoToMovie() = Movie(
     id = id,
@@ -14,11 +15,14 @@ fun MovieDto.dtoToMovie() = Movie(
     rating = rating
 )
 
-fun Movie.movieToMovieEntity(isFavorite: Int? = null, isInStore: Int? = null, isBought: Int? = null) =
-    MovieIdEntity(
-        id = id,
-        isFavorite = isFavorite ?: 0,
-        isInStore = isInStore ?: 0,
-        isBought = isBought ?: 0
-    )
+fun Movie.movieToMovieEntity(
+    isFavorite: Int = 0,
+    isInStore: Int = 0,
+    isBought: Int = 0
+) = MovieIdEntity(
+    id = id,
+    isFavorite = isFavorite,
+    isInStore = isInStore,
+    isBought = isBought)
+
 

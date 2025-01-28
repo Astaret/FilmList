@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
-import com.example.filmlist.presentation.core.Screen
+import com.example.filmlist.presentation.core.MainScreen
 import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
 import com.example.filmlist.presentation.libraryMovies.viewModel.LibraryMoviesViewModel
 import com.example.filmlist.presentation.ui_kit.components.MovieList
@@ -38,7 +38,7 @@ fun LibraryScreen(
         vm.send(LibraryEvent.ShowAllBoughtMovies)
 
     }
-    val librMovieState by vm.librState.collectAsState()
+    val librMovieState by vm.state.collectAsState()
     val movieList = librMovieState.movieList
 
     if (!librMovieState.empty){
@@ -46,7 +46,7 @@ fun LibraryScreen(
             movieList = movieList,
             navController = navController)
     }else{
-        EmptyLibraryScreen({navController.navigate(Screen.MainScreen.route)})
+        EmptyLibraryScreen({navController.navigate(MainScreen)})
     }
 
 }
@@ -66,7 +66,7 @@ private fun libraryListMovie(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = {navController.navigate(Screen.MainScreen.route)}
+                onClick = {navController.navigate(MainScreen)}
             ){
                 Icon(
                     imageVector = Icons.Default.ArrowBack,

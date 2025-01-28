@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
+import com.example.filmlist.presentation.core.DetailScreen
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
@@ -34,7 +35,7 @@ fun MovieCard(
             .height(if (moviePrice > 0) 280.dp else 260.dp)
             .padding(5.dp)
             .clickable {
-                navController.navigate("movieDetail_screen/${movie.id}")
+                navController.navigate(route = DetailScreen(id = movie.id))
             },
         shape = RoundedCornerShape(8.dp),
     ) {

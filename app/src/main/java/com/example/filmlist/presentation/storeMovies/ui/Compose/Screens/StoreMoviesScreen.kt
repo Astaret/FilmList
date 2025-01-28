@@ -13,20 +13,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,12 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.filmlist.domain.models.Movie
-import com.example.filmlist.presentation.core.Screen
+import com.example.filmlist.presentation.core.MainScreen
 import com.example.filmlist.presentation.storeMovies.events.PurchaseEvent
-import com.example.filmlist.presentation.storeMovies.states.StoreMovState
 import com.example.filmlist.presentation.storeMovies.viewModels.StoreViewModel
 import com.example.filmlist.presentation.ui_kit.components.MovieCard
 
@@ -55,20 +48,17 @@ fun StoreScreen(
     navController: NavController,
 ) {
 
-    val storeState = remember { mutableStateOf(StoreMovState()) }
+    val storeState by viewModel.state.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     var showModalSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.send(PurchaseEvent.ShowAllPurchases)
-        viewModel.storeState.collect{
-            storeState.value = it
-        }
     }
 
-    if (storeState.value.empty) {
+    if (storeState.empty) {
         EmptyStoreScreen(
-            {navController.navigate(Screen.MainScreen.route)}
+            {navController.navigate(MainScreen)}
         )
     } else {
         Column {
@@ -80,7 +70,7 @@ fun StoreScreen(
             ) {
 
                 IconButton(
-                    onClick = {navController.navigate(Screen.MainScreen.route)}
+                    onClick = {navController.navigate(MainScreen)}
                 ) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
@@ -94,7 +84,7 @@ fun StoreScreen(
                         text = "Сумма к оплате:"
                     )
                     Text(
-                        text = String.format("%.2f", storeState.value.totalPrice)
+                        text = String.format("%.2f", storeState.totalPrice)
                     )
                 }
 
@@ -114,7 +104,7 @@ fun StoreScreen(
                     .fillMaxWidth(),
                 state = listState
             ) {
-                items(storeState.value.movieList.chunked(2)) {
+                items(storeState.movieList.chunked(2)) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -149,7 +139,7 @@ fun StoreScreen(
                             )
 
                             Text(
-                                text = "${String.format("%.2f", storeState.value.totalPrice)}",
+                                text = "${String.format("%.2f", storeState.totalPrice)}",
                                 fontSize = 32.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Black,

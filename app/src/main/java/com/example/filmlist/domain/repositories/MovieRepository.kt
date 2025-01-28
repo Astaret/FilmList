@@ -10,16 +10,16 @@ interface MovieRepository {
 
     suspend fun loadData(page: Int): List<Movie>
 
-    suspend fun loadDataFromSearch(query: String): Flow<List<Movie>> //flow
+    suspend fun loadDataFromSearch(query: String): List<Movie>
 
     suspend fun getTotalPages(): Int
 
     suspend fun getMovieInfo(id: Int): Movie
 
-    suspend fun getMovieByIdFromBd(id:Int): MovieIdEntity
+    suspend fun getMovieByIdFromBd(id:Int): MovieIdEntity?
 
     suspend fun getMovieListFromBd(state: ListMovieState): List<Movie>
 
-    suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState)
+    suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState):String
 
 }

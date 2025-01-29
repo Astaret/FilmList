@@ -36,7 +36,7 @@ fun SearchScreen(
         searchQuery = searchState.searchQuery,
         searchResults = searchState.searchResult,
         navController = navController,
-        onSearchQueryChange = { vm.send(SearchEvents.SearchChange(it)) }
+        onSearchQueryChange = { vm.receiveEvent(SearchEvents.SearchChange(it)) }
     )
 }
 

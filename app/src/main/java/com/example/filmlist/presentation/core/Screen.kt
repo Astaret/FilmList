@@ -5,14 +5,14 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-object MainScreen
+object MainScreenRoute
 @Serializable
-object SearchScreen
+object SearchScreenRoute
 @Serializable
-data class DetailScreen(val id: Int)
+data class DetailScreenRoute(val id: Int)
 @Serializable
-object FavoriteScreen
+object FavoriteScreenRoute
 @Serializable
-object StoreScreen
+object StoreScreenRoute
 @Serializable
-object LibraryScreen
+object LibraryScreenRoute

@@ -16,29 +16,34 @@ import javax.inject.Inject
 @HiltViewModel
 class LibraryMoviesViewModel @Inject constructor(
     private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
-):BasedViewModel<LibraryState, LibraryEvent>(LibraryState()) {
+) : BasedViewModel<LibraryState, LibraryEvent>(LibraryState()) {
 
 
-    override fun send(event: LibraryEvent){
-        when (event){
+
+    override fun handleEvent(event: LibraryEvent): LibraryState {
+        return when (event) {
             is LibraryEvent.ShowAllBoughtMovies -> showAllBought()
         }
     }
 
-    private fun showAllBought(){
-        launchInScope {
-            val updatedMovieList = getMovieListFromBdUseCase(
-                getListMovieState(ListMovieState.ISBOUGHT)
-            ).first().listMovies
-            Log.d("Movie", "showAllBoughtMovies: $updatedMovieList")
-            setState {
-                copy(
-                    movieList = updatedMovieList,
-                    empty = updatedMovieList.isNullOrEmpty()
+    private fun showAllBought():LibraryState {
+        handleOperation(
+            operation = {
+                getMovieListFromBdUseCase(
+                    getListMovieState(ListMovieState.ISBOUGHT)
                 )
-            }
-            Log.d("Movie", "showAllBought: ${state.value}")
+            },
+            onSuccess = {
 
-        }
+                setState {
+                    copy(
+                        movieList = it.listMovies,
+                        empty = it.listMovies.isNullOrEmpty()
+                    )
+                }
+                Log.d("Movie", "showAllBought: ${state.value}")
+            }
+        )
+        return state.value
     }
 }

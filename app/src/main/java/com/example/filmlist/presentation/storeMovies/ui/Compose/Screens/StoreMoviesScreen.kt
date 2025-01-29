@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.filmlist.presentation.core.MainScreen
+import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.storeMovies.events.PurchaseEvent
 import com.example.filmlist.presentation.storeMovies.viewModels.StoreViewModel
 import com.example.filmlist.presentation.ui_kit.components.MovieCard
@@ -53,12 +53,12 @@ fun StoreScreen(
     var showModalSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        viewModel.send(PurchaseEvent.ShowAllPurchases)
+        viewModel.receiveEvent(PurchaseEvent.ShowAllPurchases)
     }
 
     if (storeState.empty) {
         EmptyStoreScreen(
-            {navController.navigate(MainScreen)}
+            {navController.navigate(MainScreenRoute)}
         )
     } else {
         Column {
@@ -70,7 +70,7 @@ fun StoreScreen(
             ) {
 
                 IconButton(
-                    onClick = {navController.navigate(MainScreen)}
+                    onClick = {navController.navigate(MainScreenRoute)}
                 ) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
@@ -148,7 +148,7 @@ fun StoreScreen(
 
                             Button(
                                 onClick = {
-                                    viewModel.send(PurchaseEvent.BuyMovie)
+                                    viewModel.receiveEvent(PurchaseEvent.BuyMovie)
                                     showModalSheet = false
                                 },
                                 modifier = Modifier

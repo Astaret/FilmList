@@ -58,15 +58,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState) {
         Log.d("Movie", "putMovieToDb: ${movie.title} to ${stateOfMovie.name}")
-        val existingMovie = movieDao.getMovieById(movie.id)
-        if (existingMovie != null) {
-            movieDao.updateMovieField(movie.id, stateOfMovie.toEntityState())
-        } else {
-            val movieEntity = movie.movieToMovieEntity(entityState = stateOfMovie.toEntityState())
-            movieDao.insertInMovieList(
-                movieEntity.copy(id = movie.id)
-            )
-        }
-
+        val movieEntity = movie.movieToMovieEntity(entityState = stateOfMovie.toEntityState())
+        movieDao.insertInMovieList(movieEntity.copy(id = movie.id))
     }
 }

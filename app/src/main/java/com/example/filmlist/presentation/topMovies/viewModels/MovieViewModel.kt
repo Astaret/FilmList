@@ -29,43 +29,46 @@ class MovieViewModel @Inject constructor(
         }
 
 
-    override fun send(event: PagingEvents) {
-        when (event) {
+    override fun handleEvent(event: PagingEvents): TopMovieState {
+        return when (event) {
             is PagingEvents.loadingData -> loadData(page)
             is PagingEvents.loadingNextPage -> loadNextPage()
+            is PagingEvents.loadingTotalPages -> loadPage()
         }
     }
 
-    private fun loadData(page: Int) {
-        launchInScope {
-            try {
-                loadDataUseCase(getPage(page)).collect { newMovies ->
-                    val totalPages = getTotalPagesUseCase(Params(Unit)).first().pages
-                    val newList = newMovies.movieList
-                    setState {
-                        copy(
-                            movieList = (this.movieList + newList).distinctBy { it.id },
-                            currentPage = page,
-                            totalPages = totalPages
-                        )
-                    }
+    private fun loadPage(): TopMovieState{
+        handleOperation(
+            operation = {getTotalPagesUseCase(Params)},
+            onSuccess = {setState { copy(totalPages = it.pages) }}
+        )
+        return state.value
+    }
 
-                    savedStateHandle["movieList"] = state.value.movieList
-                    savedStateHandle["currentPage"] = page
-                    savedStateHandle["totalPages"] = totalPages
-                    Log.d("Movie", "loadData -> ${state.value.movieList.map { it.title }} ")
+    private fun loadData(page: Int): TopMovieState {
+        handleOperation(
+            operation = {loadDataUseCase(getPage(page))},
+            onSuccess = {
+                val newList = it.movieList
+                setState {
+                    copy(movieList = (this.movieList + newList).distinctBy { it.id },
+                        currentPage = page,
+                        totalPages = totalPages)
                 }
-            } catch (e: Exception) {
-                Log.d("Movie", "loadData: FAILED $e")
+                savedStateHandle["movieList"] = state.value.movieList
+                savedStateHandle["currentPage"] = page
+                savedStateHandle["totalPages"] = state.value.totalPages
+                Log.d("Movie", "loadData -> ${state.value.movieList.map { it.title }} ")
             }
-            Log.d("Movie", "loadData: SUCCESS!")
-        }
+        )
+        return state.value
     }
 
-    private fun loadNextPage() {
+    private fun loadNextPage():TopMovieState {
         if (state.value.currentPage < state.value.totalPages) {
-            page += 1
+            val page = state.value.currentPage + 1
             loadData(page)
         }
+        return state.value
     }
 }

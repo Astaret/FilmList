@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
-import com.example.filmlist.presentation.core.MainScreen
-import com.example.filmlist.presentation.core.SearchScreen
+import com.example.filmlist.presentation.core.MainScreenRoute
+import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.viewModels.FavoriteMoviesViewModel
 import com.example.filmlist.presentation.ui_kit.components.MovieList
@@ -37,14 +37,14 @@ fun favoriteMoviesScreen(
 ) {
 
     LaunchedEffect(Unit) {
-        vm.send(FavoriteEvent.ShowAllFavorites)
+        vm.receiveEvent(FavoriteEvent.ShowAllFavorites)
 
     }
     val favMovieState by vm.state.collectAsState()
     val movieList = favMovieState.movieList
 
     if (favMovieState.empty){
-        EmptyFavoriteScreen({navController.navigate(MainScreen)})
+        EmptyFavoriteScreen({navController.navigate(MainScreenRoute)})
     }else{
         favoriteListMovie(
             movieList = movieList,
@@ -67,7 +67,7 @@ private fun favoriteListMovie(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick =  {navController.navigate(MainScreen)}
+                onClick =  {navController.navigate(MainScreenRoute)}
             ){
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
@@ -76,7 +76,7 @@ private fun favoriteListMovie(
                 )
             }
             IconButton(
-                onClick = { navController.navigate(SearchScreen)}
+                onClick = { navController.navigate(SearchScreenRoute)}
             ){
                 Icon(
                     imageVector = Icons.Default.Search,

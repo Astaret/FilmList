@@ -42,8 +42,8 @@ fun MovieDetailScreen(
     vm: DetailMovieViewModel = hiltViewModel()
 ) {
     LaunchedEffect(Unit) {
-        vm.send(MovieInfoEvent.getMovieInfo(movieId))
-        vm.send(MovieInfoEvent.isMovieInBdCheck(movieId.toInt()))
+        vm.receiveEvent(MovieInfoEvent.getMovieInfo(movieId))
+        vm.receiveEvent(MovieInfoEvent.isMovieInBdCheck(movieId.toInt()))
     }
 
     val movieInfoState by vm.state.collectAsState()
@@ -75,7 +75,7 @@ fun MovieDetailScreen(
                 IconButton(
                     modifier = Modifier.align(Alignment.BottomEnd),
                     onClick = {
-                        vm.send(MovieInfoEvent.addMovieToDataBase(MovieState.INSTORE))
+                        vm.receiveEvent(MovieInfoEvent.addMovieToDataBase(MovieState.INSTORE))
                     },
                     colors = IconButtonColors(
                         containerColor = Color.White,
@@ -101,7 +101,7 @@ fun MovieDetailScreen(
                 IconButton(
                     modifier = Modifier.align(Alignment.TopEnd),
                     onClick = {
-                        vm.send(MovieInfoEvent.addMovieToDataBase(MovieState.ISFAVORITE))
+                        vm.receiveEvent(MovieInfoEvent.addMovieToDataBase(MovieState.ISFAVORITE))
                     },
                     colors = IconButtonColors(
                         containerColor = Color.White,

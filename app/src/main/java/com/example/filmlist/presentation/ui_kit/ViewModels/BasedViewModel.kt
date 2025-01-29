@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.util.copy
 import com.google.android.material.color.utilities.MaterialDynamicColors.onError
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,8 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
 
     interface Event
 
+    private val dispatcher = Dispatchers.IO
+
     private val _state = MutableStateFlow<State>(initialState)
     val state: StateFlow<State> = _state
 
@@ -37,8 +40,9 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
 
     internal abstract fun handleEvent(event: Event): State
 
-    fun receiveEvent(event: Event) {
-        launchInScope {
+    fun receiveEvent(
+        event: Event) {
+        viewModelScope.launch(dispatcher) {
             _state.emit(handleEvent(event))
         }
     }
@@ -48,19 +52,9 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
         operation: suspend () -> Flow<T>,
         onSuccess: (T) -> Unit
     ) {
-        launchInScope {
+        viewModelScope.launch(dispatcher) {
             operation().collect {
                 onSuccess(it)
-            }
-        }
-    }
-
-    private fun launchInScope(block: suspend () -> Unit) {
-        viewModelScope.launch {
-            try {
-                block()
-            } catch (e: Exception) {
-                Log.d("Movie", "launchInScope: $e")
             }
         }
     }

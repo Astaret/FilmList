@@ -1,83 +1,100 @@
 package com.example.filmlist.presentation.detailMovies.viewModels
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.filmlist.data.mappers.movieToMovieEntity
-import com.example.filmlist.domain.models.Movie
-import com.example.filmlist.domain.usecases.GetMovieinfoUseCase
-import com.example.filmlist.domain.usecases.LoadFavMovieToDbUseCase
-import com.example.filmlist.domain.usecases.LoadStoreMovieToDbUseCase
+import com.example.filmlist.data.local.db.EntityState
+import com.example.filmlist.data.mappers.toMovieStatus
+import com.example.filmlist.domain.states.MovieState
+import com.example.filmlist.domain.usecases.get_useCases.GetId
+import com.example.filmlist.domain.usecases.get_useCases.GetIdForInfo
+import com.example.filmlist.domain.usecases.get_useCases.GetMovieIdFromBdUseCase
+import com.example.filmlist.domain.usecases.get_useCases.GetMovieInfoUseCase
+import com.example.filmlist.domain.usecases.load_useCases.PutMovieToDbUseCase
+import com.example.filmlist.domain.usecases.load_useCases.getMovieInfo
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
+import com.example.filmlist.presentation.detailMovies.states.StatusMovie
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DetailMovieViewModel @Inject constructor(
-    private val getMovieinfoUseCase: GetMovieinfoUseCase,
-    private val loadFavMovieToDbUseCase: LoadFavMovieToDbUseCase,
-    private val loadStoreMovieToDbUseCase: LoadStoreMovieToDbUseCase
-) : ViewModel() {
+    private val getMovieInfoUseCase: GetMovieInfoUseCase,
+    private val putMovieToDbUseCase: PutMovieToDbUseCase,
+    private val getMovieIdFromBdUseCase: GetMovieIdFromBdUseCase
+) : BasedViewModel<InfoMovieState, MovieInfoEvent>(InfoMovieState()) {
 
 
-    private val _movieInfoState = mutableStateOf(
-        InfoMovieState(
-            id = "",
-            movieEntity = Movie(0, "", "", "", "", 0.0.toString()),
-            isFavorite = false,
-            isBought = false
-        )
-    )
-    val movieInfoState = _movieInfoState
-
-    fun send(event: MovieInfoEvent) {
-        when (event) {
-            is MovieInfoEvent.getMovieInfo -> getMovieInfoById(event.newId)
-            is MovieInfoEvent.addMovieToFavorite -> addMovieToFav()
-            is MovieInfoEvent.addMovieToStore -> addMovieToStore()
+    override fun handleEvent(event: MovieInfoEvent): InfoMovieState {
+        return when (event) {
+            is MovieInfoEvent.GetMovieInfo -> getMovieInfoById(event.newId)
+            is MovieInfoEvent.AddMovieToDataBase -> addMovieToDataBaseList(event.state)
+            is MovieInfoEvent.IsMovieInBdCheck -> isMovieInBd(event.id)
+            is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList()
         }
     }
 
-    private fun addMovieToFav() {
-        Log.d("Movie", "addMovieToFav: ${_movieInfoState.value.movieEntity.movieToMovieEntity()}")
-        viewModelScope.launch {
-            loadFavMovieToDbUseCase.loadFavMovieToDb(_movieInfoState.value.movieEntity)
-            _movieInfoState.value = _movieInfoState.value.copy(
-                isFavorite = true
-            )
-        }
-    }
-
-    private fun addMovieToStore() {
-        Log.d("Movie", "addMovieToFav: ${_movieInfoState.value.movieEntity}")
-        viewModelScope.launch {
-            loadStoreMovieToDbUseCase.putStoreMovieToDb(_movieInfoState.value.movieEntity)
-            _movieInfoState.value = _movieInfoState.value.copy(
-                isBought = true
-            )
-        }
-    }
-
-    private fun getMovieInfoById(id: String) {
-        Log.d("Movie", "getMovieInfoById: $id")
-        viewModelScope.launch {
-            try {
-                val movieInfo = getMovieinfoUseCase.getMovieInfo(id.toInt())
-                Log.d("Movie", "getMovieInfoById: $movieInfo")
-                if (movieInfo != null) {
-                    _movieInfoState.value = _movieInfoState.value.copy(
-                        movieEntity = movieInfo
-                    )
+    private fun isMovieInBd(id: Int): InfoMovieState {
+        handleOperation(
+            operation = { getMovieIdFromBdUseCase(GetId(id)) },
+            onSuccess = {
+                if (it.movieIdEntity != null) {
+                    val statusMovie = if (it.movieIdEntity.entityState != EntityState.ISBOUGHT) {
+                        if (it.movieIdEntity.entityState == EntityState.ISFAVORITE)
+                            StatusMovie.FAVORITE
+                        else
+                            if (it.movieIdEntity.entityState == EntityState.INSTORE)
+                                StatusMovie.INSTORE
+                            else StatusMovie.EMPTY
+                    } else {
+                        StatusMovie.BOUGHT
+                    }
+                    setState {
+                        copy(
+                            statusMovie = statusMovie,
+                            id = it.movieIdEntity.id.toString(),
+                            movieEntity = getMovieInfoById(it.movieIdEntity.id.toString()).movieEntity
+                        )}
                 } else {
-                    Log.d("Movie", "Movie info not found")
+                    state.value.copy(statusMovie = StatusMovie.EMPTY)
                 }
-            } catch (e: Exception) {
-                Log.d("Movie", "getMovieInfoById: $e")
             }
-        }
-
+        )
+        return state.value
     }
+
+    private fun addMovieToDataBaseList(movieState: MovieState): InfoMovieState {
+        Log.d("Movie", "addMovieToFav: $movieState")
+        handleOperation(
+            operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, movieState)) },
+            onSuccess = { setState {  copy(statusMovie = movieState.toMovieStatus())} }
+        )
+        return state.value
+    }
+
+    private fun deleteMovieFromDataBaseList():InfoMovieState{
+        handleOperation(
+            operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, MovieState.EMPTY)) },
+            onSuccess = { setState {  copy(statusMovie = MovieState.EMPTY.toMovieStatus())} }
+        )
+        return state.value
+    }
+
+
+    private fun getMovieInfoById(id: String): InfoMovieState {
+        Log.d("Movie", "getMovieInfoById: $id")
+        return if (id.isNullOrEmpty()) {
+            println("Error $id is empty or null")
+            state.value
+        } else {
+            handleOperation(
+                operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
+                onSuccess = {
+                    setState { state.value.copy(movieEntity = it.movie) }
+                    state.value.copy(movieEntity = it.movie) }
+            )
+            state.value.copy()
+        }
+    }
+
 }

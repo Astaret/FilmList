@@ -1,17 +1,21 @@
 package com.example.filmlist.data.repositories
 
 import android.util.Log
+import com.example.filmlist.data.local.db.EntityState
 import com.example.filmlist.data.local.db.MovieInfoDao
+import com.example.filmlist.data.local.enteties.MovieIdEntity
 import com.example.filmlist.data.mappers.dtoToMovie
+import com.example.filmlist.data.mappers.listMovieDtoToListMovie
 import com.example.filmlist.data.mappers.movieToMovieEntity
+import com.example.filmlist.data.mappers.toEntityState
 import com.example.filmlist.data.web.api.ApiService
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.repositories.MovieRepository
+import com.example.filmlist.domain.states.ListMovieState
+import com.example.filmlist.domain.states.MovieState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -21,20 +25,12 @@ class MovieRepositoryImpl @Inject constructor(
 
 
     override suspend fun loadData(loadPage: Int): List<Movie> {
-        return with(apiService.getTopRatedMovies(page = loadPage)) {
-            val movieList = MovieList.map {
-                it.dtoToMovie()
-            }
-            movieList
-        }
+        return apiService.getTopRatedMovies(page = loadPage).MovieList.listMovieDtoToListMovie()
     }
 
-    override suspend fun loadDataFromSearch(query: String): Flow<List<Movie>> {
-        return flow {
-            val movieList = apiService.searchMovies(query).MovieList.map {
-                it.dtoToMovie()
-            }
-            emit(movieList)
+    override suspend fun loadDataFromSearch(query: String): List<Movie> {
+        return apiService.searchMovies(query).MovieList.map {
+            it.dtoToMovie()
         }
     }
 
@@ -46,41 +42,23 @@ class MovieRepositoryImpl @Inject constructor(
         return apiService.getMovieInfo(movieId = id).dtoToMovie()
     }
 
-    override suspend fun saveFavMovieToDb(mov: Movie) {
-        Log.d("Movie", "loadFavMovieToDb: insert")
-        movieDao.insertInMovieList(mov.movieToMovieEntity().apply { isFavorite = 1 })
 
-    }
+    override suspend fun getMovieByIdFromBd(id: Int): MovieIdEntity? = movieDao.getMovieById(id)
 
-    override suspend fun putStoreMovieToDb(movie: Movie) {
-        Log.d("Movie", "loadFavMovieToDb: insert")
-        movieDao.insertInMovieList(movie.movieToMovieEntity().apply { isInStore = 1 })
-        Log.d("Movie", "loadStoreMovieToDb: SUCCES!! INSERT ")
-    }
 
-    override suspend fun getFavoriteMovies(): List<Movie> {
-        Log.d("Movie", "getFavoriteMovie: ${movieDao.getFavoriteMovieList()}")
+    override suspend fun getMovieListFromBd(state: ListMovieState): List<Movie> {
         return coroutineScope {
-            val movieList = movieDao.getFavoriteMovieList().map { favoriteMovie ->
-                async {
-                    apiService.getMovieInfo(favoriteMovie.id).dtoToMovie()
-                }
-            }.awaitAll()
-            movieList
+                movieDao.getMovieListFromBd(state).map { storeMovie ->
+                    async {
+                        apiService.getMovieInfo(storeMovie.id).dtoToMovie()
+                    }
+                }.awaitAll()
+            }
         }
+
+    override suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState) {
+        Log.d("Movie", "putMovieToDb: ${movie.title} to ${stateOfMovie.name}")
+        val movieEntity = movie.movieToMovieEntity(entityState = stateOfMovie.toEntityState())
+        movieDao.insertInMovieList(movieEntity.copy(id = movie.id))
     }
-
-    override suspend fun getStoreMovie(): List<Movie> {
-        Log.d("Movie", "getStoreMovie: ${movieDao.getFromStoreMovieList()}")
-
-        return coroutineScope {
-            val movieList = movieDao.getFromStoreMovieList().map { storeMovie ->
-                async {
-                    apiService.getMovieInfo(storeMovie.id).dtoToMovie()
-                }
-            }.awaitAll()
-            movieList
-        }
-    }
-
 }

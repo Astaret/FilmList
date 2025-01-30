@@ -8,14 +8,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,35 +21,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.filmlist.presentation.ui_kit.components.MovieList
+import com.example.filmlist.presentation.core.FavoriteScreenRoute
+import com.example.filmlist.presentation.core.LibraryScreenRoute
+import com.example.filmlist.presentation.core.SearchScreenRoute
+import com.example.filmlist.presentation.core.StoreScreenRoute
 import com.example.filmlist.presentation.topMovies.viewModels.MovieViewModel
-import com.example.filmlist.presentation.ui_kit.events.loadingData
-import com.example.filmlist.presentation.ui_kit.events.loadingNextPage
+import com.example.filmlist.presentation.ui_kit.components.MovieList
+import com.example.filmlist.presentation.ui_kit.events.PagingEvents
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MovieScreen(
     viewModel: MovieViewModel = hiltViewModel(),
-    navController: NavController,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToFavorite: () -> Unit,
-    onNavigateToStore: () -> Unit
+    navController: NavController
 ) {
-    val topMovieState by viewModel.movieState.collectAsState()
+    val topMovieState by viewModel.state.collectAsState()
 
     val movieList = topMovieState.movieList
     val listState = rememberLazyListState()
     val isAtEnd = listState.layoutInfo.visibleItemsInfo
         .lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 3
 
+
     LaunchedEffect(isAtEnd) {
         if (isAtEnd) {
-            viewModel.send(loadingNextPage())
+            viewModel.receiveEvent(PagingEvents.loadingNextPage())
         }
     }
 
     LaunchedEffect(Unit) {
-        viewModel.send(loadingData())
+        viewModel.receiveEvent(PagingEvents.loadingData())
+        viewModel.receiveEvent(PagingEvents.loadingTotalPages())
     }
 
     Column {
@@ -62,7 +61,7 @@ fun MovieScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = { onNavigateToFavorite() }
+                onClick = {navController.navigate(FavoriteScreenRoute) }
             ){
                 Icon(
                     imageVector = Icons.Default.Favorite,
@@ -72,7 +71,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = { onNavigateToFavorite() }
+                onClick = { navController.navigate(LibraryScreenRoute)}
             ){
                 Icon(
                     imageVector = Icons.Default.List,
@@ -82,7 +81,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = { onNavigateToStore() }
+                onClick = {navController.navigate(StoreScreenRoute) }
             ){
                 Icon(
                     imageVector = Icons.Default.ShoppingCart,
@@ -92,7 +91,7 @@ fun MovieScreen(
             }
 
             IconButton(
-                onClick = { onNavigateToSearch() }
+                onClick = { navController.navigate(SearchScreenRoute)}
             ){
                 Icon(
                     imageVector = Icons.Default.Search,

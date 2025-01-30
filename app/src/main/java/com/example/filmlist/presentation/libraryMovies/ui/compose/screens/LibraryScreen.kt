@@ -1,4 +1,4 @@
-package com.example.filmlist.presentation.favoritesMovies.ui.compose.Screens
+package com.example.filmlist.presentation.libraryMovies.ui.compose.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -25,38 +24,38 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.presentation.core.MainScreenRoute
-import com.example.filmlist.presentation.core.SearchScreenRoute
-import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
-import com.example.filmlist.presentation.favoritesMovies.viewModels.FavoriteMoviesViewModel
+import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
+import com.example.filmlist.presentation.libraryMovies.viewModel.LibraryMoviesViewModel
 import com.example.filmlist.presentation.ui_kit.components.MovieList
 
 @Composable
-fun favoriteMoviesScreen(
-    vm: FavoriteMoviesViewModel = hiltViewModel(),
+fun LibraryScreen(
+    vm: LibraryMoviesViewModel = hiltViewModel(),
     navController: NavController
 ) {
 
     LaunchedEffect(Unit) {
-        vm.receiveEvent(FavoriteEvent.ShowAllFavorites)
+        vm.receiveEvent(LibraryEvent.ShowAllBoughtMovies)
 
     }
-    val favMovieState by vm.state.collectAsState()
-    val movieList = favMovieState.movieList
+    val librMovieState by vm.state.collectAsState()
+    val movieList = librMovieState.movieList
 
-    if (favMovieState.empty){
-        EmptyFavoriteScreen({navController.navigate(MainScreenRoute)})
-    }else{
-        favoriteListMovie(
+    if (!librMovieState.empty){
+        libraryListMovie(
             movieList = movieList,
             navController = navController)
+    }else{
+        EmptyLibraryScreen({navController.navigate(MainScreenRoute)})
     }
 
 }
 
+
 @Composable
-private fun favoriteListMovie(
+private fun libraryListMovie(
     movieList: List<Movie>,
-    navController: NavController,
+    navController: NavController
 ) {
     val listState = rememberLazyListState()
 
@@ -67,19 +66,10 @@ private fun favoriteListMovie(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick =  {navController.navigate(MainScreenRoute)}
+                onClick = {navController.navigate(MainScreenRoute)}
             ){
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "BACK",
-                    tint = Color.Black
-                )
-            }
-            IconButton(
-                onClick = { navController.navigate(SearchScreenRoute)}
-            ){
-                Icon(
-                    imageVector = Icons.Default.Search,
                     contentDescription = "BACK",
                     tint = Color.Black
                 )
@@ -94,7 +84,7 @@ private fun favoriteListMovie(
 }
 
 @Composable
-private fun EmptyFavoriteScreen(onNavigateToBackMain: () -> Unit) {
+private fun EmptyLibraryScreen(onNavigateToBackMain: () -> Unit) {
     Column {
         IconButton(
             onClick = { onNavigateToBackMain() }
@@ -111,7 +101,7 @@ private fun EmptyFavoriteScreen(onNavigateToBackMain: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Ваш список избранного пуст",
+                text = "Ваша библиотека пуста",
                 fontSize = 24.sp,
                 color = Color.Gray
             )

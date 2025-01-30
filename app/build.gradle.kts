@@ -21,6 +21,7 @@ android {
 
         buildConfigField("String", "BASE_API_URL", "\" https://api.themoviedb.org/3/ \"")
         buildConfigField("String", "IMG_API_URL", "\" https://image.tmdb.org/t/p/w500/ \"")
+        buildConfigField("String", "QR_API_URL", "\" https://api.qr-code-generator.com/ \"")
 
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8
@@ -112,5 +113,9 @@ dependencies {
     implementation("com.github.skydoves:landscapist-glide:2.4.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+    //google ul camera dependencies
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation("io.coil-kt:coil-svg:2.4.0")
 
 }

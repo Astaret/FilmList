@@ -1,11 +1,11 @@
-package com.example.filmlist.data.web.api
+package com.example.filmlist.data.web.api.movie
 
 import com.example.myapp.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object ApiFactory {
+object MovieApiFactory {
 
     const val IMG_URL = "https://image.tmdb.org/t/p/w500/"
     const val SEC_IMG_URL = BuildConfig.IMG_API_URL
@@ -25,7 +25,7 @@ object ApiFactory {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-    val api: ApiService = retrofit.create(ApiService::class.java)
+    val api: MovieApiService = retrofit.create(MovieApiService::class.java)
 
     private const val APPJSN_VALUE = "application/json"
     private const val AUTH_TOKEN =

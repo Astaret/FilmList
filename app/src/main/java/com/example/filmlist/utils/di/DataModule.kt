@@ -4,8 +4,10 @@ import android.app.Application
 import com.example.filmlist.data.local.db.MovieDatabase
 import com.example.filmlist.data.local.db.MovieInfoDao
 import com.example.filmlist.data.repositories.MovieRepositoryImpl
-import com.example.filmlist.data.web.api.ApiFactory
-import com.example.filmlist.data.web.api.ApiService
+import com.example.filmlist.data.web.api.movie.MovieApiFactory
+import com.example.filmlist.data.web.api.movie.MovieApiService
+import com.example.filmlist.data.web.api.qr_code.QrCodeApiFactory
+import com.example.filmlist.data.web.api.qr_code.QrCodeApiService
 import com.example.filmlist.domain.repositories.MovieRepository
 import dagger.Binds
 import dagger.Module
@@ -26,8 +28,14 @@ interface DataModule {
         }
 
         @Provides
-        fun provideApiService(): ApiService {
-            return ApiFactory.api
+        fun provideApiService(): MovieApiService {
+            return MovieApiFactory.api
         }
+
+        @Provides
+        fun provideQrCodeApiService(): QrCodeApiService {
+            return QrCodeApiFactory.api
+        }
+
     }
 }

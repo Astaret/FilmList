@@ -2,7 +2,7 @@ package com.example.filmlist.data.mappers
 
 import com.example.filmlist.data.local.db.EntityState
 import com.example.filmlist.data.local.enteties.MovieIdEntity
-import com.example.filmlist.data.web.api.ApiFactory.IMG_URL
+import com.example.filmlist.data.web.api.movie.MovieApiFactory.IMG_URL
 import com.example.filmlist.data.web.dtos.MovieDto
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.states.MovieState

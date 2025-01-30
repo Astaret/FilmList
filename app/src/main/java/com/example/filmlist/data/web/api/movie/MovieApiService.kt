@@ -1,4 +1,4 @@
-package com.example.filmlist.data.web.api
+package com.example.filmlist.data.web.api.movie
 
 import com.example.filmlist.data.web.dtos.MovieDto
 import com.example.filmlist.data.web.dtos.TopMovieListDto
@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface ApiService {
+interface MovieApiService {
 
     @GET("movie/top_rated")
     suspend fun getTopRatedMovies(

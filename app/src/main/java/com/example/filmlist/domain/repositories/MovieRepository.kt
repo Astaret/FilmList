@@ -4,7 +4,9 @@ import com.example.filmlist.data.local.enteties.MovieIdEntity
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.states.ListMovieState
 import com.example.filmlist.domain.states.MovieState
+import com.google.android.gms.common.api.Response
 import kotlinx.coroutines.flow.Flow
+import okhttp3.ResponseBody
 
 interface MovieRepository {
 
@@ -21,5 +23,7 @@ interface MovieRepository {
     suspend fun getMovieListFromBd(state: ListMovieState): List<Movie>
 
     suspend fun putMovieToDb(movie: Movie, stateOfMovie: MovieState)
+
+    suspend fun getQrCodeImage(movie: Movie): String?
 
 }

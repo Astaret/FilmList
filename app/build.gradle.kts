@@ -113,4 +113,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
+    //qr-code
+    implementation("com.google.zxing:core:3.5.2")
+
 }

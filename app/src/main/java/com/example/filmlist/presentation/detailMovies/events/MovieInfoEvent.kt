@@ -8,5 +8,6 @@ sealed interface MovieInfoEvent: BasedViewModel.Event{
     class AddMovieToDataBase(val state: MovieState):MovieInfoEvent
     class IsMovieInBdCheck(val id: Int): MovieInfoEvent
     data object DeleteMovieFromDataBase : MovieInfoEvent
+    class GetQrCode(val id: String): MovieInfoEvent
 }
 

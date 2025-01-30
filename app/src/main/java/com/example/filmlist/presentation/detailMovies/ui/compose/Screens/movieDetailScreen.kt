@@ -1,5 +1,6 @@
 package com.example.filmlist.presentation.detailMovies.ui.compose.Screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,11 +8,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,10 +24,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -44,10 +52,11 @@ fun MovieDetailScreen(
     LaunchedEffect(Unit) {
         vm.receiveEvent(MovieInfoEvent.GetMovieInfo(movieId))
         vm.receiveEvent(MovieInfoEvent.IsMovieInBdCheck(movieId.toInt()))
+        vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
     }
 
     val movieInfoState by vm.state.collectAsState()
-
+    var isActive by remember { mutableStateOf(true) }
 
     val movie = movieInfoState.movieEntity
 
@@ -59,6 +68,33 @@ fun MovieDetailScreen(
                     .height(500.dp)
                     .clip(RoundedCornerShape(8.dp))
             )
+            if (isActive) {
+                movieInfoState.qrCode?.asImageBitmap()?.let {
+                    Image(
+                        bitmap = it,
+                        contentDescription = "QR Code",
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .align(Alignment.Center),
+                    )
+                }
+            }
+            IconButton(
+                modifier = Modifier.align(Alignment.BottomStart),
+                onClick = { isActive = !isActive },
+                colors = IconButtonColors(
+                    containerColor = Color.White,
+                    contentColor = Color.Black,
+                    disabledContentColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "ShareQr",
+                    tint = Color.Black,
+                )
+            }
             Text(
                 text = "${movie.rating}",
                 fontSize = 15.sp,
@@ -75,9 +111,9 @@ fun MovieDetailScreen(
                 IconButton(
                     modifier = Modifier.align(Alignment.BottomEnd),
                     onClick = {
-                        if (movieInfoState.statusMovie == StatusMovie.INSTORE){
+                        if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
                             vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                        }else{
+                        } else {
                             vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.INSTORE))
                         }
                     },
@@ -105,9 +141,9 @@ fun MovieDetailScreen(
                 IconButton(
                     modifier = Modifier.align(Alignment.TopEnd),
                     onClick = {
-                        if (movieInfoState.statusMovie == StatusMovie.FAVORITE){
+                        if (movieInfoState.statusMovie == StatusMovie.FAVORITE) {
                             vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                        }else{
+                        } else {
                             vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.ISFAVORITE))
                         }
                     },
@@ -193,7 +229,8 @@ fun MovieDetailScreen(
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(6.dp)
+            modifier = Modifier
+                .padding(6.dp)
                 .align(Alignment.CenterHorizontally)
         )
     }

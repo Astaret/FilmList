@@ -1,5 +1,8 @@
 package com.example.filmlist.presentation.detailMovies.viewModels
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.util.Log
 import com.example.filmlist.data.local.db.EntityState
 import com.example.filmlist.data.mappers.toMovieStatus
@@ -14,6 +17,9 @@ import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -31,6 +37,7 @@ class DetailMovieViewModel @Inject constructor(
             is MovieInfoEvent.AddMovieToDataBase -> addMovieToDataBaseList(event.state)
             is MovieInfoEvent.IsMovieInBdCheck -> isMovieInBd(event.id)
             is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList()
+            is MovieInfoEvent.GetQrCode -> getQrCode(event.id)
         }
     }
 
@@ -97,4 +104,27 @@ class DetailMovieViewModel @Inject constructor(
         }
     }
 
+
+    private fun getQrCode(id:String): InfoMovieState{
+        val bitMatrix: BitMatrix = MultiFormatWriter().encode(
+            id, BarcodeFormat.QR_CODE, 512, 512
+        )
+
+        val width = bitMatrix.width
+        val height = bitMatrix.height
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                bitmap.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
+            }
+        }
+        setState {
+            copy(
+                qrCode = bitmap
+            )
+        }
+
+        return state.value
+    }
 }

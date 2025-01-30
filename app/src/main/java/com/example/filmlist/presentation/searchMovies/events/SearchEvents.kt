@@ -1,5 +1,7 @@
 package com.example.filmlist.presentation.searchMovies.events
 
-sealed interface SearchEvents{
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+
+sealed interface SearchEvents: BasedViewModel.Event {
     class SearchChange(val newSearch: String): SearchEvents
 }

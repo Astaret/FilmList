@@ -30,19 +30,19 @@ fun SearchScreen(
     vm: SearchMovieViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val searchState by vm.searchState.collectAsState()
+    val searchState by vm.state.collectAsState()
 
     SearchScreen(
         searchQuery = searchState.searchQuery,
         searchResults = searchState.searchResult,
         navController = navController,
-        onSearchQueryChange = { vm.send(SearchEvents.SearchChange(it)) }
+        onSearchQueryChange = { vm.receiveEvent(SearchEvents.SearchChange(it)) }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+private fun SearchScreen(
     searchQuery: String,
     searchResults: List<Movie>,
     navController: NavController,

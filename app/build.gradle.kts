@@ -4,6 +4,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
 
 }
 
@@ -91,7 +92,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.activity:activity-compose")
-    implementation("androidx.navigation:navigation-compose:2.7.4")
+    implementation("androidx.navigation:navigation-compose:2.8.0")
     implementation("androidx.compose.animation:animation")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
@@ -110,5 +111,6 @@ dependencies {
 // For Glide integration
     implementation("com.github.skydoves:landscapist-glide:2.4.0")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
 }

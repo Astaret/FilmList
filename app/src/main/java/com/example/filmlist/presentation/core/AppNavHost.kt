@@ -5,43 +5,57 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScreen
-import com.example.filmlist.presentation.searchMovies.ui.compose.Screens.SearchScreen
-import com.example.filmlist.presentation.detailMovies.ui.compose.Screens.movieDetailScreen
+import androidx.navigation.toRoute
+import com.example.filmlist.presentation.detailMovies.ui.compose.Screens.MovieDetailScreen
 import com.example.filmlist.presentation.favoritesMovies.ui.compose.Screens.favoriteMoviesScreen
+import com.example.filmlist.presentation.libraryMovies.ui.compose.screens.LibraryScreen
+import com.example.filmlist.presentation.searchMovies.ui.compose.Screens.SearchScreen
+import com.example.filmlist.presentation.storeMovies.ui.Compose.Screens.StoreScreen
+import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScreen
 
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
     NavHost(navController = navController,
-        startDestination = "main_screen") {
+        startDestination = MainScreenRoute) {
 
-        composable("main_screen") {
+        composable<MainScreenRoute> {
             MovieScreen(
-                navController = navController,
-                onNavigateToSearch = { navController.navigate("search_screen")},
-                onNavigateToFavorite = {navController.navigate("favorite_movie_screen")}
+                navController = navController
             )
         }
 
-        composable("search_screen") {
+        composable<SearchScreenRoute> {
             SearchScreen(navController = navController)
             BackHandler {
                 navController.navigateUp()
             }
         }
 
-        composable("movieDetail_screen/{id}") {
-            val movieId = it.arguments?.getString("id")
-            movieId?.let {
-                movieDetailScreen(movieId = it)
+        composable<DetailScreenRoute> {
+            val movieId: DetailScreenRoute = it.toRoute()
+            MovieDetailScreen(movieId = movieId.id.toString())
+        }
+
+        composable<FavoriteScreenRoute> {
+            favoriteMoviesScreen(navController = navController)
+            BackHandler {
+                navController.navigateUp()
             }
         }
 
-        composable("favorite_movie_screen") {
-            favoriteMoviesScreen(navController = navController,
-                onNavigateToSearch = { navController.navigate("search_screen")},
-                onNavigateToBackMain = {navController.navigate("main_screen")}
+        composable<StoreScreenRoute> {
+            StoreScreen(
+                navController = navController
+            )
+            BackHandler {
+                navController.navigateUp()
+            }
+        }
+
+        composable<LibraryScreenRoute> {
+            LibraryScreen(
+                navController = navController
             )
             BackHandler {
                 navController.navigateUp()

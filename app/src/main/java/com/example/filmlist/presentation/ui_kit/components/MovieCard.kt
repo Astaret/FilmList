@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
+import com.example.filmlist.presentation.core.DetailScreenRoute
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
@@ -26,14 +27,15 @@ fun MovieCard(
     movie: Movie,
     modifier: Modifier = Modifier,
     navController: NavController,
+    moviePrice: Float = 0.0f
 ) {
     Card(
         modifier = modifier
             .width(160.dp)
-            .height(260.dp)
+            .height(if (moviePrice > 0) 280.dp else 260.dp)
             .padding(5.dp)
             .clickable {
-                navController.navigate("movieDetail_screen/${movie.id}")
+                navController.navigate(route = DetailScreenRoute(id = movie.id))
             },
         shape = RoundedCornerShape(8.dp),
     ) {
@@ -66,5 +68,15 @@ fun MovieCard(
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(bottom = 4.dp)
         )
+        if (moviePrice > 0){
+            Text(
+                text = String.format("%.2f", moviePrice),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+        }
     }
 }

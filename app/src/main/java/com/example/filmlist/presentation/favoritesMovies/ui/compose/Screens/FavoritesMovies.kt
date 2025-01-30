@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
+import com.example.filmlist.presentation.core.MainScreenRoute
+import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.viewModels.FavoriteMoviesViewModel
 import com.example.filmlist.presentation.ui_kit.components.MovieList
@@ -27,36 +33,30 @@ import com.example.filmlist.presentation.ui_kit.components.MovieList
 @Composable
 fun favoriteMoviesScreen(
     vm: FavoriteMoviesViewModel = hiltViewModel(),
-    navController: NavController,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToBackMain: () -> Unit
+    navController: NavController
 ) {
 
     LaunchedEffect(Unit) {
-        vm.send(FavoriteEvent.showAllFavorites)
+        vm.receiveEvent(FavoriteEvent.ShowAllFavorites)
 
     }
-    val favMovieState by vm.favState.collectAsState()
+    val favMovieState by vm.state.collectAsState()
     val movieList = favMovieState.movieList
 
-    if (!favMovieState.empty){
+    if (favMovieState.empty){
+        EmptyFavoriteScreen({navController.navigate(MainScreenRoute)})
+    }else{
         favoriteListMovie(
             movieList = movieList,
-            navController = navController,
-            onNavigateToSearch = onNavigateToSearch,
-            onNavigateToBackMain = onNavigateToBackMain)
-    }else{
-        EmptyScreen(onNavigateToBackMain)
+            navController = navController)
     }
 
 }
 
 @Composable
-fun favoriteListMovie(
+private fun favoriteListMovie(
     movieList: List<Movie>,
     navController: NavController,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToBackMain: () -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -66,13 +66,23 @@ fun favoriteListMovie(
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(
-                onClick = { onNavigateToBackMain() }) {
-                Text(text = "◀")
+            IconButton(
+                onClick =  {navController.navigate(MainScreenRoute)}
+            ){
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "BACK",
+                    tint = Color.Black
+                )
             }
-            Button(
-                onClick = { onNavigateToSearch() }) {
-                Text(text = "\uD83D\uDD0E")
+            IconButton(
+                onClick = { navController.navigate(SearchScreenRoute)}
+            ){
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "BACK",
+                    tint = Color.Black
+                )
             }
         }
         MovieList(
@@ -84,11 +94,16 @@ fun favoriteListMovie(
 }
 
 @Composable
-fun EmptyScreen(onNavigateToBackMain: () -> Unit) {
+private fun EmptyFavoriteScreen(onNavigateToBackMain: () -> Unit) {
     Column {
-        Button(
-            onClick = { onNavigateToBackMain() }) {
-            Text(text = "◀")
+        IconButton(
+            onClick = { onNavigateToBackMain() }
+        ){
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "BACK",
+                tint = Color.Black
+            )
         }
         Box(
             modifier = Modifier

@@ -56,7 +56,7 @@ fun MovieDetailScreen(
     }
 
     val movieInfoState by vm.state.collectAsState()
-    var isActive by remember { mutableStateOf(true) }
+    var isActive by remember { mutableStateOf(false) }
 
     val movie = movieInfoState.movieEntity
 

@@ -114,7 +114,7 @@ fun StoreScreen(
                             MovieCard(
                                 movie = it,
                                 navController = navController,
-                                moviePrice = it.price ?: 0f,
+                                moviePrice = it.price,
                             )
                         }
                     }

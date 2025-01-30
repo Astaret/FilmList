@@ -74,16 +74,17 @@ class StoreViewModel @Inject constructor(
     private fun showAllMoviesInStore():StoreMovState {
         handleOperation(
             operation = {getMovieListFromBdUseCase(getListMovieState(ListMovieState.INSTORE))},
-            onSuccess = {
-                it.listMovies.map {movie ->
+            onSuccess = { movie ->
+                val listBoughtMovies = movie.listMovies.map {movie ->
                     movie.copy(price = movie.rating.toFloat() * 550.20f)
                 }
-                val totalSum = it.listMovies.sumOf { it.price?.toDouble() ?: 0.0 }
+                Log.d("Movie", "showAllMoviesInStore: $listBoughtMovies")
+                val totalSum = listBoughtMovies.sumOf { it.price.toDouble()}
                 setState {
                     copy(
-                        movieList = it.listMovies,
+                        movieList = listBoughtMovies,
                         totalPrice = totalSum,
-                        empty = it.listMovies.isEmpty()
+                        empty = listBoughtMovies.isEmpty()
                     )
                 }
             }

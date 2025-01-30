@@ -44,6 +44,7 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
         event: Event) {
         viewModelScope.launch(dispatcher) {
             _state.emit(handleEvent(event))
+            setState { handleEvent(event) }
         }
     }
 

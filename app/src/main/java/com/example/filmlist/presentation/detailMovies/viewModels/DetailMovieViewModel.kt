@@ -27,9 +27,10 @@ class DetailMovieViewModel @Inject constructor(
 
     override fun handleEvent(event: MovieInfoEvent): InfoMovieState {
         return when (event) {
-            is MovieInfoEvent.getMovieInfo -> getMovieInfoById(event.newId)
-            is MovieInfoEvent.addMovieToDataBase -> addMovieToDataBaseList(event.state)
-            is MovieInfoEvent.isMovieInBdCheck -> isMovieInBd(event.id)
+            is MovieInfoEvent.GetMovieInfo -> getMovieInfoById(event.newId)
+            is MovieInfoEvent.AddMovieToDataBase -> addMovieToDataBaseList(event.state)
+            is MovieInfoEvent.IsMovieInBdCheck -> isMovieInBd(event.id)
+            is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList()
         }
     }
 
@@ -48,7 +49,12 @@ class DetailMovieViewModel @Inject constructor(
                     } else {
                         StatusMovie.BOUGHT
                     }
-                    state.value.copy(statusMovie = statusMovie)
+                    setState {
+                        copy(
+                            statusMovie = statusMovie,
+                            id = it.movieIdEntity.id.toString(),
+                            movieEntity = getMovieInfoById(it.movieIdEntity.id.toString()).movieEntity
+                        )}
                 } else {
                     state.value.copy(statusMovie = StatusMovie.EMPTY)
                 }
@@ -61,7 +67,15 @@ class DetailMovieViewModel @Inject constructor(
         Log.d("Movie", "addMovieToFav: $movieState")
         handleOperation(
             operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, movieState)) },
-            onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
+            onSuccess = { setState {  copy(statusMovie = movieState.toMovieStatus())} }
+        )
+        return state.value
+    }
+
+    private fun deleteMovieFromDataBaseList():InfoMovieState{
+        handleOperation(
+            operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, MovieState.EMPTY)) },
+            onSuccess = { setState {  copy(statusMovie = MovieState.EMPTY.toMovieStatus())} }
         )
         return state.value
     }
@@ -75,9 +89,11 @@ class DetailMovieViewModel @Inject constructor(
         } else {
             handleOperation(
                 operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
-                onSuccess = { state.value.copy(movieEntity = it.movie) }
+                onSuccess = {
+                    setState { state.value.copy(movieEntity = it.movie) }
+                    state.value.copy(movieEntity = it.movie) }
             )
-            state.value
+            state.value.copy()
         }
     }
 

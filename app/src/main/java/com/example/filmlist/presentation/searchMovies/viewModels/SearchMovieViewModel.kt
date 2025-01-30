@@ -18,35 +18,36 @@ class SearchMovieViewModel @Inject constructor(
 ) : BasedViewModel<SearchState, SearchEvents>(SearchState()) {
 
 
-    override fun send(event: SearchEvents) {
-        when (event) {
+    override fun handleEvent(event: SearchEvents): SearchState {
+        return when (event) {
             is SearchEvents.SearchChange -> onSearchQueryChange(event.newSearch)
         }
     }
 
-    private fun onSearchQueryChange(newQuery: String) {
+    private fun onSearchQueryChange(newQuery: String):SearchState {
         setState {
             copy(searchQuery = newQuery)
         }
+        return state.value
     }
 
     private fun loadDataFromSearch(query: String) {
-        launchInScope {
-            loadDataFromSearchUseCase(GetName(query))
-                .collect { outListMovie ->
-                    val movies = outListMovie.movieList
-                    setState {
-                        copy(
-                            movieList = movies,
-                            searchResult = if (query.isNotEmpty()) {
-                                movies.filter { it.title.contains(query, ignoreCase = true) }
-                            } else {
-                                movies
-                            }
-                        )
-                    }
+        handleOperation(
+            operation = { loadDataFromSearchUseCase(GetName(query))},
+            onSuccess = {
+                val movies = it.movieList
+                setState {
+                    copy(
+                        movieList = movies,
+                        searchResult = if (query.isNotEmpty()) {
+                            movies.filter { it.title.contains(query, ignoreCase = true) }
+                        } else {
+                            movies
+                        }
+                    )
                 }
-        }
+            }
+        )
     }
 
     init {
@@ -54,7 +55,7 @@ class SearchMovieViewModel @Inject constructor(
     }
 
     private fun observeSearchQuery() {
-        launchInScope {
+        viewModelScope.launch {
             state
                 .debounce(300)
                 .distinctUntilChanged()

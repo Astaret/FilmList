@@ -6,6 +6,7 @@ import com.example.filmlist.data.web.api.ApiFactory.IMG_URL
 import com.example.filmlist.data.web.dtos.MovieDto
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.states.MovieState
+import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 
 fun MovieDto.dtoToMovie() = Movie(
     id = id,
@@ -30,5 +31,15 @@ fun MovieState.toEntityState(): EntityState {
         MovieState.ISBOUGHT -> EntityState.ISBOUGHT
         MovieState.INSTORE -> EntityState.INSTORE
         MovieState.EMPTY -> EntityState.EMPTY
+    }
+}
+
+
+fun MovieState.toMovieStatus(): StatusMovie {
+    return when (this) {
+        MovieState.ISFAVORITE -> StatusMovie.FAVORITE
+        MovieState.ISBOUGHT -> StatusMovie.BOUGHT
+        MovieState.INSTORE -> StatusMovie.INSTORE
+        MovieState.EMPTY -> StatusMovie.EMPTY
     }
 }

@@ -2,6 +2,7 @@ package com.example.filmlist.presentation.storeMovies.viewModels
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.states.ListMovieState
 import com.example.filmlist.domain.states.MovieState
 import com.example.filmlist.domain.usecases.get_useCases.GetMovieListFromBdUseCase
@@ -28,56 +29,67 @@ class StoreViewModel @Inject constructor(
     private val _storeState = MutableSharedFlow<StoreMovState>()
     val storeState: SharedFlow<StoreMovState> = _storeState
 
-    override fun send(event: PurchaseEvent) {
-        when (event) {
+
+    override fun handleEvent(event: PurchaseEvent): StoreMovState {
+        return when (event) {
             is PurchaseEvent.ShowAllPurchases -> showAllMoviesInStore()
             is PurchaseEvent.BuyMovie -> buyMovieFun()
         }
     }
 
-    private fun buyMovieFun() {
-        launchInScope {
-            getMovieListFromBdUseCase(getListMovieState(ListMovieState.INSTORE))
-                .collect { result ->
-                    val remainingMovies = result.listMovies
-
-                    remainingMovies.forEach {
-                        putMovieToDbUseCase(getMovieInfo(it, MovieState.ISBOUGHT)).collect{}
-                        Log.d("Movie", "buyMovieFun: BOUGHT ${it.title}")
-                    }
-
-                    setState {
-                        copy(
-                            movieList = emptyList(),
-                            totalPrice = 0.0,
-                            empty = true
-                        )
-                    }
-                }
-        }
+    private fun putMovieToDb(movie: Movie, state: MovieState) {
+        handleOperation(
+            operation = {
+                putMovieToDbUseCase(getMovieInfo(movie, state))
+            },
+            onSuccess = {}
+        )
     }
 
-    private fun showAllMoviesInStore() {
-        launchInScope {
-            val updatedMovieList = getMovieListFromBdUseCase(
-                getListMovieState(
-                    ListMovieState.INSTORE
-                )
-            ).first().listMovies.map { movie ->
-                movie.copy(price = movie.rating.toFloat() * 550.20f)
-            }
-            Log.d("Movie", "showAllMoviesInStore: $updatedMovieList")
-            val totalSum = updatedMovieList.sumOf { it.price?.toDouble() ?: 0.0 }
-            setState {
-                copy(
-                    movieList = updatedMovieList,
-                    totalPrice = totalSum,
-                    empty = updatedMovieList.isEmpty()
-                )
-            }
-            Log.d("Movie", "showAllMoviesInStore: ${_storeState}")
+    private fun buyMovieFun(): StoreMovState {
+        handleOperation(
+            operation = {
+                getMovieListFromBdUseCase(getListMovieState(ListMovieState.INSTORE))
+            },
+            onSuccess = {
+                val remainingMovies = it.listMovies
 
-        }
+                remainingMovies.forEach {
+                    putMovieToDb(it, MovieState.ISBOUGHT)
+                    Log.d("Movie", "buyMovieFun: BOUGHT ${it.title}")
+                }
+
+                setState {
+                    copy(
+                        movieList = emptyList(),
+                        totalPrice = 0.0,
+                        empty = true
+                    )
+                }
+            }
+        )
+        return state.value
+    }
+
+    private fun showAllMoviesInStore():StoreMovState {
+        handleOperation(
+            operation = {getMovieListFromBdUseCase(getListMovieState(ListMovieState.INSTORE))},
+            onSuccess = { movie ->
+                val listBoughtMovies = movie.listMovies.map {movie ->
+                    movie.copy(price = movie.rating.toFloat() * 550.20f)
+                }
+                Log.d("Movie", "showAllMoviesInStore: $listBoughtMovies")
+                val totalSum = listBoughtMovies.sumOf { it.price.toDouble()}
+                setState {
+                    copy(
+                        movieList = listBoughtMovies,
+                        totalPrice = totalSum,
+                        empty = listBoughtMovies.isEmpty()
+                    )
+                }
+            }
+        )
+        return state.value
     }
 
 }

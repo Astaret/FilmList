@@ -7,5 +7,5 @@ data class Movie (
     val poster: String,
     val title: String,
     val rating:String,
-    val price:Float? = null
+    val price:Float = 0f
 )

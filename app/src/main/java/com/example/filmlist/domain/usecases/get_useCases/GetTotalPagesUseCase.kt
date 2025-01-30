@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 data class putPages(val pages: Int): BaseUseCase.Out
-data class Params(val unit: Unit):BaseUseCase.In
+object Params:BaseUseCase.In
 
 class GetTotalPagesUseCase @Inject constructor(
     private val repository: MovieRepository

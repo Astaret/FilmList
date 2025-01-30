@@ -17,21 +17,19 @@ class FavoriteMoviesViewModel @Inject constructor(
     private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
 ) : BasedViewModel<FavoriteState, FavoriteEvent>(FavoriteState()) {
 
-    override fun send(event: FavoriteEvent) {
-        when (event) {
+
+    override fun handleEvent(event: FavoriteEvent): FavoriteState {
+        return when (event) {
             is FavoriteEvent.DeleteFromFavorite -> deleteFromFavorite()
             is FavoriteEvent.ShowAllFavorites -> showAllFavorites()
         }
     }
 
-    private fun showAllFavorites() {
-        Log.d("Movie", "showAllFavorites: start")
-        launchInScope {
-            Log.d("Movie", "showAllFavorites: continue")
-            getMovieListFromBdUseCase(
-                getListMovieState(ListMovieState.ISFAVORITE)
-            ).collect{
-                Log.d("Movie", "showAllFavorites: ${it.listMovies.map { it.title } }")
+    private fun showAllFavorites():FavoriteState {
+        handleOperation(
+            operation = {getMovieListFromBdUseCase(
+                getListMovieState(ListMovieState.ISFAVORITE))},
+            onSuccess = {
                 setState {
                     copy(
                         movieList = it.listMovies,
@@ -40,11 +38,11 @@ class FavoriteMoviesViewModel @Inject constructor(
                 }
                 Log.d("Movie", "showAllFavorites: ${state.value.movieList.map { it.title }}")
             }
-        }
-
+        )
+        return state.value
     }
 }
 
-private fun deleteFromFavorite() {
-
+private fun deleteFromFavorite(): FavoriteState {
+    return FavoriteState()
 }

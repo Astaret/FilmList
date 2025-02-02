@@ -48,7 +48,6 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
         }
     }
 
-
     protected fun <T> handleOperation(
         operation: suspend () -> Flow<T>,
         onSuccess: (T) -> Unit

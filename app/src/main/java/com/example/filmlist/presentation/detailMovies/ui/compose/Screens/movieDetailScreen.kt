@@ -1,5 +1,8 @@
 package com.example.filmlist.presentation.detailMovies.ui.compose.Screens
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,23 +45,36 @@ import com.example.filmlist.domain.states.MovieState
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.PermissionsViewModel
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MovieDetailScreen(
     movieId: String,
-    vm: DetailMovieViewModel = hiltViewModel()
+    vm: DetailMovieViewModel = hiltViewModel(),
+    permVm: PermissionsViewModel = hiltViewModel()
 ) {
-    LaunchedEffect(Unit) {
-        vm.receiveEvent(MovieInfoEvent.GetMovieInfo(movieId))
-        vm.receiveEvent(MovieInfoEvent.IsMovieInBdCheck(movieId.toInt()))
-        vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
-    }
+
+    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = {isGranted ->
+            permVm.onPermessionResult(
+                permission = Manifest.permission.CAMERA,
+                isGranted = isGranted
+            )
+        }
+    )
 
     val movieInfoState by vm.state.collectAsState()
     var isActive by remember { mutableStateOf(false) }
 
     val movie = movieInfoState.movieEntity
+
+    LaunchedEffect(Unit) {
+        vm.receiveEvent(MovieInfoEvent.GetMovieInfo(movieId))
+        vm.receiveEvent(MovieInfoEvent.IsMovieInBdCheck(movieId.toInt()))
+        vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
+    }
 
     Column {
         Box {
@@ -69,6 +85,9 @@ fun MovieDetailScreen(
                     .clip(RoundedCornerShape(8.dp))
             )
             if (isActive) {
+                cameraPermissionResultLauncher.launch(
+                    Manifest.permission.CAMERA
+                )
                 movieInfoState.qrCode?.asImageBitmap()?.let {
                     Image(
                         bitmap = it,

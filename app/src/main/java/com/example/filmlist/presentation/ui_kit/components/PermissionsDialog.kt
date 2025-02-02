@@ -17,6 +17,7 @@ fun PermissionDialog(
 ){
 
     AlertDialog(
+        title = {},
         onDismissRequest = onDismiss,
         modifier = modifier,
         properties = TODO(),

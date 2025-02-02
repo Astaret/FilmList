@@ -1,17 +1,16 @@
 package com.example.filmlist.presentation.detailMovies.ui.compose.Screens
 
 import android.Manifest
+import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -20,8 +19,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,40 +32,85 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.filmlist.domain.states.MovieState
+import com.example.filmlist.presentation.core.openAppSettings
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
-import com.example.filmlist.presentation.ui_kit.ViewModels.PermissionsViewModel
+import com.example.filmlist.presentation.ui_kit.components.CameraPermissionTextProvider
+import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
+import com.example.filmlist.presentation.ui_kit.components.buttons.DetailNavigationButton
+import com.example.filmlist.presentation.ui_kit.components.movie_cards.detail_movie_card_components.DetailMovieCardDescription
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MovieDetailScreen(
     movieId: String,
     vm: DetailMovieViewModel = hiltViewModel(),
-    permVm: PermissionsViewModel = hiltViewModel()
 ) {
+
+    val movieInfoState by vm.state.collectAsState()
+
+    var isActive by remember { mutableStateOf(false) }
+
+    val movie = movieInfoState.movieEntity
+
+    val context = LocalContext.current
+    val activity = context as? Activity ?: return
 
     val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = {isGranted ->
-            permVm.onPermessionResult(
+        onResult = { isGranted ->
+            vm.onPermessionResult(
                 permission = Manifest.permission.CAMERA,
                 isGranted = isGranted
             )
         }
     )
 
-    val movieInfoState by vm.state.collectAsState()
-    var isActive by remember { mutableStateOf(false) }
+    val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        onResult = { perms ->
+            perms.keys.forEach { permission ->
+                vm.onPermessionResult(
+                    permission = permission,
+                    isGranted = perms[permission] == true
+                )
+            }
+        }
+    )
 
-    val movie = movieInfoState.movieEntity
+    vm.visiblePermissionDialoqQueue
+        .reversed()
+        .forEach { permission ->
+            PermissionDialog(
+                permissionTextProvider = when (permission) {
+                    Manifest.permission.CAMERA -> {
+                        CameraPermissionTextProvider()
+                    }
+
+                    else -> return@forEach
+                },
+                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+                    activity,
+                    permission
+                ),
+                onDismiss = vm::dismissDialog,
+                onOkClick = {
+                    vm.dismissDialog()
+                    multiplePermissionResultLauncher.launch(
+                        arrayOf(permission)
+                    )
+                },
+                onGoToAppSettingsClick = activity::openAppSettings,
+            )
+        }
+
 
     LaunchedEffect(Unit) {
         vm.receiveEvent(MovieInfoEvent.GetMovieInfo(movieId))
@@ -85,9 +127,6 @@ fun MovieDetailScreen(
                     .clip(RoundedCornerShape(8.dp))
             )
             if (isActive) {
-                cameraPermissionResultLauncher.launch(
-                    Manifest.permission.CAMERA
-                )
                 movieInfoState.qrCode?.asImageBitmap()?.let {
                     Image(
                         bitmap = it,
@@ -98,22 +137,17 @@ fun MovieDetailScreen(
                     )
                 }
             }
-            IconButton(
+            DetailNavigationButton(
                 modifier = Modifier.align(Alignment.BottomStart),
-                onClick = { isActive = !isActive },
-                colors = IconButtonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black,
-                    disabledContentColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Share,
-                    contentDescription = "ShareQr",
-                    tint = Color.Black,
-                )
-            }
+                onClick = {
+                    isActive = !isActive
+                    cameraPermissionResultLauncher.launch(Manifest.permission.CAMERA)
+                },
+                imageVector = Icons.Default.Share,
+                description = "ShareQr",
+                color = Color.Black
+            )
+
             Text(
                 text = "${movie.rating}",
                 fontSize = 15.sp,
@@ -127,7 +161,7 @@ fun MovieDetailScreen(
                     )
             )
             if (movieInfoState.statusMovie != StatusMovie.BOUGHT) {
-                IconButton(
+                DetailNavigationButton(
                     modifier = Modifier.align(Alignment.BottomEnd),
                     onClick = {
                         if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
@@ -136,58 +170,27 @@ fun MovieDetailScreen(
                             vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.INSTORE))
                         }
                     },
-                    colors = IconButtonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black,
-                        disabledContentColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent
-                    )
-                ) {
-                    if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "BOUGHT",
-                            tint = Color.Green
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "BUY",
-                            tint = Color.Black
-                        )
-                    }
-                }
-                IconButton(
+                    imageVector = if (movieInfoState.statusMovie == StatusMovie.INSTORE)
+                        Icons.Default.Check
+                    else Icons.Default.ShoppingCart,
+                    description = if (movieInfoState.statusMovie == StatusMovie.INSTORE) "BOUGHT"
+                    else "BUY",
+                    color = if (movieInfoState.statusMovie == StatusMovie.INSTORE) Color.Green
+                    else Color.Black
+                )
+                DetailNavigationButton(
                     modifier = Modifier.align(Alignment.TopEnd),
                     onClick = {
-                        if (movieInfoState.statusMovie == StatusMovie.FAVORITE) {
+                        if (movieInfoState.statusMovie == StatusMovie.FAVORITE)
                             vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                        } else {
-                            vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.ISFAVORITE))
-                        }
+                        else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.ISFAVORITE))
                     },
-                    colors = IconButtonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black,
-                        disabledContentColor = Color.White,
-                        disabledContainerColor = Color.Transparent
-                    )
-                ) {
-                    if (movieInfoState.statusMovie == StatusMovie.FAVORITE) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "BACK",
-                            tint = Color.Red
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "BACK",
-                            tint = Color.Black
-                        )
-                    }
-
-                }
+                    imageVector = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Icons.Default.Favorite
+                    else Icons.Default.FavoriteBorder,
+                    description = "In favorite",
+                    color = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Color.Red
+                    else Color.Black,
+                )
             } else {
                 Row(
                     modifier = Modifier.align(Alignment.BottomEnd),
@@ -207,50 +210,6 @@ fun MovieDetailScreen(
                 }
             }
         }
-        Column(
-            modifier = Modifier
-                .padding(2.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = "Название: ${movie.title}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Text(
-                text = "Номер фильма: ${movie.id}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp)
-            )
-            Text(
-                text = "Оригинальный язык: ${movie.origLang}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp)
-            )
-            Text(
-                text = "Оценки: ${movie.rating}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp)
-            )
-        }
-        Text(
-            text = "${movie.overview}",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .padding(6.dp)
-                .align(Alignment.CenterHorizontally)
-        )
+        DetailMovieCardDescription(movie)
     }
 }

@@ -1,19 +1,14 @@
 package com.example.filmlist.presentation.ui_kit.ViewModels
 
-import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.util.copy
-import com.google.android.material.color.utilities.MaterialDynamicColors.onError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -37,6 +32,7 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
         _state.update(reducer)
 
     }
+    val visiblePermissionDialoqQueue = mutableStateListOf<String>()
 
     internal abstract fun handleEvent(event: Event): State
 
@@ -56,6 +52,19 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
             operation().collect {
                 onSuccess(it)
             }
+        }
+    }
+
+    fun dismissDialog(){
+        visiblePermissionDialoqQueue.removeFirst()
+    }
+
+    fun onPermessionResult(
+        permission: String,
+        isGranted: Boolean
+    ){
+        if (!isGranted){
+            visiblePermissionDialoqQueue.add(permission)
         }
     }
 }

@@ -1,11 +1,7 @@
 package com.example.filmlist.presentation.core
 
-import android.Manifest
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,7 +12,6 @@ import com.example.filmlist.presentation.libraryMovies.ui.compose.screens.Librar
 import com.example.filmlist.presentation.searchMovies.ui.compose.Screens.SearchScreen
 import com.example.filmlist.presentation.storeMovies.ui.Compose.Screens.StoreScreen
 import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScreen
-import com.example.filmlist.presentation.ui_kit.ViewModels.PermissionsViewModel
 
 @Composable
 fun AppNavHost() {

@@ -42,10 +42,13 @@ import com.example.filmlist.presentation.core.openAppSettings
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.PermissionsDialogViewModel
 import com.example.filmlist.presentation.ui_kit.components.CameraPermissionTextProvider
+import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
 import com.example.filmlist.presentation.ui_kit.components.buttons.DetailNavigationButton
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.detail_movie_card_components.DetailMovieCardDescription
+import com.example.filmlist.presentation.ui_kit.events.PermissionEvents
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
@@ -60,156 +63,109 @@ fun MovieDetailScreen(
 
     val movie = movieInfoState.movieEntity
 
-    val context = LocalContext.current
-    val activity = context as? Activity ?: return
-
-    val cameraPermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            vm.onPermessionResult(
-                permission = Manifest.permission.CAMERA,
-                isGranted = isGranted
-            )
-        }
-    )
-
-    val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = { perms ->
-            perms.keys.forEach { permission ->
-                vm.onPermessionResult(
-                    permission = permission,
-                    isGranted = perms[permission] == true
-                )
-            }
-        }
-    )
-
-    vm.visiblePermissionDialoqQueue
-        .reversed()
-        .forEach { permission ->
-            PermissionDialog(
-                permissionTextProvider = when (permission) {
-                    Manifest.permission.CAMERA -> {
-                        CameraPermissionTextProvider()
-                    }
-
-                    else -> return@forEach
-                },
-                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
-                    activity,
-                    permission
-                ),
-                onDismiss = vm::dismissDialog,
-                onOkClick = {
-                    vm.dismissDialog()
-                    multiplePermissionResultLauncher.launch(
-                        arrayOf(permission)
-                    )
-                },
-                onGoToAppSettingsClick = activity::openAppSettings,
-            )
-        }
-
-
     LaunchedEffect(Unit) {
         vm.receiveEvent(MovieInfoEvent.GetMovieInfo(movieId))
         vm.receiveEvent(MovieInfoEvent.IsMovieInBdCheck(movieId.toInt()))
         vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
     }
 
-    Column {
-        Box {
-            GlideImage(
-                imageModel = { movie.poster },
-                modifier = Modifier
-                    .height(500.dp)
-                    .clip(RoundedCornerShape(8.dp))
-            )
-            if (isActive) {
-                movieInfoState.qrCode?.asImageBitmap()?.let {
-                    Image(
-                        bitmap = it,
-                        contentDescription = "QR Code",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .align(Alignment.Center),
-                    )
+    MainContainer {onEvent ->
+        Column {
+            Box {
+                GlideImage(
+                    imageModel = { movie.poster },
+                    modifier = Modifier
+                        .height(500.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+                if (isActive) {
+                    movieInfoState.qrCode?.asImageBitmap()?.let {
+                        Image(
+                            bitmap = it,
+                            contentDescription = "QR Code",
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .align(Alignment.Center),
+                        )
+                    }
                 }
-            }
-            DetailNavigationButton(
-                modifier = Modifier.align(Alignment.BottomStart),
-                onClick = {
-                    isActive = !isActive
-                    cameraPermissionResultLauncher.launch(Manifest.permission.CAMERA)
-                },
-                imageVector = Icons.Default.Share,
-                description = "ShareQr",
-                color = Color.Black
-            )
+                DetailNavigationButton(
+                    modifier = Modifier.align(Alignment.BottomStart),
+                    onClick = {
+                        isActive = !isActive
+                        onEvent(PermissionEvents.RequestMultiplePermissions(arrayOf(
+                            Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)))
+                    },
+                    imageVector = Icons.Default.Share,
+                    description = "ShareQr",
+                    color = Color.Black
+                )
 
-            Text(
-                text = "${movie.rating}",
-                fontSize = 15.sp,
-                maxLines = 1,
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(5.dp)
-                    .background(
-                        color = Color.Green.copy(alpha = 0.7f),
-                        shape = RoundedCornerShape(5.dp)
-                    )
-            )
-            if (movieInfoState.statusMovie != StatusMovie.BOUGHT) {
-                DetailNavigationButton(
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    onClick = {
-                        if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
-                            vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                        } else {
-                            vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.INSTORE))
-                        }
-                    },
-                    imageVector = if (movieInfoState.statusMovie == StatusMovie.INSTORE)
-                        Icons.Default.Check
-                    else Icons.Default.ShoppingCart,
-                    description = if (movieInfoState.statusMovie == StatusMovie.INSTORE) "BOUGHT"
-                    else "BUY",
-                    color = if (movieInfoState.statusMovie == StatusMovie.INSTORE) Color.Green
-                    else Color.Black
+                Text(
+                    text = "${movie.rating}",
+                    fontSize = 15.sp,
+                    maxLines = 1,
+                    color = Color.Black,
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .background(
+                            color = Color.Green.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(5.dp)
+                        )
                 )
-                DetailNavigationButton(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    onClick = {
-                        if (movieInfoState.statusMovie == StatusMovie.FAVORITE)
-                            vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                        else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.ISFAVORITE))
-                    },
-                    imageVector = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Icons.Default.Favorite
-                    else Icons.Default.FavoriteBorder,
-                    description = "In favorite",
-                    color = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Color.Red
-                    else Color.Black,
-                )
-            } else {
-                Row(
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Куплено",
-                        modifier = Modifier
-                            .background(Color.Green),
-                        color = Color.Black
+                if (movieInfoState.statusMovie != StatusMovie.BOUGHT) {
+                    DetailNavigationButton(
+                        modifier = Modifier.align(Alignment.BottomEnd),
+                        onClick = {
+                            if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
+                                vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
+                            } else {
+                                vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.INSTORE))
+                            }
+                        },
+                        imageVector = if (movieInfoState.statusMovie == StatusMovie.INSTORE)
+                            Icons.Default.Check
+                        else Icons.Default.ShoppingCart,
+                        description = if (movieInfoState.statusMovie == StatusMovie.INSTORE) "BOUGHT"
+                        else "BUY",
+                        color = if (movieInfoState.statusMovie == StatusMovie.INSTORE) Color.Green
+                        else Color.Black
                     )
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "BOUGHT",
-                        tint = Color.Green,
+                    DetailNavigationButton(
+                        modifier = Modifier.align(Alignment.TopEnd),
+                        onClick = {
+                            if (movieInfoState.statusMovie == StatusMovie.FAVORITE)
+                                vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
+                            else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.ISFAVORITE))
+                        },
+                        imageVector = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Icons.Default.Favorite
+                        else Icons.Default.FavoriteBorder,
+                        description = "In favorite",
+                        color = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Color.Red
+                        else Color.Black,
                     )
+                } else {
+                    Row(
+                        modifier = Modifier.align(Alignment.BottomEnd),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Куплено",
+                            modifier = Modifier
+                                .background(Color.Green),
+                            color = Color.Black
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "BOUGHT",
+                            tint = Color.Green,
+                        )
+                    }
                 }
             }
+            DetailMovieCardDescription(movie)
         }
-        DetailMovieCardDescription(movie)
     }
+
+
 }

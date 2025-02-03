@@ -32,7 +32,6 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
         _state.update(reducer)
 
     }
-    val visiblePermissionDialoqQueue = mutableStateListOf<String>()
 
     internal abstract fun handleEvent(event: Event): State
 
@@ -52,19 +51,6 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
             operation().collect {
                 onSuccess(it)
             }
-        }
-    }
-
-    fun dismissDialog(){
-        visiblePermissionDialoqQueue.removeFirst()
-    }
-
-    fun onPermessionResult(
-        permission: String,
-        isGranted: Boolean
-    ){
-        if (!isGranted){
-            visiblePermissionDialoqQueue.add(permission)
         }
     }
 }

@@ -8,7 +8,8 @@ data class InfoMovieState(
     val id: String = "",
     val movieEntity: Movie = Movie(0,"","","","","",0f),
     val statusMovie: StatusMovie = StatusMovie.EMPTY,
-    val qrCode: Bitmap? = null
+    val qrCode: Bitmap? = null,
+    val isLoading: Boolean = true
 ): BasedViewModel.State
 
 enum class StatusMovie(){

@@ -45,10 +45,10 @@ interface PermissionTextProvider{
 class CameraPermissionTextProvider: PermissionTextProvider{
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         return if (isPermanentlyDeclined){
-            "Для работы с камерой необходимо разрешение которые вы запретили навсегда" +
-                    "перейдите пожалуйста в настройки "
+            "Для работы приложения необходимы разрешения, которые вы запретили навсегда" +
+                    " перейдите пожалуйста в настройки и исправьте это"
         }else{
-            " ну типа галерея тоже нужна"
+            "Разрешение необходимо для корректной работы программы, пожалуйста предоставьте его"
         }
     }
 }

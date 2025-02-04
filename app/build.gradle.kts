@@ -112,6 +112,7 @@ dependencies {
     implementation("com.github.skydoves:landscapist-glide:2.4.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
 
     //qr-code
     implementation("com.google.zxing:core:3.5.2")

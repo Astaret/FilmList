@@ -1,9 +1,6 @@
 package com.example.filmlist.presentation.detailMovies.ui.compose.Screens
 
 import android.Manifest
-import android.app.Activity
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -32,29 +29,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.filmlist.domain.states.MovieState
-import com.example.filmlist.presentation.core.openAppSettings
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
-import com.example.filmlist.presentation.ui_kit.ViewModels.PermissionsDialogViewModel
-import com.example.filmlist.presentation.ui_kit.components.CameraPermissionTextProvider
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
-import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
 import com.example.filmlist.presentation.ui_kit.components.buttons.DetailNavigationButton
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.detail_movie_card_components.DetailMovieCardDescription
-import com.example.filmlist.presentation.ui_kit.events.PermissionEvents
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MovieDetailScreen(
     movieId: String,
-    vm: DetailMovieViewModel = hiltViewModel(),
+    vm: DetailMovieViewModel = hiltViewModel()
 ) {
 
     val movieInfoState by vm.state.collectAsState()
@@ -63,13 +53,23 @@ fun MovieDetailScreen(
 
     val movie = movieInfoState.movieEntity
 
+
     LaunchedEffect(Unit) {
         vm.receiveEvent(MovieInfoEvent.GetMovieInfo(movieId))
         vm.receiveEvent(MovieInfoEvent.IsMovieInBdCheck(movieId.toInt()))
         vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
     }
 
-    MainContainer {onEvent ->
+    val permissions =
+        listOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA,
+        )
+
+
+    MainContainer(
+        permissions = permissions
+    ) {
         Column {
             Box {
                 GlideImage(
@@ -79,6 +79,7 @@ fun MovieDetailScreen(
                         .clip(RoundedCornerShape(8.dp))
                 )
                 if (isActive) {
+                    it()
                     movieInfoState.qrCode?.asImageBitmap()?.let {
                         Image(
                             bitmap = it,
@@ -93,8 +94,6 @@ fun MovieDetailScreen(
                     modifier = Modifier.align(Alignment.BottomStart),
                     onClick = {
                         isActive = !isActive
-                        onEvent(PermissionEvents.RequestMultiplePermissions(arrayOf(
-                            Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)))
                     },
                     imageVector = Icons.Default.Share,
                     description = "ShareQr",
@@ -166,6 +165,4 @@ fun MovieDetailScreen(
             DetailMovieCardDescription(movie)
         }
     }
-
-
 }

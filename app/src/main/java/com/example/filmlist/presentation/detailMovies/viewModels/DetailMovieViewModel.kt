@@ -89,6 +89,11 @@ class DetailMovieViewModel @Inject constructor(
 
 
     private fun getMovieInfoById(id: String): InfoMovieState {
+        setState {
+            copy(
+                isLoading = true
+            )
+        }
         Log.d("Movie", "getMovieInfoById: $id")
         return if (id.isNullOrEmpty()) {
             println("Error $id is empty or null")
@@ -97,7 +102,7 @@ class DetailMovieViewModel @Inject constructor(
             handleOperation(
                 operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
                 onSuccess = {
-                    setState { state.value.copy(movieEntity = it.movie) }
+                    setState { state.value.copy(movieEntity = it.movie, isLoading = false) }
                     state.value.copy(movieEntity = it.movie) }
             )
             state.value.copy()
@@ -106,6 +111,11 @@ class DetailMovieViewModel @Inject constructor(
 
 
     private fun getQrCode(id:String): InfoMovieState{
+        setState {
+            copy(
+                isLoading = true
+            )
+        }
         val bitMatrix: BitMatrix = MultiFormatWriter().encode(
             id, BarcodeFormat.QR_CODE, 512, 512
         )
@@ -121,7 +131,8 @@ class DetailMovieViewModel @Inject constructor(
         }
         setState {
             copy(
-                qrCode = bitmap
+                qrCode = bitmap,
+                isLoading = false
             )
         }
 

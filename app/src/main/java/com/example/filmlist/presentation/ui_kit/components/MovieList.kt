@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
+import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 
 @Composable
 fun MovieList(movieList: List<Movie>,

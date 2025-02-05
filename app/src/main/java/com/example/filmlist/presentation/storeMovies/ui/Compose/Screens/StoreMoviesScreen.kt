@@ -39,7 +39,7 @@ import androidx.navigation.NavController
 import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.storeMovies.events.PurchaseEvent
 import com.example.filmlist.presentation.storeMovies.viewModels.StoreViewModel
-import com.example.filmlist.presentation.ui_kit.components.MovieCard
+import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

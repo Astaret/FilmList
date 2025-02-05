@@ -21,7 +21,8 @@ import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.viewModels.SearchMovieViewModel
-import com.example.filmlist.presentation.ui_kit.components.MovieCard
+import com.example.filmlist.presentation.ui_kit.components.MainContainer
+import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")

@@ -13,7 +13,7 @@ import com.example.filmlist.presentation.core.openAppSettings
 
 @Composable
 fun PermissionDialog(
-    isPermanentlyDeclined: Boolean = false,
+    isPermanentlyDeclined: Boolean = true,
     showDialog: Boolean = true
 ) {
     val context = LocalContext.current

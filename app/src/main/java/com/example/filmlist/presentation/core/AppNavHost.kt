@@ -29,7 +29,7 @@ fun AppNavHost() {
         composable<SearchScreenRoute> {
             SearchScreen(navController = navController)
             BackHandler {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         }
 
@@ -37,14 +37,14 @@ fun AppNavHost() {
             val movieId: DetailScreenRoute = it.toRoute()
             MovieDetailScreen(movieId = movieId.id.toString())
             BackHandler {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         }
 
         composable<FavoriteScreenRoute> {
             favoriteMoviesScreen(navController = navController)
             BackHandler {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         }
 
@@ -53,7 +53,7 @@ fun AppNavHost() {
                 navController = navController
             )
             BackHandler {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         }
 
@@ -62,7 +62,7 @@ fun AppNavHost() {
                 navController = navController
             )
             BackHandler {
-                navController.popBackStack()
+                navController.navigateUp()
             }
         }
 

@@ -30,13 +30,10 @@ class FavoriteMoviesViewModel @Inject constructor(
             operation = {getMovieListFromBdUseCase(
                 getListMovieState(ListMovieState.ISFAVORITE))},
             onSuccess = {
-                setState {
-                    copy(
-                        movieList = it.listMovies,
-                        empty = it.listMovies.isEmpty()
-                    )
-                }
-                Log.d("Movie", "showAllFavorites: ${state.value.movieList.map { it.title }}")
+                FavoriteState(
+                    movieList = it.listMovies,
+                    empty = it.listMovies.isEmpty()
+                )
             }
         )
         return state.value

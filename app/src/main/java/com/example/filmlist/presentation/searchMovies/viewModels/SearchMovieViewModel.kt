@@ -36,16 +36,14 @@ class SearchMovieViewModel @Inject constructor(
             operation = { loadDataFromSearchUseCase(GetName(query))},
             onSuccess = {
                 val movies = it.movieList
-                setState {
-                    copy(
-                        movieList = movies,
-                        searchResult = if (query.isNotEmpty()) {
-                            movies.filter { it.title.contains(query, ignoreCase = true) }
-                        } else {
-                            movies
-                        }
-                    )
-                }
+                state.value.copy(
+                    movieList = movies,
+                    searchResult = if (query.isNotEmpty()) {
+                        movies.filter { it.title.contains(query, ignoreCase = true) }
+                    } else {
+                        movies
+                    }
+                )
             }
         )
     }

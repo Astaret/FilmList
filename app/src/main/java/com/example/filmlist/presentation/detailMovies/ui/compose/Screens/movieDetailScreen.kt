@@ -58,9 +58,7 @@ fun MovieDetailScreen(
 
 
     LaunchedEffect(Unit) {
-        vm.receiveEvent(MovieInfoEvent.GetMovieInfo(movieId))
-        vm.receiveEvent(MovieInfoEvent.IsMovieInBdCheck(movieId.toInt()))
-        vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
+        vm.receiveEvent(MovieInfoEvent.GetAllInfoAboutMovie(movieId))
     }
 
     val permissions = remember {

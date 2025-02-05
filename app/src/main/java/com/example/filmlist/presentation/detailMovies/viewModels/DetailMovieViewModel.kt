@@ -38,7 +38,14 @@ class DetailMovieViewModel @Inject constructor(
             is MovieInfoEvent.IsMovieInBdCheck -> isMovieInBd(event.id)
             is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList()
             is MovieInfoEvent.GetQrCode -> getQrCode(event.id)
+            is MovieInfoEvent.GetAllInfoAboutMovie -> getAllInfoAboutMovie(event.id)
         }
+    }
+    private fun getAllInfoAboutMovie(id: String): InfoMovieState {
+        isMovieInBd(id.toInt())
+        getMovieInfoById(id)
+        getQrCode(id)
+        return state.value
     }
 
     private fun isMovieInBd(id: Int): InfoMovieState {
@@ -56,12 +63,11 @@ class DetailMovieViewModel @Inject constructor(
                     } else {
                         StatusMovie.BOUGHT
                     }
-                    setState {
-                        copy(
-                            statusMovie = statusMovie,
-                            id = it.movieIdEntity.id.toString(),
-                            movieEntity = getMovieInfoById(it.movieIdEntity.id.toString()).movieEntity
-                        )}
+                    state.value.copy(
+                        statusMovie = statusMovie,
+                        id = it.movieIdEntity.id.toString(),
+                        movieEntity = getMovieInfoById(it.movieIdEntity.id.toString()).movieEntity
+                    )
                 } else {
                     state.value.copy(statusMovie = StatusMovie.EMPTY)
                 }
@@ -74,48 +80,43 @@ class DetailMovieViewModel @Inject constructor(
         Log.d("Movie", "addMovieToFav: $movieState")
         handleOperation(
             operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, movieState)) },
-            onSuccess = { setState {  copy(statusMovie = movieState.toMovieStatus())} }
+            onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
         )
         return state.value
     }
 
-    private fun deleteMovieFromDataBaseList():InfoMovieState{
+    private fun deleteMovieFromDataBaseList(): InfoMovieState {
         handleOperation(
-            operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, MovieState.EMPTY)) },
-            onSuccess = { setState {  copy(statusMovie = MovieState.EMPTY.toMovieStatus())} }
+            operation = {
+                putMovieToDbUseCase(
+                    getMovieInfo(
+                        state.value.movieEntity,
+                        MovieState.EMPTY
+                    )
+                )
+            },
+            onSuccess = { state.value.copy(statusMovie = MovieState.EMPTY.toMovieStatus()) }
         )
         return state.value
     }
 
 
     private fun getMovieInfoById(id: String): InfoMovieState {
-        setState {
-            copy(
-                isLoading = true
-            )
-        }
         Log.d("Movie", "getMovieInfoById: $id")
-        return if (id.isNullOrEmpty()) {
-            println("Error $id is empty or null")
-            state.value
-        } else {
-            handleOperation(
-                operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
-                onSuccess = {
-                    setState { state.value.copy(movieEntity = it.movie, isLoading = false) }
-                    state.value.copy(movieEntity = it.movie) }
-            )
-            state.value.copy()
-        }
+        handleOperation(
+            operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
+            onSuccess = {
+                InfoMovieState(
+                    movieEntity = it.movie,
+                    isLoading = false
+                )
+            }
+        )
+        return state.value
     }
 
 
-    private fun getQrCode(id:String): InfoMovieState{
-        setState {
-            copy(
-                isLoading = true
-            )
-        }
+    private fun getQrCode(id: String): InfoMovieState {
         val bitMatrix: BitMatrix = MultiFormatWriter().encode(
             id, BarcodeFormat.QR_CODE, 512, 512
         )
@@ -129,13 +130,9 @@ class DetailMovieViewModel @Inject constructor(
                 bitmap.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
             }
         }
-        setState {
-            copy(
-                qrCode = bitmap,
-                isLoading = false
-            )
-        }
-
-        return state.value
+        return state.value.copy(
+            qrCode = bitmap,
+            isLoading = false
+        )
     }
 }

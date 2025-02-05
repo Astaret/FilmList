@@ -8,26 +8,9 @@ import com.example.filmlist.presentation.ui_kit.components.permissions.Permissio
 
 @Composable
 fun MainContainer(
-    permissions: List<String>? = null,
-    content: @Composable (requestPermission: @Composable () -> Unit) -> Unit
+    permissionRequest: PermissionRequest,
+    content: @Composable () -> Unit
 ) {
-    val hasPermission = remember { mutableStateOf(false) }
-
-    val requestPermission: @Composable ()-> Unit = {
-        if (permissions != null) {
-            PermissionHandler(
-                PermissionRequest(
-                    permissions = permissions,
-                    permissionDialog = {
-                        PermissionDialog(permissions = permissions, showDialog = true)
-                    },
-                    onGranted = {
-                        hasPermission.value = true
-                    }
-                )
-            )
-        }
-    }
-
-    content(requestPermission)
+    content()
+    PermissionHandler(permissionRequest = permissionRequest)
 }

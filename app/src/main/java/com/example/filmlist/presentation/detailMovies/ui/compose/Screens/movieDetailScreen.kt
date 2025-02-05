@@ -1,6 +1,7 @@
 package com.example.filmlist.presentation.detailMovies.ui.compose.Screens
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -37,8 +38,10 @@ import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
+import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
 import com.example.filmlist.presentation.ui_kit.components.buttons.DetailNavigationButton
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.detail_movie_card_components.DetailMovieCardDescription
+import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
@@ -60,15 +63,13 @@ fun MovieDetailScreen(
         vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
     }
 
-    val permissions =
-        listOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.CAMERA,
-        )
+    val permissions = remember {
+        mutableStateOf(PermissionRequest())
+    }
 
 
     MainContainer(
-        permissions = permissions
+        permissionRequest = permissions.value
     ) {
         Column {
             Box {
@@ -79,7 +80,6 @@ fun MovieDetailScreen(
                         .clip(RoundedCornerShape(8.dp))
                 )
                 if (isActive) {
-                    it()
                     movieInfoState.qrCode?.asImageBitmap()?.let {
                         Image(
                             bitmap = it,
@@ -94,6 +94,14 @@ fun MovieDetailScreen(
                     modifier = Modifier.align(Alignment.BottomStart),
                     onClick = {
                         isActive = !isActive
+                        Log.d("Movie", "MovieDetailScreen: ${permissions.value}")
+                        permissions.value = PermissionRequest(
+                            permissions = listOf(
+                                Manifest.permission.CAMERA,
+                                Manifest.permission.RECORD_AUDIO),
+                            permissionDialog = { PermissionDialog() }
+                        )
+                        Log.d("Movie", "MovieDetailScreen: ${permissions.value}")
                     },
                     imageVector = Icons.Default.Share,
                     description = "ShareQr",

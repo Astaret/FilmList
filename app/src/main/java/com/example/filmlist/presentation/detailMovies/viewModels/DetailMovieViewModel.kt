@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.util.Log
 import com.example.filmlist.data.local.db.EntityState
+import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.data.mappers.toMovieStatus
 import com.example.filmlist.domain.states.MovieState
 import com.example.filmlist.domain.usecases.get_useCases.GetId
@@ -107,8 +108,8 @@ class DetailMovieViewModel @Inject constructor(
             operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
             onSuccess = {
                 InfoMovieState(
+                    id = it.movie.id.toString(),
                     movieEntity = it.movie,
-                    isLoading = false
                 )
             }
         )
@@ -130,9 +131,13 @@ class DetailMovieViewModel @Inject constructor(
                 bitmap.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
             }
         }
-        return state.value.copy(
-            qrCode = bitmap,
-            isLoading = false
-        )
+
+        setState {
+            state.value.copy(
+                qrCode = bitmap
+            )
+        }
+
+        return state.value.copy(qrCode = bitmap)
     }
 }

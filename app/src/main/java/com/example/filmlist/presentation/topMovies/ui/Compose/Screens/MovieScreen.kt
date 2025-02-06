@@ -125,7 +125,7 @@ fun MovieScreen(
             Box(modifier =  Modifier.fillMaxSize()){
                 MovieList(movieList = movieList, listState = listState, navController = navController)
                 if (showScanner){
-                    QrCodeScannerScreen{}
+                    QrCodeScannerScreen(navController){}
                 }
                 IconButton(
                     onClick = {

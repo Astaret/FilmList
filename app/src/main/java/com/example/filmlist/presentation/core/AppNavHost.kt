@@ -35,7 +35,7 @@ fun AppNavHost() {
 
         composable<DetailScreenRoute> {
             val movieId: DetailScreenRoute = it.toRoute()
-            MovieDetailScreen(movieId = movieId.id.toString())
+            MovieDetailScreen(movieId = movieId.id.toString(),navController = navController)
             BackHandler {
                 navController.navigateUp()
             }

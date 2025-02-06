@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
@@ -30,9 +32,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.filmlist.domain.states.MovieState
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
@@ -47,6 +51,7 @@ import com.skydoves.landscapist.glide.GlideImage
 @Composable
 fun MovieDetailScreen(
     movieId: String,
+    navController: NavController,
     vm: DetailMovieViewModel = hiltViewModel()
 ) {
 
@@ -77,7 +82,9 @@ fun MovieDetailScreen(
                         .height(500.dp)
                         .clip(RoundedCornerShape(8.dp))
                 )
+
                 if (isActive) {
+                    Log.d("Movie", "MovieDetailScreen: ${movieInfoState.qrCode}")
                     movieInfoState.qrCode?.asImageBitmap()?.let {
                         Image(
                             bitmap = it,
@@ -89,15 +96,22 @@ fun MovieDetailScreen(
                     }
                 }
                 DetailNavigationButton(
+                    modifier = Modifier.align(Alignment.TopStart),
+                    onClick = { navController.navigateUp() },
+                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    description = "Back",
+                    color = Color.Black
+                )
+                DetailNavigationButton(
                     modifier = Modifier.align(Alignment.BottomStart),
                     onClick = {
                         isActive = !isActive
-                        Log.d("Movie", "MovieDetailScreen: $isActive")
-                        Log.d("Movie", "MovieDetailScreen: ${permissions.value}")
+                        vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
                         permissions.value = PermissionRequest(
                             permissions = listOf(
                                 Manifest.permission.CAMERA,
-                                Manifest.permission.RECORD_AUDIO),
+                                Manifest.permission.RECORD_AUDIO
+                            ),
                             permissionDialog = { PermissionDialog() }
                         )
                         Log.d("Movie", "MovieDetailScreen: ${permissions.value}")
@@ -114,6 +128,7 @@ fun MovieDetailScreen(
                     color = Color.Black,
                     modifier = Modifier
                         .padding(5.dp)
+                        .align(Alignment.TopCenter)
                         .background(
                             color = Color.Green.copy(alpha = 0.7f),
                             shape = RoundedCornerShape(5.dp)

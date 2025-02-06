@@ -132,12 +132,6 @@ class DetailMovieViewModel @Inject constructor(
             }
         }
 
-        setState {
-            state.value.copy(
-                qrCode = bitmap
-            )
-        }
-
         return state.value.copy(qrCode = bitmap)
     }
 }

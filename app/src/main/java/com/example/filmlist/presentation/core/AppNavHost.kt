@@ -65,6 +65,5 @@ fun AppNavHost() {
                 navController.navigateUp()
             }
         }
-
     }
 }

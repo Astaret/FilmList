@@ -92,6 +92,7 @@ fun MovieDetailScreen(
                     modifier = Modifier.align(Alignment.BottomStart),
                     onClick = {
                         isActive = !isActive
+                        Log.d("Movie", "MovieDetailScreen: $isActive")
                         Log.d("Movie", "MovieDetailScreen: ${permissions.value}")
                         permissions.value = PermissionRequest(
                             permissions = listOf(

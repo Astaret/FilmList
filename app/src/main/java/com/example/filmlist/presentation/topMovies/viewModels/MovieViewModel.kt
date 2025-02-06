@@ -40,7 +40,7 @@ class MovieViewModel @Inject constructor(
     private fun loadPage(): TopMovieState{
         handleOperation(
             operation = {getTotalPagesUseCase(Params)},
-            onSuccess = {setState { copy(totalPages = it.pages) }}
+            onSuccess = { state.value.copy(totalPages = it.pages) }
         )
         return state.value
     }
@@ -50,15 +50,15 @@ class MovieViewModel @Inject constructor(
             operation = {loadDataUseCase(getPage(page))},
             onSuccess = {
                 val newList = it.movieList
-                setState {
-                    copy(movieList = (this.movieList + newList).distinctBy { it.id },
-                        currentPage = page,
-                        totalPages = totalPages)
-                }
                 savedStateHandle["movieList"] = state.value.movieList
                 savedStateHandle["currentPage"] = page
                 savedStateHandle["totalPages"] = state.value.totalPages
-                Log.d("Movie", "loadData -> ${state.value.movieList.map { it.title }} ")
+                Log.d("Movie", "loadData: SUCCES ${state.value.movieList}")
+                state.value.copy(
+                    movieList = (state.value.movieList + newList).distinctBy { it.id },
+                    currentPage = page,
+                    totalPages = state.value.totalPages
+                )
             }
         )
         return state.value

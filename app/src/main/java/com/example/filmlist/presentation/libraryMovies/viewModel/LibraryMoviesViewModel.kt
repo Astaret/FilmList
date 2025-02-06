@@ -34,14 +34,10 @@ class LibraryMoviesViewModel @Inject constructor(
                 )
             },
             onSuccess = {
-
-                setState {
-                    copy(
-                        movieList = it.listMovies,
-                        empty = it.listMovies.isNullOrEmpty()
-                    )
-                }
-                Log.d("Movie", "showAllBought: ${state.value}")
+                state.value.copy(
+                    movieList = it.listMovies,
+                    empty = it.listMovies.isNullOrEmpty()
+                )
             }
         )
         return state.value

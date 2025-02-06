@@ -37,12 +37,12 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    private fun putMovieToDb(movie: Movie, state: MovieState) {
+    private fun putMovieToDb(movie: Movie, states: MovieState) {
         handleOperation(
             operation = {
-                putMovieToDbUseCase(getMovieInfo(movie, state))
+                putMovieToDbUseCase(getMovieInfo(movie, states))
             },
-            onSuccess = {}
+            onSuccess = { state.value.copy() }
         )
     }
 
@@ -59,13 +59,11 @@ class StoreViewModel @Inject constructor(
                     Log.d("Movie", "buyMovieFun: BOUGHT ${it.title}")
                 }
 
-                setState {
-                    copy(
-                        movieList = emptyList(),
-                        totalPrice = 0.0,
-                        empty = true
-                    )
-                }
+                state.value.copy(
+                    movieList = emptyList(),
+                    totalPrice = 0.0,
+                    empty = true
+                )
             }
         )
         return state.value
@@ -80,13 +78,11 @@ class StoreViewModel @Inject constructor(
                 }
                 Log.d("Movie", "showAllMoviesInStore: $listBoughtMovies")
                 val totalSum = listBoughtMovies.sumOf { it.price.toDouble()}
-                setState {
-                    copy(
-                        movieList = listBoughtMovies,
-                        totalPrice = totalSum,
-                        empty = listBoughtMovies.isEmpty()
-                    )
-                }
+                state.value.copy(
+                    movieList = listBoughtMovies,
+                    totalPrice = totalSum,
+                    empty = listBoughtMovies.isEmpty()
+                )
             }
         )
         return state.value

@@ -13,9 +13,8 @@ import com.example.filmlist.presentation.core.openAppSettings
 
 @Composable
 fun PermissionDialog(
-    permissions: List<String>,
-    isPermanentlyDeclined: Boolean = false,
-    showDialog: Boolean
+    isPermanentlyDeclined: Boolean = true,
+    showDialog: Boolean = true
 ) {
     val context = LocalContext.current
     val activity = context as? Activity ?: return
@@ -26,9 +25,7 @@ fun PermissionDialog(
             title = { Text("Требуются разрешения") },
             text = {
                 Column {
-                    permissions.forEach {
-                        Text("Доступ к \"$it\" необходим для корректной работы.")
-                    }
+                    Text("Доступ необходим для корректной работы.")
                     if (isPermanentlyDeclined) {
                         Text("Вы запретили эти разрешения навсегда. Откройте настройки, чтобы разрешить.")
                     }

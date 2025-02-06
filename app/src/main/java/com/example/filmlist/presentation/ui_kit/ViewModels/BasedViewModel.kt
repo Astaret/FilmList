@@ -35,21 +35,21 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
 
     internal abstract fun handleEvent(event: Event): State
 
-    fun receiveEvent(
-        event: Event) {
+    fun receiveEvent(event: Event) {
         viewModelScope.launch(dispatcher) {
             _state.emit(handleEvent(event))
-            setState { handleEvent(event) }
         }
     }
 
     protected fun <T> handleOperation(
         operation: suspend () -> Flow<T>,
-        onSuccess: (T) -> Unit
-    ) {
+        onSuccess: (T) -> State
+    ){
         viewModelScope.launch(dispatcher) {
             operation().collect {
-                onSuccess(it)
+                setState {
+                    onSuccess(it)
+                }
             }
         }
     }

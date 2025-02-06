@@ -1,7 +1,9 @@
 package com.example.filmlist.presentation.ui_kit.components.permissions
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -16,22 +18,21 @@ fun PermissionHandler(
         permissions = permissionRequest.permissions.orEmpty()
     )
 
-    val isGranted = remember { mutableStateOf(permissionState.allPermissionsGranted) }
-
     LaunchedEffect(permissionRequest) {
-        if (!isGranted.value){
+        if (!permissionState.allPermissionsGranted) {
             permissionState.launchMultiplePermissionRequest()
         }
     }
 
-    when{
+    when {
         permissionState.allPermissionsGranted -> {
             permissionRequest.onGranted()
-            isGranted.value = true
         }
+
         permissionState.shouldShowRationale -> {
             permissionRequest.permissionDialog()
         }
+
         else -> {
             permissionRequest.permissionDialog()
         }

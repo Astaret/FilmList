@@ -9,6 +9,7 @@ import androidx.navigation.toRoute
 import com.example.filmlist.presentation.detailMovies.ui.compose.Screens.MovieDetailScreen
 import com.example.filmlist.presentation.favoritesMovies.ui.compose.Screens.favoriteMoviesScreen
 import com.example.filmlist.presentation.libraryMovies.ui.compose.screens.LibraryScreen
+import com.example.filmlist.presentation.qrCameraScreen.ui.compose.screens.CameraScreen
 import com.example.filmlist.presentation.searchMovies.ui.compose.Screens.SearchScreen
 import com.example.filmlist.presentation.storeMovies.ui.Compose.Screens.StoreScreen
 import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScreen
@@ -59,6 +60,14 @@ fun AppNavHost() {
 
         composable<LibraryScreenRoute> {
             LibraryScreen(
+                navController = navController
+            )
+            BackHandler {
+                navController.navigateUp()
+            }
+        }
+        composable<CameraScreenRoute> {
+            CameraScreen(
                 navController = navController
             )
             BackHandler {

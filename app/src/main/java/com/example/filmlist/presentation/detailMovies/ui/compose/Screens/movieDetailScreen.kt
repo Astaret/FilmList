@@ -109,8 +109,7 @@ fun MovieDetailScreen(
                         vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
                         permissions.value = PermissionRequest(
                             permissions = listOf(
-                                Manifest.permission.CAMERA,
-                                Manifest.permission.RECORD_AUDIO
+                                Manifest.permission.CAMERA
                             ),
                             permissionDialog = { PermissionDialog() }
                         )

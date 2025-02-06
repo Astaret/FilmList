@@ -11,12 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -33,11 +32,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.filmlist.presentation.core.CameraScreenRoute
 import com.example.filmlist.presentation.core.FavoriteScreenRoute
 import com.example.filmlist.presentation.core.LibraryScreenRoute
 import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.core.StoreScreenRoute
-import com.example.filmlist.presentation.qrCameraScreen.ui.compose.screens.QrCodeScannerScreen
 import com.example.filmlist.presentation.topMovies.viewModels.MovieViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
@@ -59,6 +58,12 @@ fun MovieScreen(
     val isAtEnd = listState.layoutInfo.visibleItemsInfo
         .lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 3
 
+
+    if (showScanner){
+        LaunchedEffect(Unit) {
+            navController.navigate(CameraScreenRoute)
+        }
+    }
 
     LaunchedEffect(isAtEnd) {
         if (isAtEnd) {
@@ -124,9 +129,6 @@ fun MovieScreen(
             }
             Box(modifier =  Modifier.fillMaxSize()){
                 MovieList(movieList = movieList, listState = listState, navController = navController)
-                if (showScanner){
-                    QrCodeScannerScreen(navController){}
-                }
                 IconButton(
                     onClick = {
                         permissions.value = PermissionRequest(
@@ -149,7 +151,7 @@ fun MovieScreen(
                         disabledContainerColor = Color.Transparent,)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.AddCircle,
+                        imageVector = Icons.Default.Info,
                         contentDescription = "Search_screen",
                         tint = Color.Black
                     )

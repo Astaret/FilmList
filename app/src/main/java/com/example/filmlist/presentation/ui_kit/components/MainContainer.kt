@@ -19,6 +19,4 @@ fun MainContainer(
         LoadingState.Loading -> LoadingIndicator()
         LoadingState.Succes -> content()
     }
-
-
 }

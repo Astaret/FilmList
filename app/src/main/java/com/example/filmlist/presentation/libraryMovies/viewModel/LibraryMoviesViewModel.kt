@@ -30,6 +30,7 @@ class LibraryMoviesViewModel @Inject constructor(
                     getListMovieState(ListMovieState.ISBOUGHT)
                 )
             },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 state.value.copy(
                     movieList = it.listMovies,

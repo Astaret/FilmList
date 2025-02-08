@@ -38,6 +38,7 @@ class MovieViewModel @Inject constructor(
     private fun loadPage(): TopMovieState{
         handleOperation(
             operation = {getTotalPagesUseCase(Params)},
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = { state.value.copy(totalPages = it.pages, isLoading = LoadingState.Succes) }
         )
         return state.value
@@ -46,6 +47,7 @@ class MovieViewModel @Inject constructor(
     private fun loadData(page: Int): TopMovieState {
         handleOperation(
             operation = {loadDataUseCase(getPage(page))},
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 val newList = it.movieList
                 savedStateHandle["movieList"] = state.value.movieList

@@ -34,8 +34,8 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 @Composable
 fun QrCodeScannerScreen(
     navController: NavController,
-    onQrCodeScanned: (String) -> Unit,
-    qrCodeViewModel: QrCodeViewModel = hiltViewModel()
+    qrCodeViewModel: QrCodeViewModel = hiltViewModel(),
+    onQrCodeScanned: (String) -> Unit
 ) {
     var scannedQr by remember { mutableStateOf<String?>(null) }
     var scanned by remember { mutableStateOf(false) }

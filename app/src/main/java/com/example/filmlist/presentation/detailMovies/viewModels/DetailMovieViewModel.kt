@@ -51,6 +51,7 @@ class DetailMovieViewModel @Inject constructor(
     private fun isMovieInBd(id: Int): InfoMovieState {
         handleOperation(
             operation = { getMovieIdFromBdUseCase(GetId(id)) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 if (it.movieIdEntity != null) {
                     val statusMovie = if (it.movieIdEntity.entityState != EntityState.ISBOUGHT) {
@@ -80,6 +81,7 @@ class DetailMovieViewModel @Inject constructor(
         Log.d("Movie", "addMovieToFav: $movieState")
         handleOperation(
             operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, movieState)) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
         )
         return state.value
@@ -95,6 +97,7 @@ class DetailMovieViewModel @Inject constructor(
                     )
                 )
             },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = { state.value.copy(statusMovie = MovieState.EMPTY.toMovieStatus()) }
         )
         return state.value
@@ -105,6 +108,7 @@ class DetailMovieViewModel @Inject constructor(
         Log.d("Movie", "getMovieInfoById: $id")
         handleOperation(
             operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 InfoMovieState(
                     id = it.movie.id.toString(),

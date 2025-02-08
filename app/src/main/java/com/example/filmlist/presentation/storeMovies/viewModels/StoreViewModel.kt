@@ -40,6 +40,7 @@ class StoreViewModel @Inject constructor(
             operation = {
                 putMovieToDbUseCase(getMovieInfo(movie, states))
             },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = { state.value.copy() }
         )
     }
@@ -49,6 +50,7 @@ class StoreViewModel @Inject constructor(
             operation = {
                 getMovieListFromBdUseCase(getListMovieState(ListMovieState.INSTORE))
             },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 val remainingMovies = it.listMovies
 
@@ -71,6 +73,7 @@ class StoreViewModel @Inject constructor(
     private fun showAllMoviesInStore():StoreMovState {
         handleOperation(
             operation = {getMovieListFromBdUseCase(getListMovieState(ListMovieState.INSTORE))},
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = { movie ->
                 val listBoughtMovies = movie.listMovies.map {movie ->
                     movie.copy(price = movie.rating.toFloat() * 550.20f)

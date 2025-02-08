@@ -35,6 +35,7 @@ class SearchMovieViewModel @Inject constructor(
     private fun loadDataFromSearch(query: String) {
         handleOperation(
             operation = { loadDataFromSearchUseCase(GetName(query))},
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 val movies = it.movieList
                 state.value.copy(

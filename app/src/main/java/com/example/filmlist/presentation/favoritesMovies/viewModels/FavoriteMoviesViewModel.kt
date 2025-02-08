@@ -27,6 +27,7 @@ class FavoriteMoviesViewModel @Inject constructor(
         handleOperation(
             operation = {getMovieListFromBdUseCase(
                 getListMovieState(ListMovieState.ISFAVORITE))},
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 FavoriteState(
                     movieList = it.listMovies,

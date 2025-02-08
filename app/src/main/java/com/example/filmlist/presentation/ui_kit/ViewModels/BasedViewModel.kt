@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -16,7 +17,7 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
     initialState: State
 ) : ViewModel() {
 
-    interface State{
+    interface State {
         val isLoading: LoadingState
     }
 
@@ -32,7 +33,6 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
 
     protected fun setState(reducer: State.() -> State) {
         _state.update(reducer)
-
     }
 
     internal abstract fun handleEvent(event: Event): State
@@ -45,14 +45,16 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
 
     protected fun <T> handleOperation(
         operation: suspend () -> Flow<T>,
-        onSuccess: (T) -> State
-    ){
+        onSuccess: (T) -> State,
+        onError: (Throwable) -> State
+    ) {
         viewModelScope.launch(dispatcher) {
-            operation().collect {
-                setState {
-                    onSuccess(it)
+            operation()
+                .catch { throwable ->
+                    setState { onError(throwable) }
+                }.collect { value ->
+                    setState { onSuccess(value) }
                 }
-            }
         }
     }
 }

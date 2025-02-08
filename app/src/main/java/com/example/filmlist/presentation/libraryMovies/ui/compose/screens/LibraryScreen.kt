@@ -26,7 +26,9 @@ import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
 import com.example.filmlist.presentation.libraryMovies.viewModel.LibraryMoviesViewModel
+import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
+import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 
 @Composable
 fun LibraryScreen(
@@ -41,12 +43,17 @@ fun LibraryScreen(
     val librMovieState by vm.state.collectAsState()
     val movieList = librMovieState.movieList
 
-    if (!librMovieState.empty){
-        libraryListMovie(
-            movieList = movieList,
-            navController = navController)
-    }else{
-        EmptyLibraryScreen({navController.navigate(MainScreenRoute)})
+    MainContainer(
+        permissionRequest = PermissionRequest(),
+        isLoading = librMovieState.isLoading
+    ) {
+        if (!librMovieState.empty){
+            libraryListMovie(
+                movieList = movieList,
+                navController = navController)
+        }else{
+            EmptyLibraryScreen({navController.navigate(MainScreenRoute)})
+        }
     }
 
 }

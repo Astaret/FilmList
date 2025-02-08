@@ -59,7 +59,7 @@ fun MovieScreen(
         .lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 3
 
 
-    if (showScanner){
+    if (showScanner) {
         LaunchedEffect(Unit) {
             navController.navigate(CameraScreenRoute)
         }
@@ -80,7 +80,10 @@ fun MovieScreen(
         mutableStateOf(PermissionRequest())
     }
 
-    MainContainer(permissions.value) {
+    MainContainer(
+        permissionRequest = permissions.value,
+        isLoading = topMovieState.isLoading
+        ) {
         Column {
             Row(
                 modifier = Modifier
@@ -88,8 +91,8 @@ fun MovieScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = {navController.navigate(FavoriteScreenRoute) }
-                ){
+                    onClick = { navController.navigate(FavoriteScreenRoute) }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
                         contentDescription = "Favorite_screen",
@@ -98,8 +101,8 @@ fun MovieScreen(
                 }
 
                 IconButton(
-                    onClick = { navController.navigate(LibraryScreenRoute)}
-                ){
+                    onClick = { navController.navigate(LibraryScreenRoute) }
+                ) {
                     Icon(
                         imageVector = Icons.Default.List,
                         contentDescription = "Library_screen",
@@ -108,8 +111,8 @@ fun MovieScreen(
                 }
 
                 IconButton(
-                    onClick = {navController.navigate(StoreScreenRoute) }
-                ){
+                    onClick = { navController.navigate(StoreScreenRoute) }
+                ) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
                         contentDescription = "Store_screen",
@@ -118,8 +121,8 @@ fun MovieScreen(
                 }
 
                 IconButton(
-                    onClick = { navController.navigate(SearchScreenRoute)}
-                ){
+                    onClick = { navController.navigate(SearchScreenRoute) }
+                ) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search_screen",
@@ -127,8 +130,12 @@ fun MovieScreen(
                     )
                 }
             }
-            Box(modifier =  Modifier.fillMaxSize()){
-                MovieList(movieList = movieList, listState = listState, navController = navController)
+            Box(modifier = Modifier.fillMaxSize()) {
+                MovieList(
+                    movieList = movieList,
+                    listState = listState,
+                    navController = navController
+                )
                 IconButton(
                     onClick = {
                         permissions.value = PermissionRequest(
@@ -148,7 +155,8 @@ fun MovieScreen(
                         containerColor = Color.Green,
                         contentColor = Color.Black,
                         disabledContentColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,)
+                        disabledContainerColor = Color.Transparent,
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Info,

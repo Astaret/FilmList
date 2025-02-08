@@ -18,6 +18,7 @@ import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
@@ -110,6 +111,7 @@ class DetailMovieViewModel @Inject constructor(
                 InfoMovieState(
                     id = it.movie.id.toString(),
                     movieEntity = it.movie,
+                    isLoading = LoadingState.Succes
                 )
             }
         )

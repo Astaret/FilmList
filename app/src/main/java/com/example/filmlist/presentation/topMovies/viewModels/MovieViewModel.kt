@@ -10,6 +10,7 @@ import com.example.filmlist.domain.usecases.load_useCases.getPage
 import com.example.filmlist.presentation.topMovies.states.TopMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -40,7 +41,7 @@ class MovieViewModel @Inject constructor(
     private fun loadPage(): TopMovieState{
         handleOperation(
             operation = {getTotalPagesUseCase(Params)},
-            onSuccess = { state.value.copy(totalPages = it.pages) }
+            onSuccess = { state.value.copy(totalPages = it.pages, isLoading = LoadingState.Succes) }
         )
         return state.value
     }
@@ -57,7 +58,8 @@ class MovieViewModel @Inject constructor(
                 state.value.copy(
                     movieList = (state.value.movieList + newList).distinctBy { it.id },
                     currentPage = page,
-                    totalPages = state.value.totalPages
+                    totalPages = state.value.totalPages,
+                    isLoading = LoadingState.Succes
                 )
             }
         )

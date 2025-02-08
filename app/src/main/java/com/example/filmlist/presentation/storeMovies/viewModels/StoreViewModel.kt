@@ -12,6 +12,7 @@ import com.example.filmlist.domain.usecases.load_useCases.getMovieInfo
 import com.example.filmlist.presentation.storeMovies.events.PurchaseEvent
 import com.example.filmlist.presentation.storeMovies.states.StoreMovState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -62,7 +63,8 @@ class StoreViewModel @Inject constructor(
                 state.value.copy(
                     movieList = emptyList(),
                     totalPrice = 0.0,
-                    empty = true
+                    empty = true,
+                    isLoading = LoadingState.Succes
                 )
             }
         )
@@ -81,7 +83,8 @@ class StoreViewModel @Inject constructor(
                 state.value.copy(
                     movieList = listBoughtMovies,
                     totalPrice = totalSum,
-                    empty = listBoughtMovies.isEmpty()
+                    empty = listBoughtMovies.isEmpty(),
+                    isLoading = LoadingState.Succes
                 )
             }
         )

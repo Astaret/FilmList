@@ -8,6 +8,7 @@ import com.example.filmlist.domain.usecases.get_useCases.getListMovieState
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -32,7 +33,8 @@ class FavoriteMoviesViewModel @Inject constructor(
             onSuccess = {
                 FavoriteState(
                     movieList = it.listMovies,
-                    empty = it.listMovies.isEmpty()
+                    empty = it.listMovies.isEmpty(),
+                    isLoading = LoadingState.Succes
                 )
             }
         )

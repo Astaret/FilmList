@@ -8,6 +8,7 @@ import com.example.filmlist.domain.usecases.get_useCases.getListMovieState
 import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
 import com.example.filmlist.presentation.libraryMovies.states.LibraryState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -36,7 +37,8 @@ class LibraryMoviesViewModel @Inject constructor(
             onSuccess = {
                 state.value.copy(
                     movieList = it.listMovies,
-                    empty = it.listMovies.isNullOrEmpty()
+                    empty = it.listMovies.isNullOrEmpty(),
+                    isLoading = LoadingState.Succes
                 )
             }
         )

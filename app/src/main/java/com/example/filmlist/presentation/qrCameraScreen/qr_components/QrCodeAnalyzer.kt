@@ -29,4 +29,7 @@ class QrCodeAnalyzer(
                 imageProxy.close()
             }
     }
+
+
+
 }

@@ -1,11 +1,9 @@
 package com.example.filmlist.presentation.detailMovies.viewModels
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.util.Log
 import com.example.filmlist.data.local.db.EntityState
-import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.data.mappers.toMovieStatus
 import com.example.filmlist.domain.states.MovieState
 import com.example.filmlist.domain.usecases.get_useCases.GetId

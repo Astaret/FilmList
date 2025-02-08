@@ -1,7 +1,6 @@
 package com.example.filmlist.presentation.storeMovies.viewModels
 
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.domain.states.ListMovieState
 import com.example.filmlist.domain.states.MovieState
@@ -16,8 +15,6 @@ import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 

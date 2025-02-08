@@ -9,26 +9,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
-import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.viewModels.SearchMovieViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
-import com.example.filmlist.presentation.ui_kit.components.buttons.DetailNavigationButton
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 

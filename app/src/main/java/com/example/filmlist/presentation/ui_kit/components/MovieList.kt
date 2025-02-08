@@ -13,9 +13,11 @@ import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 
 @Composable
-fun MovieList(movieList: List<Movie>,
-              navController: NavController,
-              listState: LazyListState){
+fun MovieList(
+    movieList: List<Movie>,
+    navController: NavController,
+    listState: LazyListState
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth(),
@@ -27,7 +29,7 @@ fun MovieList(movieList: List<Movie>,
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                it.forEach{
+                it.forEach {
                     MovieCard(movie = it, navController = navController)
                 }
             }

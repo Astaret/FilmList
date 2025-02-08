@@ -2,7 +2,6 @@ package com.example.filmlist.presentation.topMovies.viewModels
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.example.filmlist.domain.usecases.get_useCases.GetTotalPagesUseCase
 import com.example.filmlist.domain.usecases.get_useCases.Params
 import com.example.filmlist.domain.usecases.load_useCases.LoadDataUseCase
@@ -12,8 +11,6 @@ import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
 import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

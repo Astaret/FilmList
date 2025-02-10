@@ -46,8 +46,14 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
+        debug {
+            applicationIdSuffix = ".debug"
+        }
 
+        create("huawei"){
+            applicationIdSuffix = ".huawei"
+        }
+    }
 }
 
 dependencies {

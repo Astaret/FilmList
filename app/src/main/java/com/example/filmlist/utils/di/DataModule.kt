@@ -4,8 +4,6 @@ import android.app.Application
 import com.example.filmlist.data.local.db.MovieDatabase
 import com.example.filmlist.data.local.db.MovieInfoDao
 import com.example.filmlist.data.repositories.MovieRepositoryImpl
-import com.example.filmlist.data.web.api.ApiFactory
-import com.example.filmlist.data.web.api.ApiService
 import com.example.filmlist.domain.repositories.MovieRepository
 import dagger.Binds
 import dagger.Module
@@ -23,11 +21,6 @@ interface DataModule {
         @Provides
         fun provideMovieDao(application: Application): MovieInfoDao {
             return MovieDatabase.getInstance(application).movieInfoDao()
-        }
-
-        @Provides
-        fun provideApiService(): ApiService {
-            return ApiFactory.api
         }
     }
 }

@@ -20,7 +20,7 @@ android {
         versionName = "1.0"
 
         buildConfigField("String", "BASE_API_URL", "\" https://api.themoviedb.org/3/ \"")
-        buildConfigField("String", "IMG_API_URL", "\" https://image.tmdb.org/t/p/w500/ \"")
+        buildConfigField("String", "IMG_API_URL", "\"https://image.tmdb.org/t/p/w500/\"")
 
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_1_8
@@ -129,5 +129,9 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.3.0")
     implementation("androidx.camera:camera-lifecycle:1.3.0")
     implementation("androidx.camera:camera-view:1.3.0")
+
+    //tests
+    debugImplementation ("com.github.chuckerteam.chucker:library:4.0.0")
+    releaseImplementation ("com.github.chuckerteam.chucker:library-no-op:4.0.0")
 
 }

@@ -1,7 +1,6 @@
 package com.example.filmlist.data.repositories
 
 import android.util.Log
-import com.example.filmlist.data.local.db.EntityState
 import com.example.filmlist.data.local.db.MovieInfoDao
 import com.example.filmlist.data.local.enteties.MovieIdEntity
 import com.example.filmlist.data.mappers.dtoToMovie

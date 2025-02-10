@@ -8,11 +8,13 @@ import android.util.Log
 import com.example.filmlist.presentation.qrCameraScreen.QrFeature
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.common.InputImage
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class HuaweiQrFeature @Inject constructor():QrFeature {
+class HuaweiQrFeature @Inject constructor(
+    @ApplicationContext private val context: Context
+):QrFeature {
     override fun processImageFromGallery(
-        context: Context,
         uri: Uri,
         barcodeScanner: BarcodeScanner,
         onQrCodeScanned: (String) -> Unit

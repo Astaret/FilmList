@@ -13,12 +13,11 @@ class QrCodeViewModel @Inject constructor(
 ): ViewModel() {
 
     fun processImageFromGallery(
-        context: android.content.Context,
         uri: Uri,
         barcodeScanner: BarcodeScanner,
         onQrCodeScanned: (String) -> Unit
     ) {
-        qrFeature.processImageFromGallery(context, uri, barcodeScanner, onQrCodeScanned)
+        qrFeature.processImageFromGallery(uri, barcodeScanner, onQrCodeScanned)
     }
 
 }

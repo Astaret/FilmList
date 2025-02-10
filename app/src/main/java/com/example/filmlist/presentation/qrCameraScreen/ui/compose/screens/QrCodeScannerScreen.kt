@@ -41,7 +41,6 @@ fun QrCodeScannerScreen(
     var scanned by remember { mutableStateOf(false) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    val context = LocalContext.current
     val barcodeScanner = remember { BarcodeScanning.getClient() }
 
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -49,7 +48,7 @@ fun QrCodeScannerScreen(
         onResult = { uri ->
             if (uri != null) {
                 imageUri = uri
-                qrCodeViewModel.processImageFromGallery(context, uri, barcodeScanner) { qrCode ->
+                qrCodeViewModel.processImageFromGallery(uri, barcodeScanner) { qrCode ->
                     if (!scanned) {
                         scanned = true
                         navController.navigate(DetailScreenRoute(qrCode.toInt()))

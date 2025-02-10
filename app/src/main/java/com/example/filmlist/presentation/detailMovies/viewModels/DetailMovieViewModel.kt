@@ -1,5 +1,7 @@
 package com.example.filmlist.presentation.detailMovies.viewModels
 
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.util.Log
 import com.example.filmlist.data.local.db.EntityState
 import com.example.filmlist.data.mappers.toMovieStatus
@@ -14,6 +16,10 @@ import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -31,12 +37,21 @@ class DetailMovieViewModel @Inject constructor(
             is MovieInfoEvent.AddMovieToDataBase -> addMovieToDataBaseList(event.state)
             is MovieInfoEvent.IsMovieInBdCheck -> isMovieInBd(event.id)
             is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList()
+            is MovieInfoEvent.GetQrCode -> getQrCode(event.id)
+            is MovieInfoEvent.GetAllInfoAboutMovie -> getAllInfoAboutMovie(event.id)
         }
+    }
+    private fun getAllInfoAboutMovie(id: String): InfoMovieState {
+        isMovieInBd(id.toInt())
+        getMovieInfoById(id)
+        getQrCode(id)
+        return state.value
     }
 
     private fun isMovieInBd(id: Int): InfoMovieState {
         handleOperation(
             operation = { getMovieIdFromBdUseCase(GetId(id)) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 if (it.movieIdEntity != null) {
                     val statusMovie = if (it.movieIdEntity.entityState != EntityState.ISBOUGHT) {
@@ -49,12 +64,11 @@ class DetailMovieViewModel @Inject constructor(
                     } else {
                         StatusMovie.BOUGHT
                     }
-                    setState {
-                        copy(
-                            statusMovie = statusMovie,
-                            id = it.movieIdEntity.id.toString(),
-                            movieEntity = getMovieInfoById(it.movieIdEntity.id.toString()).movieEntity
-                        )}
+                    state.value.copy(
+                        statusMovie = statusMovie,
+                        id = it.movieIdEntity.id.toString(),
+                        movieEntity = getMovieInfoById(it.movieIdEntity.id.toString()).movieEntity
+                    )
                 } else {
                     state.value.copy(statusMovie = StatusMovie.EMPTY)
                 }
@@ -67,15 +81,24 @@ class DetailMovieViewModel @Inject constructor(
         Log.d("Movie", "addMovieToFav: $movieState")
         handleOperation(
             operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, movieState)) },
-            onSuccess = { setState {  copy(statusMovie = movieState.toMovieStatus())} }
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
         )
         return state.value
     }
 
-    private fun deleteMovieFromDataBaseList():InfoMovieState{
+    private fun deleteMovieFromDataBaseList(): InfoMovieState {
         handleOperation(
-            operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, MovieState.EMPTY)) },
-            onSuccess = { setState {  copy(statusMovie = MovieState.EMPTY.toMovieStatus())} }
+            operation = {
+                putMovieToDbUseCase(
+                    getMovieInfo(
+                        state.value.movieEntity,
+                        MovieState.EMPTY
+                    )
+                )
+            },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onSuccess = { state.value.copy(statusMovie = MovieState.EMPTY.toMovieStatus()) }
         )
         return state.value
     }
@@ -83,18 +106,36 @@ class DetailMovieViewModel @Inject constructor(
 
     private fun getMovieInfoById(id: String): InfoMovieState {
         Log.d("Movie", "getMovieInfoById: $id")
-        return if (id.isNullOrEmpty()) {
-            println("Error $id is empty or null")
-            state.value
-        } else {
-            handleOperation(
-                operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
-                onSuccess = {
-                    setState { state.value.copy(movieEntity = it.movie) }
-                    state.value.copy(movieEntity = it.movie) }
-            )
-            state.value.copy()
-        }
+        handleOperation(
+            operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onSuccess = {
+                InfoMovieState(
+                    id = it.movie.id.toString(),
+                    movieEntity = it.movie,
+                    isLoading = LoadingState.Succes
+                )
+            }
+        )
+        return state.value
     }
 
+
+    private fun getQrCode(id: String): InfoMovieState {
+        val bitMatrix: BitMatrix = MultiFormatWriter().encode(
+            id, BarcodeFormat.QR_CODE, 512, 512
+        )
+
+        val width = bitMatrix.width
+        val height = bitMatrix.height
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                bitmap.setPixel(x, y, if (bitMatrix[x, y]) Color.BLACK else Color.WHITE)
+            }
+        }
+
+        return state.value.copy(qrCode = bitmap)
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.filmlist.presentation.ui_kit.components
+package com.example.filmlist.presentation.ui_kit.components.movie_cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

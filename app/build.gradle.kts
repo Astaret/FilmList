@@ -46,8 +46,14 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
+        debug {
+            applicationIdSuffix = ".debug"
+        }
 
+        create("huawei"){
+            applicationIdSuffix = ".huawei"
+        }
+    }
 }
 
 dependencies {
@@ -112,5 +118,16 @@ dependencies {
     implementation("com.github.skydoves:landscapist-glide:2.4.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation ("com.google.accompanist:accompanist-permissions:0.32.0")
+
+    //qr-code
+    implementation("com.google.zxing:core:3.5.2")
+
+    //for camera
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation("androidx.camera:camera-core:1.3.0")
+    implementation("androidx.camera:camera-camera2:1.3.0")
+    implementation("androidx.camera:camera-lifecycle:1.3.0")
+    implementation("androidx.camera:camera-view:1.3.0")
 
 }

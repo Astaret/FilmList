@@ -2,6 +2,7 @@ package com.example.filmlist.presentation.searchMovies.ui.compose.Screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +22,9 @@ import androidx.navigation.NavController
 import com.example.filmlist.domain.models.Movie
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.viewModels.SearchMovieViewModel
-import com.example.filmlist.presentation.ui_kit.components.MovieCard
+import com.example.filmlist.presentation.ui_kit.components.MainContainer
+import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
+import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -32,12 +35,17 @@ fun SearchScreen(
 ) {
     val searchState by vm.state.collectAsState()
 
-    SearchScreen(
-        searchQuery = searchState.searchQuery,
-        searchResults = searchState.searchResult,
-        navController = navController,
-        onSearchQueryChange = { vm.receiveEvent(SearchEvents.SearchChange(it)) }
-    )
+    MainContainer(
+        permissionRequest = PermissionRequest(),
+        isLoading = searchState.isLoading
+    ) {
+        SearchScreen(
+            searchQuery = searchState.searchQuery,
+            searchResults = searchState.searchResult,
+            navController = navController,
+            onSearchQueryChange = { vm.receiveEvent(SearchEvents.SearchChange(it)) }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,35 +56,37 @@ private fun SearchScreen(
     navController: NavController,
     onSearchQueryChange: (String) -> Unit
 ) {
-    SearchBar(
-        query = searchQuery,
-        onQueryChange = onSearchQueryChange,
-        onSearch = {},
-        placeholder = {
-            Text(text = "Search movies")
-        },
-        trailingIcon = {},
-        content = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(32.dp),
-                contentPadding = PaddingValues(16.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(searchResults.chunked(2)) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
-                    ) {
-                        it.forEach{
-                            MovieCard(movie = it, navController = navController)
+    Box{
+        SearchBar(
+            query = searchQuery,
+            onQueryChange = onSearchQueryChange,
+            onSearch = {},
+            placeholder = {
+                Text(text = "Search movies")
+            },
+            trailingIcon = {},
+            content = {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(searchResults.chunked(2)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+                            it.forEach{
+                                MovieCard(movie = it, navController = navController)
+                            }
                         }
                     }
                 }
-            }
-        },
-        active = true,
-        onActiveChange = {},
-        tonalElevation = 0.dp
-    )
+            },
+            active = true,
+            onActiveChange = {},
+            tonalElevation = 0.dp
+        )
+    }
 }

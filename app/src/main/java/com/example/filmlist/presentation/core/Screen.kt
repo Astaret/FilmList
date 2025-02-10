@@ -16,3 +16,5 @@ object FavoriteScreenRoute
 object StoreScreenRoute
 @Serializable
 object LibraryScreenRoute
+@Serializable
+object CameraScreenRoute

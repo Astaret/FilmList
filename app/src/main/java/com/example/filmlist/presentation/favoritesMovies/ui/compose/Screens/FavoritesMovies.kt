@@ -28,10 +28,12 @@ import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.viewModels.FavoriteMoviesViewModel
+import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
+import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 
 @Composable
-fun favoriteMoviesScreen(
+fun FavoriteMoviesScreen(
     vm: FavoriteMoviesViewModel = hiltViewModel(),
     navController: NavController
 ) {
@@ -43,12 +45,17 @@ fun favoriteMoviesScreen(
     val favMovieState by vm.state.collectAsState()
     val movieList = favMovieState.movieList
 
-    if (favMovieState.empty){
-        EmptyFavoriteScreen({navController.navigate(MainScreenRoute)})
-    }else{
-        favoriteListMovie(
-            movieList = movieList,
-            navController = navController)
+    MainContainer(
+        permissionRequest = PermissionRequest(),
+        isLoading = favMovieState.isLoading
+    ) {
+        if (favMovieState.empty){
+            EmptyFavoriteScreen { navController.navigate(MainScreenRoute) }
+        }else{
+            favoriteListMovie(
+                movieList = movieList,
+                navController = navController)
+        }
     }
 
 }

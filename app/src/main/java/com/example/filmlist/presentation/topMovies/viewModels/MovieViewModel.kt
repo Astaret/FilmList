@@ -2,7 +2,6 @@ package com.example.filmlist.presentation.topMovies.viewModels
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.example.filmlist.domain.usecases.get_useCases.GetTotalPagesUseCase
 import com.example.filmlist.domain.usecases.get_useCases.Params
 import com.example.filmlist.domain.usecases.load_useCases.LoadDataUseCase
@@ -10,9 +9,8 @@ import com.example.filmlist.domain.usecases.load_useCases.getPage
 import com.example.filmlist.presentation.topMovies.states.TopMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,7 +38,8 @@ class MovieViewModel @Inject constructor(
     private fun loadPage(): TopMovieState{
         handleOperation(
             operation = {getTotalPagesUseCase(Params)},
-            onSuccess = {setState { copy(totalPages = it.pages) }}
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onSuccess = { state.value.copy(totalPages = it.pages, isLoading = LoadingState.Succes) }
         )
         return state.value
     }
@@ -48,17 +47,19 @@ class MovieViewModel @Inject constructor(
     private fun loadData(page: Int): TopMovieState {
         handleOperation(
             operation = {loadDataUseCase(getPage(page))},
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 val newList = it.movieList
-                setState {
-                    copy(movieList = (this.movieList + newList).distinctBy { it.id },
-                        currentPage = page,
-                        totalPages = totalPages)
-                }
                 savedStateHandle["movieList"] = state.value.movieList
                 savedStateHandle["currentPage"] = page
                 savedStateHandle["totalPages"] = state.value.totalPages
-                Log.d("Movie", "loadData -> ${state.value.movieList.map { it.title }} ")
+                Log.d("Movie", "loadData: SUCCES ${state.value.movieList}")
+                state.value.copy(
+                    movieList = (state.value.movieList + newList).distinctBy { it.id },
+                    currentPage = page,
+                    totalPages = state.value.totalPages,
+                    isLoading = LoadingState.Succes
+                )
             }
         )
         return state.value

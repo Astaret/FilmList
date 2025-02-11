@@ -17,6 +17,15 @@ fun MovieDto.dtoToMovie() = Movie(
     rating = rating
 )
 
+fun Movie.movieToDto() = MovieDto(
+    id = id,
+    origLang = origLang,
+    overview = overview,
+    poster = BuildConfig.IMG_API_URL + poster,
+    title = title,
+    rating = rating
+)
+
 fun Movie.movieToMovieEntity(
     entityState: EntityState = EntityState.EMPTY
 ) = MovieIdEntity(
@@ -24,6 +33,7 @@ fun Movie.movieToMovieEntity(
     entityState = entityState)
 
 fun List<MovieDto>.listMovieDtoToListMovie() = map { it.dtoToMovie() }
+fun List<Movie>.listMovieToListMovieDto() = map { it.movieToDto() }
 
 fun MovieState.toEntityState(): EntityState {
     return when (this) {

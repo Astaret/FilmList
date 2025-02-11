@@ -54,6 +54,9 @@ android {
             applicationIdSuffix = ".huawei"
         }
     }
+    testOptions{
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -133,5 +136,12 @@ dependencies {
     //tests
     debugImplementation ("com.github.chuckerteam.chucker:library:4.0.0")
     releaseImplementation ("com.github.chuckerteam.chucker:library-no-op:4.0.0")
+    testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    testImplementation("org.mockito:mockito-core:5.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
 }
+

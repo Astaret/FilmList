@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.example.domain.states.LoadingState
 
 @Composable
 fun CameraPreview(analyzer: ImageAnalysis.Analyzer) {
@@ -21,7 +21,7 @@ fun CameraPreview(analyzer: ImageAnalysis.Analyzer) {
 
     MainContainer(
         permissionRequest = PermissionRequest(),
-        isLoading = LoadingState.Succes
+        isLoading = com.example.domain.states.LoadingState.Succes
     ) {
         AndroidView(
             factory = { ctx ->

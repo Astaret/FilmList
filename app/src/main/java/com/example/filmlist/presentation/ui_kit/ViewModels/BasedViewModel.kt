@@ -2,7 +2,7 @@ package com.example.filmlist.presentation.ui_kit.ViewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.example.domain.states.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,7 +18,7 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
 ) : ViewModel() {
 
     interface State {
-        val isLoading: LoadingState
+        val isLoading: com.example.domain.states.LoadingState
     }
 
     interface Event

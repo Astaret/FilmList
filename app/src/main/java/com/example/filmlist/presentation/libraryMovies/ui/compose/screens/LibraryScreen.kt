@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.filmlist.domain.models.Movie
+import com.example.domain.models.Movie
 import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
 import com.example.filmlist.presentation.libraryMovies.viewModel.LibraryMoviesViewModel
@@ -61,7 +61,7 @@ fun LibraryScreen(
 
 @Composable
 private fun libraryListMovie(
-    movieList: List<Movie>,
+    movieList: List<com.example.domain.models.Movie>,
     navController: NavController
 ) {
     val listState = rememberLazyListState()

@@ -1,18 +1,18 @@
 package com.example.filmlist.presentation.favoritesMovies.viewModels
 
-import com.example.filmlist.domain.states.ListMovieState
-import com.example.filmlist.domain.usecases.get_useCases.GetMovieListFromBdUseCase
-import com.example.filmlist.domain.usecases.get_useCases.getListMovieState
+import com.example.domain.states.ListMovieState
+import com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
+import com.example.domain.usecases.get_useCases.getListMovieState
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.example.domain.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteMoviesViewModel @Inject constructor(
-    private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
+    private val getMovieListFromBdUseCase: com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
 ) : BasedViewModel<FavoriteState, FavoriteEvent>(FavoriteState()) {
 
 
@@ -26,13 +26,14 @@ class FavoriteMoviesViewModel @Inject constructor(
     private fun showAllFavorites():FavoriteState {
         handleOperation(
             operation = {getMovieListFromBdUseCase(
-                getListMovieState(ListMovieState.ISFAVORITE))},
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+                com.example.domain.usecases.get_useCases.getListMovieState(com.example.domain.states.ListMovieState.ISFAVORITE)
+            )},
+            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
             onSuccess = {
                 FavoriteState(
                     movieList = it.listMovies,
                     empty = it.listMovies.isEmpty(),
-                    isLoading = LoadingState.Succes
+                    isLoading = com.example.domain.states.LoadingState.Succes
                 )
             }
         )

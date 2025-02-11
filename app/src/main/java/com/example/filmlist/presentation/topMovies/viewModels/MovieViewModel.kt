@@ -2,21 +2,21 @@ package com.example.filmlist.presentation.topMovies.viewModels
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import com.example.filmlist.domain.usecases.get_useCases.GetTotalPagesUseCase
-import com.example.filmlist.domain.usecases.get_useCases.Params
-import com.example.filmlist.domain.usecases.load_useCases.LoadDataUseCase
-import com.example.filmlist.domain.usecases.load_useCases.getPage
+import com.example.domain.usecases.get_useCases.GetTotalPagesUseCase
+import com.example.domain.usecases.get_useCases.Params
+import com.example.domain.usecases.load_useCases.LoadDataUseCase
+import com.example.domain.usecases.load_useCases.getPage
 import com.example.filmlist.presentation.topMovies.states.TopMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.example.domain.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
-    private val loadDataUseCase: LoadDataUseCase,
-    private val getTotalPagesUseCase: GetTotalPagesUseCase,
+    private val loadDataUseCase: com.example.domain.usecases.load_useCases.LoadDataUseCase,
+    private val getTotalPagesUseCase: com.example.domain.usecases.get_useCases.GetTotalPagesUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : BasedViewModel<TopMovieState, PagingEvents>(TopMovieState()) {
 
@@ -37,17 +37,17 @@ class MovieViewModel @Inject constructor(
 
     private fun loadPage(): TopMovieState{
         handleOperation(
-            operation = {getTotalPagesUseCase(Params)},
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
-            onSuccess = { state.value.copy(totalPages = it.pages, isLoading = LoadingState.Succes) }
+            operation = {getTotalPagesUseCase(com.example.domain.usecases.get_useCases.Params)},
+            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
+            onSuccess = { state.value.copy(totalPages = it.pages, isLoading = com.example.domain.states.LoadingState.Succes) }
         )
         return state.value
     }
 
     private fun loadData(page: Int): TopMovieState {
         handleOperation(
-            operation = {loadDataUseCase(getPage(page))},
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            operation = {loadDataUseCase(com.example.domain.usecases.load_useCases.getPage(page))},
+            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
             onSuccess = {
                 val newList = it.movieList
                 savedStateHandle["movieList"] = state.value.movieList
@@ -58,7 +58,7 @@ class MovieViewModel @Inject constructor(
                     movieList = (state.value.movieList + newList).distinctBy { it.id },
                     currentPage = page,
                     totalPages = state.value.totalPages,
-                    isLoading = LoadingState.Succes
+                    isLoading = com.example.domain.states.LoadingState.Succes
                 )
             }
         )

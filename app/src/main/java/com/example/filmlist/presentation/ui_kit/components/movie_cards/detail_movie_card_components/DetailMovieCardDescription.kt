@@ -11,10 +11,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.filmlist.domain.models.Movie
+import com.example.domain.models.Movie
 
 @Composable
-fun DetailMovieCardDescription(movie: Movie) {
+fun DetailMovieCardDescription(movie: com.example.domain.models.Movie) {
 
     Column(
         modifier = Modifier

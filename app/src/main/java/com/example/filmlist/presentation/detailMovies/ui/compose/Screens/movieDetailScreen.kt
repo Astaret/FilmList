@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.filmlist.domain.states.MovieState
+import com.example.domain.states.MovieState
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
@@ -139,7 +139,7 @@ fun MovieDetailScreen(
                             if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
                                 vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
                             } else {
-                                vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.INSTORE))
+                                vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(com.example.domain.states.MovieState.INSTORE))
                             }
                         },
                         imageVector = if (movieInfoState.statusMovie == StatusMovie.INSTORE)
@@ -155,7 +155,7 @@ fun MovieDetailScreen(
                         onClick = {
                             if (movieInfoState.statusMovie == StatusMovie.FAVORITE)
                                 vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                            else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.ISFAVORITE))
+                            else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(com.example.domain.states.MovieState.ISFAVORITE))
                         },
                         imageVector = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Icons.Default.Favorite
                         else Icons.Default.FavoriteBorder,

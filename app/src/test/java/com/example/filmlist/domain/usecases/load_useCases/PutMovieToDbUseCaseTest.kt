@@ -1,8 +1,8 @@
 package com.example.filmlist.domain.usecases.load_useCases
 
-import com.example.filmlist.domain.models.Movie
-import com.example.filmlist.domain.repositories.MovieRepository
-import com.example.filmlist.domain.states.MovieState
+import com.example.domain.models.Movie
+import com.example.domain.repositories.MovieRepository
+import com.example.domain.states.MovieState
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.*
@@ -12,18 +12,18 @@ import org.mockito.Mockito.verify
 import kotlin.test.Test
 
 class PutMovieToDbUseCaseTest{
-    private lateinit var useCase: PutMovieToDbUseCase
-    private val repository: MovieRepository = mock()
+    private lateinit var useCase: com.example.domain.usecases.load_useCases.PutMovieToDbUseCase
+    private val repository: com.example.domain.repositories.MovieRepository = mock()
 
     @BeforeEach
     fun setup() {
-        useCase = PutMovieToDbUseCase(repository)
+        useCase = com.example.domain.usecases.load_useCases.PutMovieToDbUseCase(repository)
     }
 
     @Test
     fun `invoke calls repository putMovieToDb and returns putMovieStatus`() = runTest {
         // Given: создаём тестовые входные данные
-        val fakeMovie = Movie(
+        val fakeMovie = com.example.domain.models.Movie(
             1, "Inception",
             overview = "over1",
             poster = "post1",
@@ -31,8 +31,9 @@ class PutMovieToDbUseCaseTest{
             rating = "rat1",
             price = 1f
         )
-        val fakeMovieState = MovieState.ISFAVORITE
-        val params = getMovieInfo(fakeMovie, fakeMovieState)
+        val fakeMovieState = com.example.domain.states.MovieState.ISFAVORITE
+        val params =
+            com.example.domain.usecases.load_useCases.getMovieInfo(fakeMovie, fakeMovieState)
 
 
         val flowResult = useCase.invoke(params)

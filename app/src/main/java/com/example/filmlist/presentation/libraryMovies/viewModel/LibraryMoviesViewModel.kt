@@ -1,18 +1,18 @@
 package com.example.filmlist.presentation.libraryMovies.viewModel
 
-import com.example.filmlist.domain.states.ListMovieState
-import com.example.filmlist.domain.usecases.get_useCases.GetMovieListFromBdUseCase
-import com.example.filmlist.domain.usecases.get_useCases.getListMovieState
+import com.example.domain.states.ListMovieState
+import com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
+import com.example.domain.usecases.get_useCases.getListMovieState
 import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
 import com.example.filmlist.presentation.libraryMovies.states.LibraryState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.example.domain.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class LibraryMoviesViewModel @Inject constructor(
-    private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
+    private val getMovieListFromBdUseCase: com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
 ) : BasedViewModel<LibraryState, LibraryEvent>(LibraryState()) {
 
 
@@ -27,15 +27,15 @@ class LibraryMoviesViewModel @Inject constructor(
         handleOperation(
             operation = {
                 getMovieListFromBdUseCase(
-                    getListMovieState(ListMovieState.ISBOUGHT)
+                    com.example.domain.usecases.get_useCases.getListMovieState(com.example.domain.states.ListMovieState.ISBOUGHT)
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
             onSuccess = {
                 state.value.copy(
                     movieList = it.listMovies,
                     empty = it.listMovies.isEmpty(),
-                    isLoading = LoadingState.Succes
+                    isLoading = com.example.domain.states.LoadingState.Succes
                 )
             }
         )

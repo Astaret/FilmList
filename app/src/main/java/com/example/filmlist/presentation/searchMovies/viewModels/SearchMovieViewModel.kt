@@ -1,12 +1,12 @@
 package com.example.filmlist.presentation.searchMovies.viewModels
 
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.load_useCases.GetName
-import com.example.filmlist.domain.usecases.load_useCases.LoadDataFromSearchUseCase
+import com.example.domain.usecases.load_useCases.GetName
+import com.example.domain.usecases.load_useCases.LoadDataFromSearchUseCase
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.states.SearchState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.example.domain.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchMovieViewModel @Inject constructor(
-    private val loadDataFromSearchUseCase: LoadDataFromSearchUseCase,
+    private val loadDataFromSearchUseCase: com.example.domain.usecases.load_useCases.LoadDataFromSearchUseCase,
 ) : BasedViewModel<SearchState, SearchEvents>(SearchState()) {
 
 
@@ -27,15 +27,19 @@ class SearchMovieViewModel @Inject constructor(
 
     private fun onSearchQueryChange(newQuery: String):SearchState {
         setState {
-            copy(searchQuery = newQuery, isLoading = LoadingState.Succes)
+            copy(searchQuery = newQuery, isLoading = com.example.domain.states.LoadingState.Succes)
         }
         return state.value
     }
 
     private fun loadDataFromSearch(query: String) {
         handleOperation(
-            operation = { loadDataFromSearchUseCase(GetName(query))},
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            operation = { loadDataFromSearchUseCase(
+                com.example.domain.usecases.load_useCases.GetName(
+                    query
+                )
+            )},
+            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
             onSuccess = {
                 val movies = it.movieList
                 state.value.copy(
@@ -45,7 +49,7 @@ class SearchMovieViewModel @Inject constructor(
                     } else {
                         movies
                     },
-                    isLoading = LoadingState.Succes
+                    isLoading = com.example.domain.states.LoadingState.Succes
                 )
             }
         )
@@ -65,7 +69,7 @@ class SearchMovieViewModel @Inject constructor(
                         loadDataFromSearch(state.searchQuery)
                     } else {
                         setState {
-                            copy(searchResult = emptyList(), isLoading = LoadingState.Succes)
+                            copy(searchResult = emptyList(), isLoading = com.example.domain.states.LoadingState.Succes)
                         }
                     }
                 }

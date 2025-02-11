@@ -15,8 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
-    private val loadDataUseCase: com.example.domain.usecases.load_useCases.LoadDataUseCase,
-    private val getTotalPagesUseCase: com.example.domain.usecases.get_useCases.GetTotalPagesUseCase,
+    private val loadDataUseCase: LoadDataUseCase,
+    private val getTotalPagesUseCase: GetTotalPagesUseCase,
     private val savedStateHandle: SavedStateHandle
 ) : BasedViewModel<TopMovieState, PagingEvents>(TopMovieState()) {
 
@@ -37,17 +37,17 @@ class MovieViewModel @Inject constructor(
 
     private fun loadPage(): TopMovieState{
         handleOperation(
-            operation = {getTotalPagesUseCase(com.example.domain.usecases.get_useCases.Params)},
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
-            onSuccess = { state.value.copy(totalPages = it.pages, isLoading = com.example.domain.states.LoadingState.Succes) }
+            operation = {getTotalPagesUseCase(Params)},
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onSuccess = { state.value.copy(totalPages = it.pages, isLoading = LoadingState.Succes) }
         )
         return state.value
     }
 
     private fun loadData(page: Int): TopMovieState {
         handleOperation(
-            operation = {loadDataUseCase(com.example.domain.usecases.load_useCases.getPage(page))},
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
+            operation = {loadDataUseCase(getPage(page))},
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 val newList = it.movieList
                 savedStateHandle["movieList"] = state.value.movieList
@@ -58,7 +58,7 @@ class MovieViewModel @Inject constructor(
                     movieList = (state.value.movieList + newList).distinctBy { it.id },
                     currentPage = page,
                     totalPages = state.value.totalPages,
-                    isLoading = com.example.domain.states.LoadingState.Succes
+                    isLoading = LoadingState.Succes
                 )
             }
         )

@@ -21,7 +21,7 @@ fun CameraPreview(analyzer: ImageAnalysis.Analyzer) {
 
     MainContainer(
         permissionRequest = PermissionRequest(),
-        isLoading = com.example.domain.states.LoadingState.Succes
+        isLoading = LoadingState.Succes
     ) {
         AndroidView(
             factory = { ctx ->

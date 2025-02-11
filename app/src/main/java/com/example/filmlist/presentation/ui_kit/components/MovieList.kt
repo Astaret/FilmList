@@ -9,12 +9,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.domain.models.Movie
+import com.example.domain.enteties.Movie
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 
 @Composable
 fun MovieList(
-    movieList: List<com.example.domain.models.Movie>,
+    movieList: List<Movie>,
     navController: NavController,
     listState: LazyListState
 ) {

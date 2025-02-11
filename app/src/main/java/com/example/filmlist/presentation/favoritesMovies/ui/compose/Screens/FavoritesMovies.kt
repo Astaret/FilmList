@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.domain.models.Movie
+import com.example.domain.enteties.Movie
 import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
@@ -62,7 +62,7 @@ fun FavoriteMoviesScreen(
 
 @Composable
 private fun favoriteListMovie(
-    movieList: List<com.example.domain.models.Movie>,
+    movieList: List<Movie>,
     navController: NavController,
 ) {
     val listState = rememberLazyListState()

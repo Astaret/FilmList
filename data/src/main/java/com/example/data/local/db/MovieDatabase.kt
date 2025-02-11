@@ -5,9 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.filmlist.data.local.enteties.MovieIdEntity
+import com.example.domain.enteties.db_enteties.MovieIdEntity
 
 @Database(entities = [MovieIdEntity::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)

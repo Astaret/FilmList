@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchMovieViewModel @Inject constructor(
-    private val loadDataFromSearchUseCase: com.example.domain.usecases.load_useCases.LoadDataFromSearchUseCase,
+    private val loadDataFromSearchUseCase: LoadDataFromSearchUseCase,
 ) : BasedViewModel<SearchState, SearchEvents>(SearchState()) {
 
 
@@ -25,21 +25,23 @@ class SearchMovieViewModel @Inject constructor(
         }
     }
 
-    private fun onSearchQueryChange(newQuery: String):SearchState {
+    private fun onSearchQueryChange(newQuery: String): SearchState {
         setState {
-            copy(searchQuery = newQuery, isLoading = com.example.domain.states.LoadingState.Succes)
+            copy(searchQuery = newQuery, isLoading = LoadingState.Succes)
         }
         return state.value
     }
 
     private fun loadDataFromSearch(query: String) {
         handleOperation(
-            operation = { loadDataFromSearchUseCase(
-                com.example.domain.usecases.load_useCases.GetName(
-                    query
+            operation = {
+                loadDataFromSearchUseCase(
+                    GetName(
+                        query
+                    )
                 )
-            )},
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
+            },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 val movies = it.movieList
                 state.value.copy(
@@ -49,7 +51,7 @@ class SearchMovieViewModel @Inject constructor(
                     } else {
                         movies
                     },
-                    isLoading = com.example.domain.states.LoadingState.Succes
+                    isLoading = LoadingState.Succes
                 )
             }
         )
@@ -69,7 +71,7 @@ class SearchMovieViewModel @Inject constructor(
                         loadDataFromSearch(state.searchQuery)
                     } else {
                         setState {
-                            copy(searchResult = emptyList(), isLoading = com.example.domain.states.LoadingState.Succes)
+                            copy(searchResult = emptyList(), isLoading = LoadingState.Succes)
                         }
                     }
                 }

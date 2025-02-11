@@ -1,10 +1,9 @@
-package com.example.filmlist.utils.di
+package com.example.data.utils.di
 
 import android.app.Application
-import com.example.filmlist.data.local.db.MovieDatabase
-import com.example.filmlist.data.local.db.MovieInfoDao
-import com.example.filmlist.data.repositories.MovieRepositoryImpl
-import com.example.domain.repositories.MovieRepository
+import com.example.data.local.db.MovieDatabase
+import com.example.data.local.db.MovieInfoDao
+import com.example.data.repositories.MovieRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -13,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface DataModule {
+public interface DataModule {
     @Binds
     fun bindMovieRepository(impl: MovieRepositoryImpl): com.example.domain.repositories.MovieRepository
 

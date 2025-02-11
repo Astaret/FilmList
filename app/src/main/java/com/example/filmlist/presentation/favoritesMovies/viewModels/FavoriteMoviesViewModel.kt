@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteMoviesViewModel @Inject constructor(
-    private val getMovieListFromBdUseCase: com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
+    private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
 ) : BasedViewModel<FavoriteState, FavoriteEvent>(FavoriteState()) {
 
 
@@ -26,14 +26,14 @@ class FavoriteMoviesViewModel @Inject constructor(
     private fun showAllFavorites():FavoriteState {
         handleOperation(
             operation = {getMovieListFromBdUseCase(
-                com.example.domain.usecases.get_useCases.getListMovieState(com.example.domain.states.ListMovieState.ISFAVORITE)
+                getListMovieState(ListMovieState.ISFAVORITE)
             )},
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 FavoriteState(
                     movieList = it.listMovies,
                     empty = it.listMovies.isEmpty(),
-                    isLoading = com.example.domain.states.LoadingState.Succes
+                    isLoading = LoadingState.Succes
                 )
             }
         )

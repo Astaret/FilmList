@@ -1,10 +1,10 @@
-package com.example.filmlist.utils.di
+package com.example.data.utils.di
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.example.filmlist.data.web.api.ApiService
-import com.example.myapp.BuildConfig
+import com.example.data.BuildConfig
+import com.example.data.web.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

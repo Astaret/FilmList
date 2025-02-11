@@ -1,12 +1,12 @@
-package com.example.data.mappers
+package com.example.filmlist.presentation
 
-import com.example.data.BuildConfig
 import com.example.domain.states.EntityState
 import com.example.domain.enteties.dto_enteties.MovieDto
 import com.example.domain.enteties.db_enteties.MovieIdEntity
 import com.example.domain.enteties.Movie
 import com.example.domain.states.MovieState
 import com.example.domain.states.StatusMovie
+import com.example.myapp.BuildConfig
 
 fun MovieDto.dtoToMovie() = Movie(
     id = id,

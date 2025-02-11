@@ -1,14 +1,15 @@
 package com.example.data.repositories
 
 import android.util.Log
-import com.example.filmlist.data.local.db.MovieInfoDao
-import com.example.filmlist.data.local.enteties.MovieIdEntity
-import com.example.filmlist.data.mappers.dtoToMovie
-import com.example.filmlist.data.mappers.listMovieDtoToListMovie
-import com.example.filmlist.data.mappers.movieToMovieEntity
-import com.example.filmlist.data.mappers.toEntityState
-import com.example.filmlist.data.web.api.ApiService
+import com.example.data.local.db.MovieInfoDao
+import com.example.data.mappers.dtoToMovie
+import com.example.data.mappers.listMovieDtoToListMovie
+import com.example.data.mappers.movieToMovieEntity
+import com.example.data.mappers.toEntityState
+import com.example.data.web.api.ApiService
 import com.example.domain.enteties.Movie
+import com.example.domain.enteties.db_enteties.MovieIdEntity
+import com.example.domain.states.ListMovieState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -42,17 +43,18 @@ class MovieRepositoryImpl @Inject constructor(
     override suspend fun getMovieByIdFromBd(id: Int): MovieIdEntity? = movieDao.getMovieById(id)
 
 
-    override suspend fun getMovieListFromBd(state: com.example.domain.states.ListMovieState): List<Movie> {
-        return coroutineScope {
-                movieDao.getMovieListFromBd(state).map { storeMovie ->
-                    async {
-                        apiService.getMovieInfo(storeMovie.id).dtoToMovie()
-                    }
-                }.awaitAll()
-            }
+    override suspend fun getMovieListFromBd(state: ListMovieState): List<Movie> = coroutineScope {
+        movieDao.getMovieListFromBd(state).map {
+            async {
+                apiService.getMovieInfo(it.id).dtoToMovie()
+            }.await()
         }
+    }
 
-    override suspend fun putMovieToDb(movie: Movie, stateOfMovie: com.example.domain.states.MovieState) {
+    override suspend fun putMovieToDb(
+        movie: Movie,
+        stateOfMovie: com.example.domain.states.MovieState
+    ) {
         Log.d("Movie", "putMovieToDb: ${movie.title} to ${stateOfMovie.name}")
         val movieEntity = movie.movieToMovieEntity(entityState = stateOfMovie.toEntityState())
         movieDao.insertInMovieList(movieEntity.copy(id = movie.id))

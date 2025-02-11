@@ -1,14 +1,15 @@
 package com.example.filmlist.presentation.detailMovies.states
 
 import android.graphics.Bitmap
-import com.example.domain.models.Movie
-import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.example.domain.enteties.Movie
 import com.example.domain.states.LoadingState
+import com.example.domain.states.StatusMovie
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 
 data class InfoMovieState(
-    override val isLoading: com.example.domain.states.LoadingState = com.example.domain.states.LoadingState.Loading,
+    override val isLoading: LoadingState = com.example.domain.states.LoadingState.Loading,
     val id: String = "",
-    val movieEntity: com.example.domain.models.Movie = com.example.domain.models.Movie(
+    val movieEntity: Movie = Movie(
         0,
         "",
         "",
@@ -21,6 +22,3 @@ data class InfoMovieState(
     val qrCode: Bitmap? = null
 ): BasedViewModel.State
 
-enum class StatusMovie(){
-    FAVORITE, INSTORE, EMPTY, BOUGHT
-}

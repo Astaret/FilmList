@@ -4,10 +4,8 @@ import com.example.filmlist.data.local.db.MovieInfoDao
 import com.example.filmlist.data.mappers.listMovieToListMovieDto
 import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.data.web.api.ApiService
-import com.example.data.web.dtos.TopMovieListDto
+import com.example.domain.enteties.dto_enteties.TopMovieListDto
 import com.example.domain.models.Movie
-import com.example.domain.repositories.MovieRepository
-import com.example.domain.states.MovieState
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.jupiter.api.Assertions.*
@@ -48,7 +46,7 @@ class MovieRepositoryImplTest {
             )
         )
         whenever(apiService.getTopRatedMovies(language = "ru-Ru", page = 1)).thenReturn(
-            com.example.data.web.dtos.TopMovieListDto(
+            TopMovieListDto(
                 fakeMovies.listMovieToListMovieDto(),
                 "1",
                 "2"
@@ -83,7 +81,7 @@ class MovieRepositoryImplTest {
             )
         )
         whenever(apiService.searchMovies("Inception")).thenReturn(
-            com.example.data.web.dtos.TopMovieListDto(
+            TopMovieListDto(
                 fakeMovies.listMovieToListMovieDto(),
                 "1",
                 "2"

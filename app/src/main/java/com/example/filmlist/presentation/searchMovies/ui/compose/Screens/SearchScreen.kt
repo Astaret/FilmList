@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.domain.models.Movie
+import com.example.domain.enteties.Movie
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.viewModels.SearchMovieViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
@@ -52,7 +52,7 @@ fun SearchScreen(
 @Composable
 private fun SearchScreen(
     searchQuery: String,
-    searchResults: List<com.example.domain.models.Movie>,
+    searchResults: List<Movie>,
     navController: NavController,
     onSearchQueryChange: (String) -> Unit
 ) {

@@ -1,7 +1,7 @@
 package com.example.domain.repositories
 
-import com.example.data.local.db_enteties.MovieIdEntity
 import com.example.domain.enteties.Movie
+import com.example.domain.enteties.db_enteties.MovieIdEntity
 import com.example.domain.states.ListMovieState
 import com.example.domain.states.MovieState
 interface MovieRepository {
@@ -14,7 +14,7 @@ interface MovieRepository {
 
     suspend fun getMovieInfo(id: Int): Movie
 
-    suspend fun getMovieByIdFromBd(id:Int): com.example.data.local.db_enteties.MovieIdEntity?
+    suspend fun getMovieByIdFromBd(id:Int): MovieIdEntity?
 
     suspend fun getMovieListFromBd(state: ListMovieState): List<Movie>
 

@@ -1,4 +1,4 @@
-package com.example.data.local.db_enteties
+package com.example.domain.enteties.db_enteties
 
 import androidx.room.Entity
 

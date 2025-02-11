@@ -1,7 +1,7 @@
 package com.example.data.web.api
 
-import com.example.filmlist.data.web.dtos.MovieDto
-import com.example.data.web.dtos.TopMovieListDto
+import com.example.domain.enteties.dto_enteties.MovieDto
+import com.example.domain.enteties.dto_enteties.TopMovieListDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -12,7 +12,7 @@ interface ApiService {
     suspend fun getTopRatedMovies(
         @Query("language") language: String = "ru-RU",
         @Query("page") page: Int
-    ): com.example.data.web.dtos.TopMovieListDto
+    ): TopMovieListDto
 
     @GET("search/movie")
     suspend fun searchMovies(
@@ -20,7 +20,7 @@ interface ApiService {
         @Query("include_adult") includeAdult: Boolean = false,
         @Query("language") language: String = "ru-RU",
         @Query("page") page: Int = 1
-    ): com.example.data.web.dtos.TopMovieListDto
+    ): TopMovieListDto
 
     @GET("movie/{id}")
     suspend fun getMovieInfo(

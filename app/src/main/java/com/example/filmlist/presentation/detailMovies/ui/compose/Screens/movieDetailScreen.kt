@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.domain.states.MovieState
+import com.example.domain.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
-import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.PermissionDialog

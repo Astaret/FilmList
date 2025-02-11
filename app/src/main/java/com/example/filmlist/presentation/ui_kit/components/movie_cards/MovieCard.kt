@@ -18,13 +18,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.domain.models.Movie
+import com.example.domain.enteties.Movie
 import com.example.filmlist.presentation.core.DetailScreenRoute
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun MovieCard(
-    movie: com.example.domain.models.Movie,
+    movie: Movie,
     modifier: Modifier = Modifier,
     navController: NavController,
     moviePrice: Float = 0.0f

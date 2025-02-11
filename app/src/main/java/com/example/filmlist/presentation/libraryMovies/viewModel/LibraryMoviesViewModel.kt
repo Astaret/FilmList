@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryMoviesViewModel @Inject constructor(
-    private val getMovieListFromBdUseCase: com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
+    private val getMovieListFromBdUseCase:GetMovieListFromBdUseCase
 ) : BasedViewModel<LibraryState, LibraryEvent>(LibraryState()) {
 
 
@@ -27,7 +27,7 @@ class LibraryMoviesViewModel @Inject constructor(
         handleOperation(
             operation = {
                 getMovieListFromBdUseCase(
-                    com.example.domain.usecases.get_useCases.getListMovieState(com.example.domain.states.ListMovieState.ISBOUGHT)
+                    getListMovieState(ListMovieState.ISBOUGHT)
                 )
             },
             onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
@@ -35,7 +35,7 @@ class LibraryMoviesViewModel @Inject constructor(
                 state.value.copy(
                     movieList = it.listMovies,
                     empty = it.listMovies.isEmpty(),
-                    isLoading = com.example.domain.states.LoadingState.Succes
+                    isLoading = LoadingState.Succes
                 )
             }
         )

@@ -3,8 +3,7 @@ package com.example.filmlist.presentation.detailMovies.viewModels
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
-import com.example.filmlist.data.local.db.EntityState
-import com.example.filmlist.data.mappers.toMovieStatus
+import com.example.domain.states.EntityState
 import com.example.domain.states.MovieState
 import com.example.domain.usecases.get_useCases.GetId
 import com.example.domain.usecases.get_useCases.GetIdForInfo
@@ -14,9 +13,10 @@ import com.example.domain.usecases.load_useCases.PutMovieToDbUseCase
 import com.example.domain.usecases.load_useCases.getMovieInfo
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
-import com.example.filmlist.presentation.detailMovies.states.StatusMovie
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.domain.states.LoadingState
+import com.example.domain.states.StatusMovie
+import com.example.filmlist.presentation.toMovieStatus
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
@@ -25,9 +25,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailMovieViewModel @Inject constructor(
-    private val getMovieInfoUseCase: com.example.domain.usecases.get_useCases.GetMovieInfoUseCase,
-    private val putMovieToDbUseCase: com.example.domain.usecases.load_useCases.PutMovieToDbUseCase,
-    private val getMovieIdFromBdUseCase: com.example.domain.usecases.get_useCases.GetMovieIdFromBdUseCase
+    private val getMovieInfoUseCase: GetMovieInfoUseCase,
+    private val putMovieToDbUseCase: PutMovieToDbUseCase,
+    private val getMovieIdFromBdUseCase: GetMovieIdFromBdUseCase
 ) : BasedViewModel<InfoMovieState, MovieInfoEvent>(InfoMovieState()) {
 
 
@@ -50,15 +50,16 @@ class DetailMovieViewModel @Inject constructor(
 
     private fun isMovieInBd(id: Int): InfoMovieState {
         handleOperation(
-            operation = { getMovieIdFromBdUseCase(com.example.domain.usecases.get_useCases.GetId(id)) },
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
+            operation = { getMovieIdFromBdUseCase(GetId(id)) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
-                if (it.movieIdEntity != null) {
-                    val statusMovie = if (it.movieIdEntity.entityState != EntityState.ISBOUGHT) {
-                        if (it.movieIdEntity.entityState == EntityState.ISFAVORITE)
+                val moveIdEntity = it.movieIdEntity
+                if (moveIdEntity != null) {
+                    val statusMovie = if (moveIdEntity.entityState != EntityState.ISBOUGHT) {
+                        if (moveIdEntity.entityState == EntityState.ISFAVORITE)
                             StatusMovie.FAVORITE
                         else
-                            if (it.movieIdEntity.entityState == EntityState.INSTORE)
+                            if (moveIdEntity.entityState == EntityState.INSTORE)
                                 StatusMovie.INSTORE
                             else StatusMovie.EMPTY
                     } else {
@@ -66,8 +67,8 @@ class DetailMovieViewModel @Inject constructor(
                     }
                     state.value.copy(
                         statusMovie = statusMovie,
-                        id = it.movieIdEntity.id.toString(),
-                        movieEntity = getMovieInfoById(it.movieIdEntity.id.toString()).movieEntity
+                        id = moveIdEntity.id.toString(),
+                        movieEntity = getMovieInfoById(moveIdEntity.id.toString()).movieEntity
                     )
                 } else {
                     state.value.copy(statusMovie = StatusMovie.EMPTY)
@@ -77,16 +78,16 @@ class DetailMovieViewModel @Inject constructor(
         return state.value
     }
 
-    private fun addMovieToDataBaseList(movieState: com.example.domain.states.MovieState): InfoMovieState {
+    private fun addMovieToDataBaseList(movieState:MovieState): InfoMovieState {
         Log.d("Movie", "addMovieToFav: $movieState")
         handleOperation(
             operation = { putMovieToDbUseCase(
-                com.example.domain.usecases.load_useCases.getMovieInfo(
+                getMovieInfo(
                     state.value.movieEntity,
                     movieState
                 )
             ) },
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
         )
         return state.value
@@ -96,14 +97,14 @@ class DetailMovieViewModel @Inject constructor(
         handleOperation(
             operation = {
                 putMovieToDbUseCase(
-                    com.example.domain.usecases.load_useCases.getMovieInfo(
+                    getMovieInfo(
                         state.value.movieEntity,
-                        com.example.domain.states.MovieState.EMPTY
+                        MovieState.EMPTY
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
-            onSuccess = { state.value.copy(statusMovie = com.example.domain.states.MovieState.EMPTY.toMovieStatus()) }
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onSuccess = { state.value.copy(statusMovie =MovieState.EMPTY.toMovieStatus()) }
         )
         return state.value
     }
@@ -113,16 +114,16 @@ class DetailMovieViewModel @Inject constructor(
         Log.d("Movie", "getMovieInfoById: $id")
         handleOperation(
             operation = { getMovieInfoUseCase(
-                com.example.domain.usecases.get_useCases.GetIdForInfo(
+               GetIdForInfo(
                     id.toInt()
                 )
             ) },
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 InfoMovieState(
                     id = it.movie.id.toString(),
                     movieEntity = it.movie,
-                    isLoading = com.example.domain.states.LoadingState.Succes
+                    isLoading = LoadingState.Succes
                 )
             }
         )

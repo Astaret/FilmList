@@ -76,7 +76,7 @@ fun MovieDetailScreen(
         Column {
             Box {
                 GlideImage(
-                    imageModel = { movie.poster },
+                    imageModel = { movie?.poster },
                     modifier = Modifier
                         .height(500.dp)
                         .clip(RoundedCornerShape(8.dp))
@@ -120,7 +120,7 @@ fun MovieDetailScreen(
                 )
 
                 Text(
-                    text = "${movie.rating}",
+                    text = "${movie?.rating}",
                     fontSize = 15.sp,
                     maxLines = 1,
                     color = Color.Black,
@@ -139,7 +139,7 @@ fun MovieDetailScreen(
                             if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
                                 vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
                             } else {
-                                vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(com.example.domain.states.MovieState.INSTORE))
+                                vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.INSTORE))
                             }
                         },
                         imageVector = if (movieInfoState.statusMovie == StatusMovie.INSTORE)
@@ -182,7 +182,10 @@ fun MovieDetailScreen(
                     }
                 }
             }
-            DetailMovieCardDescription(movie)
+            movie?.let {movie->
+                DetailMovieCardDescription(movie)
+            }
+
         }
     }
 }

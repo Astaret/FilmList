@@ -41,6 +41,7 @@ class DetailMovieViewModel @Inject constructor(
             is MovieInfoEvent.GetAllInfoAboutMovie -> getAllInfoAboutMovie(event.id)
         }
     }
+
     private fun getAllInfoAboutMovie(id: String): InfoMovieState {
         isMovieInBd(id.toInt())
         getMovieInfoById(id)
@@ -78,34 +79,40 @@ class DetailMovieViewModel @Inject constructor(
         return state.value
     }
 
-    private fun addMovieToDataBaseList(movieState:MovieState): InfoMovieState {
+    private fun addMovieToDataBaseList(movieState: MovieState): InfoMovieState {
         Log.d("Movie", "addMovieToFav: $movieState")
-        handleOperation(
-            operation = { putMovieToDbUseCase(
-                getMovieInfo(
-                    state.value.movieEntity,
-                    movieState
-                )
-            ) },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
-            onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
-        )
+        state.value.movieEntity?.let {movie ->
+            handleOperation(
+                operation = {
+                    putMovieToDbUseCase(
+                        getMovieInfo(
+                            movie = movie,
+                            movieState = movieState
+                        )
+                    )
+                },
+                onError = { state.value.copy(isLoading = LoadingState.Error) },
+                onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
+            )
+        }
         return state.value
     }
 
     private fun deleteMovieFromDataBaseList(): InfoMovieState {
-        handleOperation(
-            operation = {
-                putMovieToDbUseCase(
-                    getMovieInfo(
-                        state.value.movieEntity,
-                        MovieState.EMPTY
+        state.value.movieEntity?.let { movie ->
+            handleOperation(
+                operation = {
+                    putMovieToDbUseCase(
+                        getMovieInfo(
+                            movie = movie,
+                            movieState = MovieState.EMPTY
+                        )
                     )
-                )
-            },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
-            onSuccess = { state.value.copy(statusMovie =MovieState.EMPTY.toMovieStatus()) }
-        )
+                },
+                onError = { state.value.copy(isLoading = LoadingState.Error) },
+                onSuccess = { state.value.copy(statusMovie = MovieState.EMPTY.toMovieStatus()) }
+            )
+        }
         return state.value
     }
 
@@ -113,11 +120,13 @@ class DetailMovieViewModel @Inject constructor(
     private fun getMovieInfoById(id: String): InfoMovieState {
         Log.d("Movie", "getMovieInfoById: $id")
         handleOperation(
-            operation = { getMovieInfoUseCase(
-               GetIdForInfo(
-                    id.toInt()
+            operation = {
+                getMovieInfoUseCase(
+                    GetIdForInfo(
+                        id.toInt()
+                    )
                 )
-            ) },
+            },
             onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
                 InfoMovieState(

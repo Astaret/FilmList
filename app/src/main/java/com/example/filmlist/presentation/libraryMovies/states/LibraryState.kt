@@ -1,6 +1,6 @@
 package com.example.filmlist.presentation.libraryMovies.states
 
-import com.example.domain.enteties.Movie
+import com.example.domain.entities.Movie
 import com.example.domain.states.LoadingState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 

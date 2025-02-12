@@ -4,7 +4,7 @@ import com.example.filmlist.data.local.db.MovieInfoDao
 import com.example.filmlist.data.mappers.listMovieToListMovieDto
 import com.example.filmlist.data.mappers.movieToMovieEntity
 import com.example.filmlist.data.web.api.ApiService
-import com.example.domain.enteties.dto_enteties.TopMovieListDto
+import com.example.domain.entities.dto_entities.TopMovieListDto
 import com.example.domain.models.Movie
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

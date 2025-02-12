@@ -1,6 +1,6 @@
 package com.example.domain.usecases.get_useCases
 
-import com.example.domain.enteties.db_enteties.MovieIdEntity
+import com.example.domain.entities.db_entities.MovieIdEntity
 import com.example.domain.repositories.MovieRepository
 import com.example.domain.usecases.BaseUseCase
 import kotlinx.coroutines.flow.Flow

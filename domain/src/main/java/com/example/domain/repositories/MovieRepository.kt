@@ -1,7 +1,7 @@
 package com.example.domain.repositories
 
-import com.example.domain.enteties.Movie
-import com.example.domain.enteties.db_enteties.MovieIdEntity
+import com.example.domain.entities.Movie
+import com.example.domain.entities.db_entities.MovieIdEntity
 import com.example.domain.states.ListMovieState
 import com.example.domain.states.MovieState
 interface MovieRepository {

@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.domain.enteties.Movie
+import com.example.domain.entities.Movie
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.viewModels.SearchMovieViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
@@ -36,7 +36,6 @@ fun SearchScreen(
     val searchState by vm.state.collectAsState()
 
     MainContainer(
-        permissionRequest = PermissionRequest(),
         isLoading = searchState.isLoading
     ) {
         SearchScreen(

@@ -1,4 +1,4 @@
-package com.example.domain.enteties.dto_enteties
+package com.example.domain.entities.dto_entities
 
 import com.google.gson.annotations.SerializedName
 

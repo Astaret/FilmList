@@ -9,14 +9,14 @@ import com.example.domain.states.LoadingState
 
 @Composable
 fun MainContainer(
-    permissionRequest: PermissionRequest,
-    isLoading: com.example.domain.states.LoadingState,
+    permissionRequest: PermissionRequest = PermissionRequest(),
+    isLoading: LoadingState,
     content: @Composable () -> Unit
 ) {
     PermissionHandler(permissionRequest = permissionRequest)
     when(isLoading){
-        com.example.domain.states.LoadingState.Error -> ErrorIndicator()
-        com.example.domain.states.LoadingState.Loading -> LoadingIndicator()
-        com.example.domain.states.LoadingState.Succes -> content()
+        LoadingState.Error -> ErrorIndicator()
+        LoadingState.Loading -> LoadingIndicator()
+        LoadingState.Succes -> content()
     }
 }

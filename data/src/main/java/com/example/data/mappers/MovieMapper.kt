@@ -2,9 +2,9 @@ package com.example.data.mappers
 
 import com.example.data.BuildConfig
 import com.example.domain.states.EntityState
-import com.example.domain.enteties.dto_enteties.MovieDto
-import com.example.domain.enteties.db_enteties.MovieIdEntity
-import com.example.domain.enteties.Movie
+import com.example.domain.entities.dto_entities.MovieDto
+import com.example.domain.entities.db_entities.MovieIdEntity
+import com.example.domain.entities.Movie
 import com.example.domain.states.MovieState
 import com.example.domain.states.StatusMovie
 

@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.domain.enteties.db_enteties.MovieIdEntity
+import com.example.domain.entities.db_entities.MovieIdEntity
 import com.example.domain.states.EntityState
 
 @Dao

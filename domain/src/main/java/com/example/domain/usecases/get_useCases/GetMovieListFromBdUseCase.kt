@@ -1,6 +1,6 @@
 package com.example.domain.usecases.get_useCases
 
-import com.example.domain.enteties.Movie
+import com.example.domain.entities.Movie
 import com.example.domain.repositories.MovieRepository
 import com.example.domain.states.ListMovieState
 import com.example.domain.usecases.BaseUseCase

@@ -7,11 +7,10 @@ import com.example.data.mappers.listMovieDtoToListMovie
 import com.example.data.mappers.movieToMovieEntity
 import com.example.data.mappers.toEntityState
 import com.example.data.web.api.ApiService
-import com.example.domain.enteties.Movie
-import com.example.domain.enteties.db_enteties.MovieIdEntity
+import com.example.domain.entities.Movie
+import com.example.domain.entities.db_entities.MovieIdEntity
 import com.example.domain.states.ListMovieState
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 

@@ -18,7 +18,7 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
 ) : ViewModel() {
 
     interface State {
-        val isLoading: com.example.domain.states.LoadingState
+        val isLoading: LoadingState
     }
 
     interface Event

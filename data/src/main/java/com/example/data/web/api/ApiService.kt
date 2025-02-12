@@ -1,7 +1,7 @@
 package com.example.data.web.api
 
-import com.example.domain.enteties.dto_enteties.MovieDto
-import com.example.domain.enteties.dto_enteties.TopMovieListDto
+import com.example.domain.entities.dto_entities.MovieDto
+import com.example.domain.entities.dto_entities.TopMovieListDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.domain.enteties.Movie
+import com.example.domain.entities.Movie
 import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
@@ -46,7 +46,6 @@ fun FavoriteMoviesScreen(
     val movieList = favMovieState.movieList
 
     MainContainer(
-        permissionRequest = PermissionRequest(),
         isLoading = favMovieState.isLoading
     ) {
         if (favMovieState.empty){

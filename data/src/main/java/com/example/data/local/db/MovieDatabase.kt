@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.domain.enteties.db_enteties.MovieIdEntity
+import com.example.domain.entities.db_entities.MovieIdEntity
 
 @Database(entities = [MovieIdEntity::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)

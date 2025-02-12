@@ -20,7 +20,6 @@ fun CameraPreview(analyzer: ImageAnalysis.Analyzer) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
     MainContainer(
-        permissionRequest = PermissionRequest(),
         isLoading = LoadingState.Succes
     ) {
         AndroidView(

@@ -1,4 +1,4 @@
-package com.example.domain.enteties.db_enteties
+package com.example.domain.entities.db_entities
 
 import android.os.Parcelable
 import androidx.room.Entity

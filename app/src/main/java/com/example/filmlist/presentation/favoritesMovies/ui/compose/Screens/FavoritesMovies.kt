@@ -30,7 +30,6 @@ import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.viewModels.FavoriteMoviesViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
-import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 
 @Composable
 fun FavoriteMoviesScreen(

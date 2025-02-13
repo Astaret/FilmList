@@ -5,11 +5,13 @@ import com.example.data.local.db.MovieInfoDao
 import com.example.data.mappers.dtoToMovie
 import com.example.data.mappers.listMovieDtoToListMovie
 import com.example.data.mappers.movieToMovieEntity
-import com.example.data.mappers.toEntityState
+import com.example.data.mappers.toEntityType
 import com.example.data.web.api.ApiService
 import com.example.domain.entities.Movie
 import com.example.domain.entities.db_entities.MovieIdEntity
-import com.example.domain.states.ListMovieState
+import com.example.domain.repositories.MovieRepository
+import com.example.domain.types.ListMovieType
+import com.example.domain.types.MovieType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
@@ -17,7 +19,7 @@ import javax.inject.Inject
 class MovieRepositoryImpl @Inject constructor(
     private val movieDao: MovieInfoDao,
     private val apiService: ApiService
-) : com.example.domain.repositories.MovieRepository {
+) : MovieRepository {
 
 
     override suspend fun loadData(loadPage: Int): List<Movie> {
@@ -42,7 +44,7 @@ class MovieRepositoryImpl @Inject constructor(
     override suspend fun getMovieByIdFromBd(id: Int): MovieIdEntity? = movieDao.getMovieById(id)
 
 
-    override suspend fun getMovieListFromBd(state: ListMovieState): List<Movie> = coroutineScope {
+    override suspend fun getMovieListFromBd(state: ListMovieType): List<Movie> = coroutineScope {
         movieDao.getMovieListFromBd(state).map {
             async {
                 apiService.getMovieInfo(it.id).dtoToMovie()
@@ -52,10 +54,10 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun putMovieToDb(
         movie: Movie,
-        stateOfMovie: com.example.domain.states.MovieState
+        stateOfMovie: MovieType
     ) {
         Log.d("Movie", "putMovieToDb: ${movie.title} to ${stateOfMovie.name}")
-        val movieEntity = movie.movieToMovieEntity(entityState = stateOfMovie.toEntityState())
+        val movieEntity = movie.movieToMovieEntity(entityType = stateOfMovie.toEntityType())
         movieDao.insertInMovieList(movieEntity.copy(id = movie.id))
     }
 }

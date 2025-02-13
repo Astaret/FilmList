@@ -3,8 +3,8 @@ package com.example.filmlist.presentation.detailMovies.viewModels
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
-import com.example.domain.states.EntityState
-import com.example.domain.states.MovieState
+import com.example.domain.types.EntityType
+import com.example.domain.types.MovieType
 import com.example.domain.usecases.get_useCases.GetId
 import com.example.domain.usecases.get_useCases.GetIdForInfo
 import com.example.domain.usecases.get_useCases.GetMovieIdFromBdUseCase
@@ -14,8 +14,8 @@ import com.example.domain.usecases.load_useCases.getMovieInfo
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.domain.states.LoadingState
-import com.example.domain.states.StatusMovie
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.example.domain.types.MovieStatus
 import com.example.filmlist.presentation.toMovieStatus
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -52,47 +52,47 @@ class DetailMovieViewModel @Inject constructor(
     private fun isMovieInBd(id: Int): InfoMovieState {
         handleOperation(
             operation = { getMovieIdFromBdUseCase(GetId(id)) },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
             onSuccess = {
                 val moveIdEntity = it.movieIdEntity
                 if (moveIdEntity != null) {
-                    val statusMovie = if (moveIdEntity.entityState != EntityState.ISBOUGHT) {
-                        if (moveIdEntity.entityState == EntityState.ISFAVORITE)
-                            StatusMovie.FAVORITE
+                    val movieStatus = if (moveIdEntity.entityType != EntityType.ISBOUGHT) {
+                        if (moveIdEntity.entityType == EntityType.ISFAVORITE)
+                            MovieStatus.FAVORITE
                         else
-                            if (moveIdEntity.entityState == EntityState.INSTORE)
-                                StatusMovie.INSTORE
-                            else StatusMovie.EMPTY
+                            if (moveIdEntity.entityType == EntityType.INSTORE)
+                                MovieStatus.INSTORE
+                            else MovieStatus.EMPTY
                     } else {
-                        StatusMovie.BOUGHT
+                        MovieStatus.BOUGHT
                     }
                     state.value.copy(
-                        statusMovie = statusMovie,
+                        movieStatus = movieStatus,
                         id = moveIdEntity.id.toString(),
                         movieEntity = getMovieInfoById(moveIdEntity.id.toString()).movieEntity
                     )
                 } else {
-                    state.value.copy(statusMovie = StatusMovie.EMPTY)
+                    state.value.copy(movieStatus = MovieStatus.EMPTY)
                 }
             }
         )
         return state.value
     }
 
-    private fun addMovieToDataBaseList(movieState: MovieState): InfoMovieState {
-        Log.d("Movie", "addMovieToFav: $movieState")
-        state.value.movieEntity?.let {movie ->
+    private fun addMovieToDataBaseList(movieType: MovieType): InfoMovieState {
+        Log.d("Movie", "addMovieToFav: $movieType")
+        state.value.movieEntity?.let { movie ->
             handleOperation(
                 operation = {
                     putMovieToDbUseCase(
                         getMovieInfo(
                             movie = movie,
-                            movieState = movieState
+                            movieType = movieType
                         )
                     )
                 },
-                onError = { state.value.copy(isLoading = LoadingState.Error) },
-                onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
+                onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+                onSuccess = { state.value.copy(movieStatus = movieType.toMovieStatus()) }
             )
         }
         return state.value
@@ -105,12 +105,12 @@ class DetailMovieViewModel @Inject constructor(
                     putMovieToDbUseCase(
                         getMovieInfo(
                             movie = movie,
-                            movieState = MovieState.EMPTY
+                            movieType = MovieType.EMPTY
                         )
                     )
                 },
-                onError = { state.value.copy(isLoading = LoadingState.Error) },
-                onSuccess = { state.value.copy(statusMovie = MovieState.EMPTY.toMovieStatus()) }
+                onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+                onSuccess = { state.value.copy(movieStatus = MovieType.EMPTY.toMovieStatus()) }
             )
         }
         return state.value
@@ -123,11 +123,15 @@ class DetailMovieViewModel @Inject constructor(
             operation = {
                 getMovieInfoUseCase(
                     GetIdForInfo(
-                        id.toInt()
+                        try {
+                            id.toInt()
+                        }catch (error: Exception){
+                            throw error
+                        }
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
             onSuccess = {
                 InfoMovieState(
                     id = it.movie.id.toString(),

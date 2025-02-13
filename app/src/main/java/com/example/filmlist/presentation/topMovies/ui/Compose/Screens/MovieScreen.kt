@@ -38,6 +38,7 @@ import com.example.filmlist.presentation.core.LibraryScreenRoute
 import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.core.StoreScreenRoute
 import com.example.filmlist.presentation.topMovies.viewModels.MovieViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
 import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
@@ -82,8 +83,8 @@ fun MovieScreen(
 
     MainContainer(
         permissionRequest = permissions.value,
-        isLoading = topMovieState.isLoading
-        ) {
+        state = topMovieState
+    ) {
         Column {
             Row(
                 modifier = Modifier

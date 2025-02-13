@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.domain.states.MovieState
-import com.example.domain.states.StatusMovie
+import com.example.domain.types.MovieType
+import com.example.domain.types.MovieStatus
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
@@ -132,35 +132,35 @@ fun MovieDetailScreen(
                             shape = RoundedCornerShape(5.dp)
                         )
                 )
-                if (movieInfoState.statusMovie != StatusMovie.BOUGHT) {
+                if (movieInfoState.movieStatus != MovieStatus.BOUGHT) {
                     DetailNavigationButton(
                         modifier = Modifier.align(Alignment.BottomEnd),
                         onClick = {
-                            if (movieInfoState.statusMovie == StatusMovie.INSTORE) {
+                            if (movieInfoState.movieStatus == MovieStatus.INSTORE) {
                                 vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
                             } else {
-                                vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieState.INSTORE))
+                                vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieType.INSTORE))
                             }
                         },
-                        imageVector = if (movieInfoState.statusMovie == StatusMovie.INSTORE)
+                        imageVector = if (movieInfoState.movieStatus == MovieStatus.INSTORE)
                             Icons.Default.Check
                         else Icons.Default.ShoppingCart,
-                        description = if (movieInfoState.statusMovie == StatusMovie.INSTORE) "BOUGHT"
+                        description = if (movieInfoState.movieStatus == MovieStatus.INSTORE) "BOUGHT"
                         else "BUY",
-                        color = if (movieInfoState.statusMovie == StatusMovie.INSTORE) Color.Green
+                        color = if (movieInfoState.movieStatus == MovieStatus.INSTORE) Color.Green
                         else Color.Black
                     )
                     DetailNavigationButton(
                         modifier = Modifier.align(Alignment.TopEnd),
                         onClick = {
-                            if (movieInfoState.statusMovie == StatusMovie.FAVORITE)
+                            if (movieInfoState.movieStatus == MovieStatus.FAVORITE)
                                 vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                            else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(com.example.domain.states.MovieState.ISFAVORITE))
+                            else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(com.example.domain.types.MovieType.ISFAVORITE))
                         },
-                        imageVector = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Icons.Default.Favorite
+                        imageVector = if (movieInfoState.movieStatus == MovieStatus.FAVORITE) Icons.Default.Favorite
                         else Icons.Default.FavoriteBorder,
                         description = "In favorite",
-                        color = if (movieInfoState.statusMovie == StatusMovie.FAVORITE) Color.Red
+                        color = if (movieInfoState.movieStatus == MovieStatus.FAVORITE) Color.Red
                         else Color.Black,
                     )
                 } else {
@@ -182,7 +182,7 @@ fun MovieDetailScreen(
                     }
                 }
             }
-            movie?.let {movie->
+            movie?.let { movie ->
                 DetailMovieCardDescription(movie)
             }
 

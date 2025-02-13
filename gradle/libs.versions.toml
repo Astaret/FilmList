@@ -1,13 +1,57 @@
 [versions]
 kotlin = "1.9.10"
-coreKtx = "1.15.0"
+coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-appcompat = "1.7.0"
-material = "1.12.0"
+appcompat = "1.6.1"
+material = "1.9.0"
 activity = "1.9.3"
-constraintlayout = "2.2.0"
+constraintlayout = "2.1.4"
+compose = "1.6.0"
+navigation = "2.8.0"
+accompanist = "0.32.0"
+constraintlayoutCompose = "1.1.0-alpha11"
+lifecycle = "2.8.7"
+
+#serialization
+serialization = "1.5.1"
+
+#images
+glide = "2.4.0"
+
+#qrcode
+zxing-qrcode = "3.5.2"
+
+#camera
+camera = "1.3.0"
+barcode-scaning = "17.2.0"
+
+#dagger
+dagger = "2.48"
+
+#tests
+junit4 = "4.13.2"
+junitExt = "1.1.5"
+espresso = "3.5.1"
+chucker = "4.0.0"
+junitJupiter = "5.9.2"
+mockitoCore = "5.2.0"
+mockitoKotlin = "4.1.0"
+mockk = "1.13.5"
+coroutinesTest = "1.7.3"
+composeUiTest = "1.6.1"
+
+#room
+room = "2.6.1"
+
+#picasso
+picasso = "2.8"
+
+#retrofit
+retrofit = "2.10.0"
+gson = "2.8.9"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -18,7 +62,144 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 
-[plugins]
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+#viewmodel
 
+# Serialization JSON
+serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+
+# Glide
+glide = { group = "com.github.skydoves", name = "landscapist-glide", version.ref = "glide" }
+
+# QR Code
+zxing-qrcode = { group = "com.google.zxing", name = "core", version.ref = "zxing-qrcode" }
+
+# Compose
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+activity-compose = { group = "androidx.activity", name = "activity-compose" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+compose-animation = { group = "androidx.compose.animation", name = "animation" }
+lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }
+compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version = "2.6.0" }
+lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycle" }
+
+# Accompanist
+accompanist-systemuicontroller = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-navigation-animation = { group = "com.google.accompanist", name = "accompanist-navigation-animation", version.ref = "accompanist" }
+accompanist-placeholder-material = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanist" }
+accompanist-permission = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
+
+# Camera
+barcode-scanning = { group = "com.github.skydoves", name = "landscapist-glide", version.ref = "barcode-scaning" }
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camera" }
+camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
+
+# Dagger
+dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
+dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.0.0" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "dagger" }
+
+#Tests
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+junitExt = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
+espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+chuckerDebug = { group = "com.github.chuckerteam.chucker", name = "library", version.ref = "chucker" }
+chuckerRelease = { group = "com.github.chuckerteam.chucker", name = "library-no-op", version.ref = "chucker" }
+junitJupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+mockitoCore = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoCore" }
+mockitoKotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockitoKotlin" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+coroutinesTest = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+composeUiTest = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUiTest" }
+
+#room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+#picasso
+picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
+
+#retrofit-gson
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+
+[bundles]
+
+roomDependencies = [
+    "room-compiler",
+    "room-ktx",
+    "room-runtime"
+]
+retrofitDependencies = [
+    "retrofit",
+    "gson",
+    "retrofit-gson"
+]
+
+dagger-hiltDependencies = [
+    "dagger",
+    "dagger-compiler",
+    "hilt-navigation-compose",
+    "hilt-android",
+    "hilt-compiler"
+]
+
+composeDependencies = [
+    "lifecycle-viewmodel",
+    "compose-bom",
+    "compose-ui",
+    "compose-material3",
+    "compose-ui-tooling-preview",
+    "activity-compose",
+    "navigation-compose",
+    "compose-animation",
+    "lifecycle-runtime-compose",
+    "lifecycle-viewmodel-compose",
+    "compose-ui-tooling",
+    "compose-ui-test-manifest",
+    "constraintlayout-compose",
+    "compose-ui-test-junit4",
+    "lifecycle-viewmodel-ktx"
+]
+accompanistDependencies = [
+    "accompanist-permission",
+    "accompanist-systemuicontroller",
+    "accompanist-navigation-animation",
+    "accompanist-placeholder-material",
+]
+cameraDependencies = [
+    "barcode-scanning",
+    "camera-core",
+    "camera-lifecycle",
+    "camera2",
+    "camera-view"
+]
+
+testDependencies = [
+    "junit4",
+    "junitExt",
+    "espressoCore",
+    "junitJupiter",
+    "mockitoCore",
+    "mockitoKotlin",
+    "mockk",
+    "coroutinesTest",
+    "composeUiTest",
+    "chuckerDebug",
+    "chuckerRelease"
+]

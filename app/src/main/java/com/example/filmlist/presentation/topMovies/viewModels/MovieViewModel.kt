@@ -9,7 +9,6 @@ import com.example.domain.usecases.load_useCases.getPage
 import com.example.filmlist.presentation.topMovies.states.TopMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
-import com.example.domain.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -35,19 +34,19 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    private fun loadPage(): TopMovieState{
+    private fun loadPage(): TopMovieState {
         handleOperation(
-            operation = {getTotalPagesUseCase(Params)},
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
-            onSuccess = { state.value.copy(totalPages = it.pages, isLoading = LoadingState.Succes) }
+            operation = { getTotalPagesUseCase(Params) },
+            onError = { handleError(it) },
+            onSuccess = { state.value.copy(totalPages = it.pages) }
         )
         return state.value
     }
 
     private fun loadData(page: Int): TopMovieState {
         handleOperation(
-            operation = {loadDataUseCase(getPage(page))},
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            operation = { loadDataUseCase(getPage(page)) },
+            onError = { handleError(it) },
             onSuccess = {
                 val newList = it.movieList
                 savedStateHandle["movieList"] = state.value.movieList
@@ -57,15 +56,14 @@ class MovieViewModel @Inject constructor(
                 state.value.copy(
                     movieList = (state.value.movieList + newList).distinctBy { it.id },
                     currentPage = page,
-                    totalPages = state.value.totalPages,
-                    isLoading = LoadingState.Succes
+                    totalPages = state.value.totalPages
                 )
             }
         )
         return state.value
     }
 
-    private fun loadNextPage():TopMovieState {
+    private fun loadNextPage(): TopMovieState {
         if (state.value.currentPage < state.value.totalPages) {
             val page = state.value.currentPage + 1
             loadData(page)

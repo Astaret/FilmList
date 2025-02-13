@@ -6,7 +6,7 @@ import com.example.domain.usecases.load_useCases.LoadDataFromSearchUseCase
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.states.SearchState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.domain.states.LoadingState
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -41,7 +41,7 @@ class SearchMovieViewModel @Inject constructor(
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
             onSuccess = {
                 val movies = it.movieList
                 state.value.copy(

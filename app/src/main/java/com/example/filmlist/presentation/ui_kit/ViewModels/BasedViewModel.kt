@@ -1,8 +1,8 @@
 package com.example.filmlist.presentation.ui_kit.ViewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.states.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,8 +17,10 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
     initialState: State
 ) : ViewModel() {
 
-    interface State {
-        val isLoading: LoadingState
+    sealed interface State {
+        object Loading: State
+        class Error(val message: String) : State
+        interface ScreenState : State
     }
 
     interface Event
@@ -42,16 +44,20 @@ abstract class BasedViewModel<State : BasedViewModel.State, Event : BasedViewMod
             _state.emit(handleEvent(event))
         }
     }
+    protected fun handleError(throwable: Throwable): BasedViewModel.State {
+        return BasedViewModel.State.Error(throwable.message.orEmpty())
+    }
 
     protected fun <T> handleOperation(
         operation: suspend () -> Flow<T>,
         onSuccess: (T) -> State,
-        onError: (Throwable) -> State
+        onError: (Throwable) -> BasedViewModel.State
     ) {
         viewModelScope.launch(dispatcher) {
             operation()
                 .catch { throwable ->
-                    setState { onError(throwable) }
+                    Log.d("Movie", "handleOperation: ${throwable.message}")
+                    onError(throwable)
                 }.collect { value ->
                     setState { onSuccess(value) }
                 }

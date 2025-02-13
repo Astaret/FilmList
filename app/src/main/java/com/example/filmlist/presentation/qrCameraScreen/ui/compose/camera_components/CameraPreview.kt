@@ -11,8 +11,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
-import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
-import com.example.domain.states.LoadingState
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 
 @Composable
 fun CameraPreview(analyzer: ImageAnalysis.Analyzer) {

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.domain.entities.db_entities.MovieIdEntity
 
-@Database(entities = [MovieIdEntity::class], version = 4, exportSchema = false)
+@Database(entities = [MovieIdEntity::class], version = 5, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class MovieDatabase : RoomDatabase() {
     abstract fun movieInfoDao(): MovieInfoDao

@@ -6,31 +6,32 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.domain.entities.db_entities.MovieIdEntity
-import com.example.domain.states.EntityState
+import com.example.domain.types.EntityType
+import com.example.domain.types.ListMovieType
 
 @Dao
 interface MovieInfoDao {
 
-    @Query("SELECT * FROM movie_entity WHERE entityState = :state")
-    suspend fun getMoviesByState(state: EntityState): List<MovieIdEntity>
+    @Query("SELECT * FROM movie_entity WHERE entityType = :state")
+    suspend fun getMoviesByState(state: EntityType): List<MovieIdEntity>
 
     suspend fun getFavoriteMovieList(): List<MovieIdEntity> {
-        return getMoviesByState(EntityState.ISFAVORITE)
+        return getMoviesByState(EntityType.ISFAVORITE)
     }
 
     suspend fun getFromStoreMovieList(): List<MovieIdEntity> {
-        return getMoviesByState(EntityState.INSTORE)
+        return getMoviesByState(EntityType.INSTORE)
     }
 
     suspend fun getFromBoughtMovieList(): List<MovieIdEntity> {
-        return getMoviesByState(EntityState.ISBOUGHT)
+        return getMoviesByState(EntityType.ISBOUGHT)
     }
 
-    suspend fun getMovieListFromBd(state: com.example.domain.states.ListMovieState): List<MovieIdEntity>{
-        return when(state){
-            com.example.domain.states.ListMovieState.ISFAVORITE -> getFavoriteMovieList()
-            com.example.domain.states.ListMovieState.INSTORE -> getFromStoreMovieList()
-            com.example.domain.states.ListMovieState.ISBOUGHT -> getFromBoughtMovieList()
+    suspend fun getMovieListFromBd(type: ListMovieType): List<MovieIdEntity>{
+        return when(type){
+            ListMovieType.ISFAVORITE -> getFavoriteMovieList()
+            ListMovieType.INSTORE -> getFromStoreMovieList()
+            ListMovieType.ISBOUGHT -> getFromBoughtMovieList()
         }
     }
 
@@ -40,11 +41,13 @@ interface MovieInfoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertInMovieList(movieId: MovieIdEntity)
 
-    @Query("""
+    @Query(
+        """
     UPDATE movie_entity 
-    SET entityState = :field
-    WHERE id = :id """)
-    suspend fun updateMovieField(id: Int, field: EntityState)
+    SET entityType = :field
+    WHERE id = :id """
+    )
+    suspend fun updateMovieField(id: Int, field: EntityType)
 
     @Delete
     suspend fun deleteMovie(movieId: MovieIdEntity)

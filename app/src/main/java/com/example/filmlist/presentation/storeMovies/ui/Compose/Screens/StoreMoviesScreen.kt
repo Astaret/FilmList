@@ -58,7 +58,7 @@ fun StoreScreen(
 
     if (storeState.empty) {
         EmptyStoreScreen(
-            {navController.navigate(MainScreenRoute)}
+            { navController.navigate(MainScreenRoute) }
         )
     } else {
         Column {
@@ -70,7 +70,7 @@ fun StoreScreen(
             ) {
 
                 IconButton(
-                    onClick = {navController.navigate(MainScreenRoute)}
+                    onClick = { navController.navigate(MainScreenRoute) }
                 ) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
@@ -171,7 +171,6 @@ fun StoreScreen(
 
 
 }
-
 
 
 @Composable

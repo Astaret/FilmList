@@ -1,12 +1,12 @@
 package com.example.data.mappers
 
 import com.example.data.BuildConfig
-import com.example.domain.states.EntityState
+import com.example.domain.types.EntityType
 import com.example.domain.entities.dto_entities.MovieDto
 import com.example.domain.entities.db_entities.MovieIdEntity
 import com.example.domain.entities.Movie
-import com.example.domain.states.MovieState
-import com.example.domain.states.StatusMovie
+import com.example.domain.types.MovieType
+import com.example.domain.types.MovieStatus
 
 fun MovieDto.dtoToMovie() = Movie(
     id = id,
@@ -27,29 +27,29 @@ fun Movie.movieToDto() = MovieDto(
 )
 
 fun Movie.movieToMovieEntity(
-    entityState: EntityState = EntityState.EMPTY
+    entityType: EntityType = EntityType.EMPTY
 ) = MovieIdEntity(
     id = id,
-    entityState = entityState)
+    entityType = entityType)
 
 fun List<MovieDto>.listMovieDtoToListMovie() = map { it.dtoToMovie() }
 fun List<Movie>.listMovieToListMovieDto() = map { it.movieToDto() }
 
-fun MovieState.toEntityState(): EntityState {
+fun MovieType.toEntityType(): EntityType {
     return when (this) {
-        MovieState.ISFAVORITE -> EntityState.ISFAVORITE
-        MovieState.ISBOUGHT -> EntityState.ISBOUGHT
-        MovieState.INSTORE -> EntityState.INSTORE
-       MovieState.EMPTY -> EntityState.EMPTY
+        MovieType.ISFAVORITE -> EntityType.ISFAVORITE
+        MovieType.ISBOUGHT -> EntityType.ISBOUGHT
+        MovieType.INSTORE -> EntityType.INSTORE
+       MovieType.EMPTY -> EntityType.EMPTY
     }
 }
 
 
-fun MovieState.toMovieStatus(): StatusMovie {
+fun MovieType.toMovieStatus(): MovieStatus {
     return when (this) {
-        MovieState.ISFAVORITE -> StatusMovie.FAVORITE
-        MovieState.ISBOUGHT -> StatusMovie.BOUGHT
-        MovieState.INSTORE -> StatusMovie.INSTORE
-        MovieState.EMPTY -> StatusMovie.EMPTY
+        MovieType.ISFAVORITE -> MovieStatus.FAVORITE
+        MovieType.ISBOUGHT -> MovieStatus.BOUGHT
+        MovieType.INSTORE -> MovieStatus.INSTORE
+        MovieType.EMPTY -> MovieStatus.EMPTY
     }
 }

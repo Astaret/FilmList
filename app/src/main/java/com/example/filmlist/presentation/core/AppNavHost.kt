@@ -18,8 +18,10 @@ import com.example.filmlist.presentation.topMovies.ui.Compose.Screens.MovieScree
 fun AppNavHost() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController,
-        startDestination = MainScreenRoute) {
+    NavHost(
+        navController = navController,
+        startDestination = MainScreenRoute
+    ) {
 
         composable<MainScreenRoute> {
             MovieScreen(
@@ -36,7 +38,7 @@ fun AppNavHost() {
 
         composable<DetailScreenRoute> {
             val movieId: DetailScreenRoute = it.toRoute()
-            MovieDetailScreen(movieId = movieId.id.toString(),navController = navController)
+            MovieDetailScreen(movieId = movieId.id.toString(), navController = navController)
             BackHandler {
                 navController.navigateUp()
             }

@@ -2,15 +2,16 @@ package com.example.filmlist.presentation.storeMovies.viewModels
 
 import android.util.Log
 import com.example.domain.entities.Movie
-import com.example.domain.states.ListMovieState
-import com.example.domain.states.LoadingState
-import com.example.domain.states.MovieState
+import com.example.domain.types.ListMovieType
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
+import com.example.domain.types.MovieType
 import com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
 import com.example.domain.usecases.get_useCases.getListMovieState
 import com.example.domain.usecases.load_useCases.PutMovieToDbUseCase
 import com.example.domain.usecases.load_useCases.getMovieInfo
 import com.example.filmlist.presentation.storeMovies.events.PurchaseEvent
 import com.example.filmlist.presentation.storeMovies.states.StoreMovState
+import com.example.filmlist.presentation.toBoughtMovies
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,7 +36,7 @@ class StoreViewModel @Inject constructor(
         }
     }
 
-    private fun putMovieToDb(movie: Movie, states: MovieState) {
+    private fun putMovieToDb(movie: Movie, states: MovieType) {
         handleOperation(
             operation = {
                 putMovieToDbUseCase(
@@ -45,7 +46,7 @@ class StoreViewModel @Inject constructor(
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
             onSuccess = { state.value.copy() }
         )
     }
@@ -55,16 +56,16 @@ class StoreViewModel @Inject constructor(
             operation = {
                 getMovieListFromBdUseCase(
                     getListMovieState(
-                        ListMovieState.INSTORE
+                        ListMovieType.INSTORE
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
             onSuccess = {
                 val remainingMovies = it.listMovies
 
                 remainingMovies.forEach {
-                    putMovieToDb(it, MovieState.ISBOUGHT)
+                    putMovieToDb(it, MovieType.ISBOUGHT)
                     Log.d("Movie", "buyMovieFun: BOUGHT ${it.title}")
                 }
 
@@ -84,15 +85,13 @@ class StoreViewModel @Inject constructor(
             operation = {
                 getMovieListFromBdUseCase(
                     getListMovieState(
-                        ListMovieState.INSTORE
+                        ListMovieType.INSTORE
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
             onSuccess = { movie ->
-                val listBoughtMovies = movie.listMovies.map { movie ->
-                    movie.copy(price = movie.rating.toFloat() * 550.20f)
-                }
+                val listBoughtMovies = movie.listMovies.toBoughtMovies()
                 Log.d("Movie", "showAllMoviesInStore: $listBoughtMovies")
                 val totalSum = listBoughtMovies.sumOf { it.price.toDouble() }
                 state.value.copy(

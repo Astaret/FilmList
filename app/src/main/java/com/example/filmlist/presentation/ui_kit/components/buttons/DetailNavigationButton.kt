@@ -23,7 +23,8 @@ fun DetailNavigationButton(
             containerColor = Color.White,
             contentColor = Color.Black,
             disabledContentColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,)
+            disabledContainerColor = Color.Transparent,
+        )
     ) {
         Icon(
             imageVector = imageVector,

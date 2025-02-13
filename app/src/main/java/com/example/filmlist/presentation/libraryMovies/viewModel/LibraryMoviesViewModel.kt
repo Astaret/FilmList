@@ -1,20 +1,19 @@
 package com.example.filmlist.presentation.libraryMovies.viewModel
 
-import com.example.domain.states.ListMovieState
+import com.example.domain.types.ListMovieType
 import com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
 import com.example.domain.usecases.get_useCases.getListMovieState
 import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
 import com.example.filmlist.presentation.libraryMovies.states.LibraryState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.domain.states.LoadingState
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class LibraryMoviesViewModel @Inject constructor(
-    private val getMovieListFromBdUseCase:GetMovieListFromBdUseCase
+    private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
 ) : BasedViewModel<LibraryState, LibraryEvent>(LibraryState()) {
-
 
 
     override fun handleEvent(event: LibraryEvent): LibraryState {
@@ -23,14 +22,14 @@ class LibraryMoviesViewModel @Inject constructor(
         }
     }
 
-    private fun showAllBought():LibraryState {
+    private fun showAllBought(): LibraryState {
         handleOperation(
             operation = {
                 getMovieListFromBdUseCase(
-                    getListMovieState(ListMovieState.ISBOUGHT)
+                    getListMovieState(ListMovieType.ISBOUGHT)
                 )
             },
-            onError = { state.value.copy(isLoading = com.example.domain.states.LoadingState.Error) },
+            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
             onSuccess = {
                 state.value.copy(
                     movieList = it.listMovies,

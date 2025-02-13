@@ -1,25 +1,26 @@
 package com.example.filmlist.data.repositories
 
-import com.example.filmlist.data.local.db.MovieInfoDao
-import com.example.filmlist.data.mappers.listMovieToListMovieDto
-import com.example.filmlist.data.mappers.movieToMovieEntity
-import com.example.filmlist.data.web.api.ApiService
+import com.example.data.local.db.MovieInfoDao
+import com.example.data.mappers.listMovieToListMovieDto
+import com.example.data.mappers.movieToMovieEntity
+import com.example.data.repositories.MovieRepositoryImpl
+import com.example.data.web.api.ApiService
+import com.example.domain.entities.Movie
 import com.example.domain.entities.dto_entities.TopMovieListDto
-import com.example.domain.models.Movie
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.jupiter.api.Assertions.*
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.test.Test
 
 class MovieRepositoryImplTest {
 
     private lateinit var repository: com.example.domain.repositories.MovieRepository
-    private val apiService: ApiService = mock()
-    private val movieDao: MovieInfoDao = mock()
+    private val apiService = mock<ApiService>()
+    private val movieDao = mock<MovieInfoDao>()
 
     @Before
     fun setup() {
@@ -29,14 +30,14 @@ class MovieRepositoryImplTest {
     @Test
     fun `loadData should return list of movies from API`() = runTest {
         val fakeMovies = listOf(
-            com.example.domain.models.Movie(
+            Movie(
                 1, "Inception",
                 overview = "over1",
                 poster = "post1",
                 title = "titl1",
                 rating = "rat1",
                 price = 1f
-            ), com.example.domain.models.Movie(
+            ), Movie(
                 2, "Inception2",
                 overview = "over2",
                 poster = "post1",
@@ -64,14 +65,14 @@ class MovieRepositoryImplTest {
     @Test
     fun `loadDataFromSearch should return list of movies from search`() = runTest {
         val fakeMovies = listOf(
-            com.example.domain.models.Movie(
+            Movie(
                 1, "Inception",
                 overview = "over1",
                 poster = "post1",
                 title = "titl1",
                 rating = "rat1",
                 price = 1f
-            ), com.example.domain.models.Movie(
+            ),Movie(
                 2, "Inception2",
                 overview = "over2",
                 poster = "post1",
@@ -108,7 +109,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getMovieByIdFromBd should return movie from DAO`() = runTest {
-        val fakeMovie = com.example.domain.models.Movie(
+        val fakeMovie = Movie(
             1, "Inception",
             overview = "over1",
             poster = "post1",
@@ -128,7 +129,7 @@ class MovieRepositoryImplTest {
     @Test
     fun `putMovieToDb should insert movie in DAO`() = runTest {
         // Given
-        val fakeMovie = com.example.domain.models.Movie(
+        val fakeMovie = Movie(
             1, "Inception",
             overview = "over1",
             poster = "post1",
@@ -136,10 +137,10 @@ class MovieRepositoryImplTest {
             rating = "rat1",
             price = 1f
         )
-        val movieState = com.example.domain.states.MovieState.ISBOUGHT
+        val movieType = com.example.domain.types.MovieType.ISBOUGHT
         whenever(movieDao.insertInMovieList(any())).thenReturn(Unit)
 
-        repository.putMovieToDb(fakeMovie, movieState)
+        repository.putMovieToDb(fakeMovie, movieType)
 
         verify(movieDao).insertInMovieList(any())
     }

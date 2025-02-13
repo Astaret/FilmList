@@ -1,22 +1,23 @@
 package com.example.filmlist.presentation.ui_kit.components
 
 import androidx.compose.runtime.Composable
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.indicators.ErrorIndicator
 import com.example.filmlist.presentation.ui_kit.components.indicators.LoadingIndicator
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionHandler
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
-import com.example.domain.states.LoadingState
 
 @Composable
 fun MainContainer(
     permissionRequest: PermissionRequest = PermissionRequest(),
-    isLoading: LoadingState,
+    state: BasedViewModel.State,
     content: @Composable () -> Unit
 ) {
     PermissionHandler(permissionRequest = permissionRequest)
-    when(isLoading){
-        LoadingState.Error -> ErrorIndicator()
-        LoadingState.Loading -> LoadingIndicator()
-        LoadingState.Succes -> content()
+    content()
+    when(state){
+        is BasedViewModel.State.Error -> ErrorIndicator(state.message)
+        BasedViewModel.State.Loading -> LoadingIndicator()
+        is BasedViewModel.State.ScreenState -> Unit
     }
 }

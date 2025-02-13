@@ -1,12 +1,12 @@
 package com.example.filmlist.presentation.favoritesMovies.viewModels
 
-import com.example.domain.states.ListMovieState
+import com.example.domain.types.ListMovieType
 import com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
 import com.example.domain.usecases.get_useCases.getListMovieState
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.domain.states.LoadingState
+import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -23,12 +23,14 @@ class FavoriteMoviesViewModel @Inject constructor(
         }
     }
 
-    private fun showAllFavorites():FavoriteState {
+    private fun showAllFavorites(): FavoriteState {
         handleOperation(
-            operation = {getMovieListFromBdUseCase(
-                getListMovieState(ListMovieState.ISFAVORITE)
-            )},
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
+            operation = {
+                getMovieListFromBdUseCase(
+                    getListMovieState(ListMovieType.ISFAVORITE)
+                )
+            },
+            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
             onSuccess = {
                 FavoriteState(
                     movieList = it.listMovies,

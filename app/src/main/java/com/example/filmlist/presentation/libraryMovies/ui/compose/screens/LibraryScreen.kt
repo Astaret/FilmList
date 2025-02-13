@@ -28,7 +28,6 @@ import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
 import com.example.filmlist.presentation.libraryMovies.viewModel.LibraryMoviesViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
-import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 
 @Composable
 fun LibraryScreen(
@@ -46,12 +45,13 @@ fun LibraryScreen(
     MainContainer(
         isLoading = librMovieState.isLoading
     ) {
-        if (!librMovieState.empty){
+        if (!librMovieState.empty) {
             libraryListMovie(
                 movieList = movieList,
-                navController = navController)
-        }else{
-            EmptyLibraryScreen({navController.navigate(MainScreenRoute)})
+                navController = navController
+            )
+        } else {
+            EmptyLibraryScreen({ navController.navigate(MainScreenRoute) })
         }
     }
 
@@ -72,8 +72,8 @@ private fun libraryListMovie(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = {navController.navigate(MainScreenRoute)}
-            ){
+                onClick = { navController.navigate(MainScreenRoute) }
+            ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "BACK",
@@ -94,7 +94,7 @@ private fun EmptyLibraryScreen(onNavigateToBackMain: () -> Unit) {
     Column {
         IconButton(
             onClick = { onNavigateToBackMain() }
-        ){
+        ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "BACK",

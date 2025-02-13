@@ -36,7 +36,7 @@ fun SearchScreen(
     val searchState by vm.state.collectAsState()
 
     MainContainer(
-        isLoading = searchState.isLoading
+        state = searchState
     ) {
         SearchScreen(
             searchQuery = searchState.searchQuery,

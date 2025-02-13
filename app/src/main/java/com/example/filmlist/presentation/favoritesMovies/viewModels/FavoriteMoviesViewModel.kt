@@ -6,7 +6,6 @@ import com.example.domain.usecases.get_useCases.getListMovieState
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -30,12 +29,11 @@ class FavoriteMoviesViewModel @Inject constructor(
                     getListMovieState(ListMovieType.ISFAVORITE)
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+            onError = { handleError(it) },
             onSuccess = {
                 FavoriteState(
                     movieList = it.listMovies,
-                    empty = it.listMovies.isEmpty(),
-                    isLoading = LoadingState.Succes
+                    empty = it.listMovies.isEmpty()
                 )
             }
         )

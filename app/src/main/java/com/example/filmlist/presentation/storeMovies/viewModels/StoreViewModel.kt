@@ -3,7 +3,6 @@ package com.example.filmlist.presentation.storeMovies.viewModels
 import android.util.Log
 import com.example.domain.entities.Movie
 import com.example.domain.types.ListMovieType
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import com.example.domain.types.MovieType
 import com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
 import com.example.domain.usecases.get_useCases.getListMovieState
@@ -46,7 +45,7 @@ class StoreViewModel @Inject constructor(
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+            onError = {handleError(it) },
             onSuccess = { state.value.copy() }
         )
     }
@@ -60,7 +59,7 @@ class StoreViewModel @Inject constructor(
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+            onError = {handleError(it) },
             onSuccess = {
                 val remainingMovies = it.listMovies
 
@@ -72,8 +71,7 @@ class StoreViewModel @Inject constructor(
                 state.value.copy(
                     movieList = emptyList(),
                     totalPrice = 0.0,
-                    empty = true,
-                    isLoading = LoadingState.Succes
+                    empty = true
                 )
             }
         )
@@ -89,7 +87,7 @@ class StoreViewModel @Inject constructor(
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+            onError = {handleError(it) },
             onSuccess = { movie ->
                 val listBoughtMovies = movie.listMovies.toBoughtMovies()
                 Log.d("Movie", "showAllMoviesInStore: $listBoughtMovies")
@@ -97,8 +95,7 @@ class StoreViewModel @Inject constructor(
                 state.value.copy(
                     movieList = listBoughtMovies,
                     totalPrice = totalSum,
-                    empty = listBoughtMovies.isEmpty(),
-                    isLoading = LoadingState.Succes
+                    empty = listBoughtMovies.isEmpty()
                 )
             }
         )

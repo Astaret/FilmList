@@ -21,11 +21,11 @@ serialization = "1.5.1"
 glide = "2.4.0"
 
 #qrcode
-zxing-qrcode = "3.5.2"
+zxingQrcode = "3.5.2"
 
 #camera
 camera = "1.3.0"
-barcode-scaning = "17.2.0"
+barcodeScanning = "17.2.0"
 
 #dagger
 dagger = "2.48"
@@ -52,7 +52,6 @@ picasso = "2.8"
 retrofit = "2.10.0"
 gson = "2.8.9"
 
-
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -64,8 +63,6 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 
-#viewmodel
-
 # Serialization JSON
 serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 
@@ -73,7 +70,7 @@ serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serializ
 glide = { group = "com.github.skydoves", name = "landscapist-glide", version.ref = "glide" }
 
 # QR Code
-zxing-qrcode = { group = "com.google.zxing", name = "core", version.ref = "zxing-qrcode" }
+zxing-qrcode = { group = "com.google.zxing", name = "core", version.ref = "zxingQrcode" }
 
 # Compose
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose" }
@@ -99,7 +96,6 @@ accompanist-placeholder-material = { group = "com.google.accompanist", name = "a
 accompanist-permission = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 # Camera
-barcode-scanning = { group = "com.github.skydoves", name = "landscapist-glide", version.ref = "barcode-scaning" }
 camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camera" }
 camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera" }
 camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera" }
@@ -112,7 +108,7 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "dagger" }
 
-#Tests
+# Tests
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 junitExt = { group = "androidx.test.ext", name = "junit", version.ref = "junitExt" }
 espressoCore = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
@@ -125,15 +121,15 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 coroutinesTest = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
 composeUiTest = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUiTest" }
 
-#room
+# Room
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
-#picasso
+# Picasso
 picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
 
-#retrofit-gson
+# Retrofit
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
@@ -183,7 +179,6 @@ accompanistDependencies = [
     "accompanist-placeholder-material",
 ]
 cameraDependencies = [
-    "barcode-scanning",
     "camera-core",
     "camera-lifecycle",
     "camera2",

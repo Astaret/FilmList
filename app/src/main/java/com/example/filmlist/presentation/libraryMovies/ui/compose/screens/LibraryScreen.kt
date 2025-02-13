@@ -43,7 +43,7 @@ fun LibraryScreen(
     val movieList = librMovieState.movieList
 
     MainContainer(
-        isLoading = librMovieState.isLoading
+        state = librMovieState
     ) {
         if (!librMovieState.empty) {
             libraryListMovie(

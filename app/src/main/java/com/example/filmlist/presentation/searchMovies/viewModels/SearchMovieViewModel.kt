@@ -6,7 +6,6 @@ import com.example.domain.usecases.load_useCases.LoadDataFromSearchUseCase
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.states.SearchState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -27,7 +26,7 @@ class SearchMovieViewModel @Inject constructor(
 
     private fun onSearchQueryChange(newQuery: String): SearchState {
         setState {
-            copy(searchQuery = newQuery, isLoading = LoadingState.Succes)
+            copy(searchQuery = newQuery)
         }
         return state.value
     }
@@ -41,7 +40,7 @@ class SearchMovieViewModel @Inject constructor(
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+            onError = { handleError(it) },
             onSuccess = {
                 val movies = it.movieList
                 state.value.copy(
@@ -50,8 +49,7 @@ class SearchMovieViewModel @Inject constructor(
                         movies.filter { it.title.contains(query, ignoreCase = true) }
                     } else {
                         movies
-                    },
-                    isLoading = LoadingState.Succes
+                    }
                 )
             }
         )
@@ -71,7 +69,7 @@ class SearchMovieViewModel @Inject constructor(
                         loadDataFromSearch(state.searchQuery)
                     } else {
                         setState {
-                            copy(searchResult = emptyList(), isLoading = LoadingState.Succes)
+                            copy(searchResult = emptyList())
                         }
                     }
                 }

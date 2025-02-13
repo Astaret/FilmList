@@ -45,7 +45,7 @@ fun FavoriteMoviesScreen(
     val movieList = favMovieState.movieList
 
     MainContainer(
-        isLoading = favMovieState.isLoading
+        state = favMovieState
     ) {
         if (favMovieState.empty){
             EmptyFavoriteScreen { navController.navigate(MainScreenRoute) }

@@ -14,7 +14,6 @@ import com.example.domain.usecases.load_useCases.getMovieInfo
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import com.example.domain.types.MovieStatus
 import com.example.filmlist.presentation.toMovieStatus
 import com.google.zxing.BarcodeFormat
@@ -52,7 +51,7 @@ class DetailMovieViewModel @Inject constructor(
     private fun isMovieInBd(id: Int): InfoMovieState {
         handleOperation(
             operation = { getMovieIdFromBdUseCase(GetId(id)) },
-            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+            onError = { handleError(it) },
             onSuccess = {
                 val moveIdEntity = it.movieIdEntity
                 if (moveIdEntity != null) {
@@ -91,7 +90,7 @@ class DetailMovieViewModel @Inject constructor(
                         )
                     )
                 },
-                onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+                onError = { handleError(it) },
                 onSuccess = { state.value.copy(movieStatus = movieType.toMovieStatus()) }
             )
         }
@@ -109,7 +108,7 @@ class DetailMovieViewModel @Inject constructor(
                         )
                     )
                 },
-                onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+                onError = { handleError(it) },
                 onSuccess = { state.value.copy(movieStatus = MovieType.EMPTY.toMovieStatus()) }
             )
         }
@@ -131,12 +130,11 @@ class DetailMovieViewModel @Inject constructor(
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error(it.message)) },
+            onError = { handleError(it) },
             onSuccess = {
                 InfoMovieState(
                     id = it.movie.id.toString(),
-                    movieEntity = it.movie,
-                    isLoading = LoadingState.Succes
+                    movieEntity = it.movie
                 )
             }
         )

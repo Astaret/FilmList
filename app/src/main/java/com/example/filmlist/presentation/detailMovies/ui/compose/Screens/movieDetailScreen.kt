@@ -71,7 +71,7 @@ fun MovieDetailScreen(
 
     MainContainer(
         permissionRequest = permissions.value,
-        isLoading = movieInfoState.isLoading
+        state = movieInfoState
     ) {
         Column {
             Box {

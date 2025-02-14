@@ -6,17 +6,21 @@ import com.example.filmlist.presentation.ui_kit.components.indicators.LoadingInd
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionHandler
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 import com.example.domain.states.LoadingState
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 
 @Composable
 fun MainContainer(
     permissionRequest: PermissionRequest,
-    isLoading: com.example.domain.states.LoadingState,
+    state: BasedViewModel.State,
     content: @Composable () -> Unit
 ) {
     PermissionHandler(permissionRequest = permissionRequest)
-    when(isLoading){
-        com.example.domain.states.LoadingState.Error -> ErrorIndicator()
-        com.example.domain.states.LoadingState.Loading -> LoadingIndicator()
-        com.example.domain.states.LoadingState.Succes -> content()
+
+    when (state) {
+        BasedViewModel.State.Loading -> LoadingIndicator()
+        is BasedViewModel.State.Error -> ErrorIndicator()
     }
+
+    content()
+
 }

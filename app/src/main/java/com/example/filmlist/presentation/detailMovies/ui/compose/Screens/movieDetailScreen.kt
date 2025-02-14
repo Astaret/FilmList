@@ -142,9 +142,9 @@ fun MovieDetailScreen(
                                 vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieType.INSTORE))
                             }
                         },
-                        imageVector = if (movieInfoState.movieStatus == MovieStatus.INSTORE)
-                            Icons.Default.Check
-                        else Icons.Default.ShoppingCart,
+                        imageVector = if (movieInfoState.movieStatus != MovieStatus.INSTORE)
+                            Icons.Default.ShoppingCart
+                        else Icons.Default.Check,
                         description = if (movieInfoState.movieStatus == MovieStatus.INSTORE) "BOUGHT"
                         else "BUY",
                         color = if (movieInfoState.movieStatus == MovieStatus.INSTORE) Color.Green

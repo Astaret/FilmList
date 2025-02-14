@@ -49,6 +49,7 @@ class DetailMovieViewModel @Inject constructor(
     }
 
     private fun isMovieInBd(id: Int): InfoMovieState {
+        Log.d("Movie", "isMovieInBd: checked")
         handleOperation(
             operation = { getMovieIdFromBdUseCase(GetId(id)) },
             onError = { handleError(it) },
@@ -65,6 +66,7 @@ class DetailMovieViewModel @Inject constructor(
                     } else {
                         MovieStatus.BOUGHT
                     }
+                    Log.d("Movie", "isMovieInBd: $movieStatus $moveIdEntity")
                     state.value.copy(
                         movieStatus = movieStatus,
                         id = moveIdEntity.id.toString(),

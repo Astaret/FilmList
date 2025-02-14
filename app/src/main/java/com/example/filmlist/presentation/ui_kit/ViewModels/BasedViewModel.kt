@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-abstract class BasedViewModel<LocalState: BasedViewModel.State, Event: BasedViewModel.Event> : ViewModel() {
+abstract class BasedViewModel<LocalState: BasedViewModel.State.ScreenState, Event: BasedViewModel.Event> : ViewModel() {
 
     interface State {
         object Loading : State

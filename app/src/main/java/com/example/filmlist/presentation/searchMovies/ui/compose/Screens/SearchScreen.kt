@@ -13,15 +13,19 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.domain.entities.Movie
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
+import com.example.filmlist.presentation.searchMovies.states.SearchState
 import com.example.filmlist.presentation.searchMovies.viewModels.SearchMovieViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
@@ -33,17 +37,24 @@ fun SearchScreen(
     vm: SearchMovieViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val searchState by vm.state.collectAsState()
+    val currentState by vm.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
+
+    LaunchedEffect(Unit) {
+        vm.receiveEvent(SearchEvents.SearchChange(""))
+    }
 
     MainContainer(
-        state = searchState
+        state = currentState
     ) {
-        SearchScreen(
-            searchQuery = searchState.searchQuery,
-            searchResults = searchState.searchResult,
-            navController = navController,
-            onSearchQueryChange = { vm.receiveEvent(SearchEvents.SearchChange(it)) }
-        )
+        if (currentState is SearchState) {
+            val searchState = currentState as SearchState
+            SearchScreen(
+                searchQuery = searchState.searchQuery,
+                searchResults = searchState.searchResult,
+                navController = navController,
+                onSearchQueryChange = { vm.receiveEvent(SearchEvents.SearchChange(it)) }
+            )
+        }
     }
 }
 

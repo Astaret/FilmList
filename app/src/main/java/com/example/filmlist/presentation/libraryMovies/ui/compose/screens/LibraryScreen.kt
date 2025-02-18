@@ -16,16 +16,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.domain.entities.Movie
 import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.libraryMovies.events.LibraryEvent
+import com.example.filmlist.presentation.libraryMovies.states.LibraryState
 import com.example.filmlist.presentation.libraryMovies.viewModel.LibraryMoviesViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
 
@@ -39,17 +45,26 @@ fun LibraryScreen(
         vm.receiveEvent(LibraryEvent.ShowAllBoughtMovies)
 
     }
-    val librMovieState by vm.state.collectAsState()
-    val movieList = librMovieState.movieList
+
+    val currentState by vm.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
+    var librMovieState by remember { mutableStateOf<LibraryState?>(null) }
+
+    LaunchedEffect(currentState) {
+        (currentState as? LibraryState).let {
+            librMovieState = it
+        }
+    }
 
     MainContainer(
-        state = librMovieState
+        state = currentState
     ) {
-        if (!librMovieState.empty) {
-            libraryListMovie(
-                movieList = movieList,
-                navController = navController
-            )
+        if (librMovieState?.empty != true) {
+            librMovieState?.movieList?.let {movieList->
+                libraryListMovie(
+                    movieList = movieList,
+                    navController = navController
+                )
+            }
         } else {
             EmptyLibraryScreen({ navController.navigate(MainScreenRoute) })
         }

@@ -38,7 +38,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.storeMovies.events.PurchaseEvent
+import com.example.filmlist.presentation.storeMovies.states.StoreMovState
 import com.example.filmlist.presentation.storeMovies.viewModels.StoreViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,126 +51,142 @@ fun StoreScreen(
     navController: NavController,
 ) {
 
-    val storeState by viewModel.state.collectAsStateWithLifecycle()
+    val currentState by viewModel.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
     val listState = rememberLazyListState()
+
+    var storeState by remember { mutableStateOf<StoreMovState?>(null) }
     var showModalSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.receiveEvent(PurchaseEvent.ShowAllPurchases)
     }
 
-    if (storeState.empty) {
-        EmptyStoreScreen(
-            { navController.navigate(MainScreenRoute) }
-        )
-    } else {
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+    LaunchedEffect(currentState) {
+        (currentState as? StoreMovState).let {
+            storeState = it
+        }
+    }
 
-                IconButton(
-                    onClick = { navController.navigate(MainScreenRoute) }
+    MainContainer(
+        state = currentState
+    ) {
+        if (storeState?.empty == true) {
+            EmptyStoreScreen(
+                { navController.navigate(MainScreenRoute) }
+            )
+        } else {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowLeft,
-                        contentDescription = "BACK",
-                        tint = Color.Black
-                    )
-                }
 
-                Row {
-                    Text(
-                        text = "Сумма к оплате:"
-                    )
-                    Text(
-                        text = String.format("%.2f", storeState.totalPrice)
-                    )
-                }
-
-
-                IconButton(
-                    onClick = { showModalSheet = true }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "BYU?",
-                        tint = Color.Black
-                    )
-                }
-            }
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                state = listState
-            ) {
-                items(storeState.movieList.chunked(2)) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceAround
+                    IconButton(
+                        onClick = { navController.navigate(MainScreenRoute) }
                     ) {
-                        it.forEach {
-                            MovieCard(
-                                movie = it,
-                                navController = navController,
-                                moviePrice = it.price,
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowLeft,
+                            contentDescription = "BACK",
+                            tint = Color.Black
+                        )
+                    }
+
+                    Row {
+                        Text(
+                            text = "Сумма к оплате:"
+                        )
+                        Text(
+                            text = String.format("%.2f", storeState?.totalPrice)
+                        )
+                    }
+
+
+                    IconButton(
+                        onClick = { showModalSheet = true }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ShoppingCart,
+                            contentDescription = "BYU?",
+                            tint = Color.Black
+                        )
                     }
                 }
-
-            }
-
-            if (showModalSheet) {
-                ModalBottomSheet(
-                    onDismissRequest = { showModalSheet = false },
-                    content = {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Text(
-                                text = "Итого к оплате",
-                                fontSize = 20.sp,
-                                color = Color.Gray,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-
-                            Text(
-                                text = "${String.format("%.2f", storeState.totalPrice)}",
-                                fontSize = 32.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                modifier = Modifier.padding(bottom = 16.dp)
-                            )
-
-                            Button(
-                                onClick = {
-                                    viewModel.receiveEvent(PurchaseEvent.BuyMovie)
-                                    showModalSheet = false
-                                },
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    state = listState
+                ) {
+                    storeState?.let {storeState->
+                        items(storeState.movieList.chunked(2)) {
+                            Row(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(56.dp),
-                                shape = RoundedCornerShape(8.dp)
+                                    .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceAround
                             ) {
-                                Text(
-                                    text = "Оплатить",
-                                    fontSize = 18.sp,
-                                    color = Color.White
-                                )
+                                it.forEach {
+                                    MovieCard(
+                                        movie = it,
+                                        navController = navController,
+                                        moviePrice = it.price,
+                                    )
+                                }
                             }
                         }
-                    },
-                )
+                    }
+
+                }
+
+                if (showModalSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = { showModalSheet = false },
+                        content = {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                            ) {
+                                Text(
+                                    text = "Итого к оплате",
+                                    fontSize = 20.sp,
+                                    color = Color.Gray,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                )
+
+                                Text(
+                                    text = "${String.format("%.2f", storeState?.totalPrice)}",
+                                    fontSize = 32.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(bottom = 16.dp)
+                                )
+
+                                Button(
+                                    onClick = {
+                                        viewModel.receiveEvent(PurchaseEvent.BuyMovie)
+                                        showModalSheet = false
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(56.dp),
+                                    shape = RoundedCornerShape(8.dp)
+                                ) {
+                                    Text(
+                                        text = "Оплатить",
+                                        fontSize = 18.sp,
+                                        color = Color.White
+                                    )
+                                }
+                            }
+                        },
+                    )
+                }
             }
         }
     }
+
+
 
 
 }

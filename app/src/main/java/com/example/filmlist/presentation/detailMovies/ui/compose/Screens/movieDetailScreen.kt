@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,20 +58,27 @@ fun MovieDetailScreen(
 ) {
 
     val currentState by vm.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
+    val permissions = remember { mutableStateOf(PermissionRequest()) }
+
+    var movieInfoState by remember { mutableStateOf<InfoMovieState?>(null) }
+    val status by remember { derivedStateOf {  movieInfoState?.movieStatus } }
+    Log.d("Movie", "MovieDetailScreen: $status")
+    var isActive by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         vm.receiveEvent(MovieInfoEvent.GetAllInfoAboutMovie(movieId))
     }
 
-    val permissions = remember { mutableStateOf(PermissionRequest()) }
-
-    var isActive by remember { mutableStateOf(false) }
+    LaunchedEffect(currentState) {
+        (currentState as? InfoMovieState).let {
+            movieInfoState = it
+        }
+    }
 
     MainContainer(
         permissionRequest = permissions.value,
         state = currentState
     ) {
-        val movieInfoState = currentState as? InfoMovieState
         Column {
             Box {
                 GlideImage(
@@ -129,14 +137,25 @@ fun MovieDetailScreen(
                             shape = RoundedCornerShape(5.dp)
                         )
                 )
-                if (movieInfoState?.movieStatus != MovieStatus.BOUGHT) {
+                if (status != MovieStatus.BOUGHT) {
                     DetailNavigationButton(
                         modifier = Modifier.align(Alignment.BottomEnd),
                         onClick = {
-                            if (movieInfoState?.movieStatus == MovieStatus.INSTORE) {
-                                vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                            } else {
-                                vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieType.INSTORE))
+                            movieInfoState?.movieEntity?.let { movie ->
+                                if (movieInfoState?.movieStatus == MovieStatus.INSTORE) {
+                                    vm.receiveEvent(
+                                        MovieInfoEvent.DeleteMovieFromDataBase(
+                                            movie = movie
+                                        )
+                                    )
+                                } else {
+                                    vm.receiveEvent(
+                                        MovieInfoEvent.AddMovieToDataBase(
+                                            state = MovieType.INSTORE,
+                                            movie = movie
+                                        )
+                                    )
+                                }
                             }
                         },
                         imageVector = if (movieInfoState?.movieStatus != MovieStatus.INSTORE)
@@ -150,9 +169,20 @@ fun MovieDetailScreen(
                     DetailNavigationButton(
                         modifier = Modifier.align(Alignment.TopEnd),
                         onClick = {
-                            if (movieInfoState?.movieStatus == MovieStatus.FAVORITE)
-                                vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
-                            else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(com.example.domain.types.MovieType.ISFAVORITE))
+                            movieInfoState?.movieEntity?.let { movie ->
+                                if (movieInfoState?.movieStatus == MovieStatus.FAVORITE)
+                                    vm.receiveEvent(
+                                        MovieInfoEvent.DeleteMovieFromDataBase(
+                                            movie = movie
+                                        )
+                                    )
+                                else vm.receiveEvent(
+                                    MovieInfoEvent.AddMovieToDataBase(
+                                        state = MovieType.ISFAVORITE,
+                                        movie = movie
+                                    )
+                                )
+                            }
                         },
                         imageVector = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Icons.Default.Favorite
                         else Icons.Default.FavoriteBorder,

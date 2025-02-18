@@ -33,9 +33,6 @@ abstract class BasedViewModel<LocalState : BasedViewModel.State.ScreenState, Eve
     private val _state = MutableSharedFlow<State>()
     val state: SharedFlow<State> = _state
 
-    private val _localScreenState = MutableSharedFlow<LocalState>()
-    protected val localScreenState: SharedFlow<LocalState> = _localScreenState
-
     fun flowState(state: State) = flow { emit(state) }
 
     internal abstract suspend fun handleEvent(event: Event): Flow<LocalState>
@@ -54,9 +51,9 @@ abstract class BasedViewModel<LocalState : BasedViewModel.State.ScreenState, Eve
     protected suspend fun <T> handleOperation(
         operation: suspend () -> Flow<T>,
         withLoading: Boolean = true,
-        onSuccess: suspend (T) -> State,
+        onSuccess: suspend (T) -> LocalState,
         onError: (Throwable) -> State = { State.Error(it.message ?: "Unknown error, try again") }
-    ): Flow<State> = operation()
+    ): Flow<LocalState> = operation()
         .onStart { if (withLoading) _state.emit(State.Loading) }
         .map { onSuccess(it) }
         .catch { _state.emit(onError(it)) }

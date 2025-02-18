@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AtomicReference
+import com.example.domain.entities.Movie
 import com.example.domain.types.EntityType
 import com.example.domain.types.MovieStatus
 import com.example.domain.types.MovieType
@@ -37,100 +38,99 @@ class DetailMovieViewModel @Inject constructor(
 
     override suspend fun handleEvent(event: MovieInfoEvent): Flow<InfoMovieState> {
         return when (event) {
-            is MovieInfoEvent.AddMovieToDataBase -> addMovieToDataBaseList(event.state)
-            is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList()
+            is MovieInfoEvent.AddMovieToDataBase -> addMovieToDataBaseList(event.state, event.movie)
+            is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList(event.movie)
             is MovieInfoEvent.GetAllInfoAboutMovie -> getAllInfoAboutMovie(event.id)
         }
     }
 
-    private suspend fun getAllInfoAboutMovie(id: String): Flow<InfoMovieState> {
-        isMovieInBd(id.toInt())
-        getMovieInfoById(id)
-        getQrCode(id)
-        return flow{ cachedScreenState.get() }
+    private fun getAllInfoAboutMovie(id: String): Flow<InfoMovieState> {
+        return flow {
+
+            getMovieInfoById(id).collect {}
+
+            isMovieInBd(id.toInt()).collect {}
+
+            getQrCode(id).collect {}
+
+            emit(cachedScreenState.get())
+        }
     }
 
-    private suspend fun isMovieInBd(id: Int): Flow<InfoMovieState> {
-        Log.d("Movie", "isMovieInBd: checked")
-        handleOperation(
-            operation = { getMovieIdFromBdUseCase(GetId(id)) },
-            onSuccess = {
-                val moveIdEntity = it.movieIdEntity
-                if (moveIdEntity != null) {
-                    val movieStatus = if (moveIdEntity.entityType != EntityType.ISBOUGHT) {
-                        if (moveIdEntity.entityType == EntityType.ISFAVORITE)
-                            MovieStatus.FAVORITE
-                        else
-                            if (moveIdEntity.entityType == EntityType.INSTORE)
-                                MovieStatus.INSTORE
-                            else MovieStatus.EMPTY
-                    } else {
-                        MovieStatus.BOUGHT
+    private suspend fun isMovieInBd(id: Int): Flow<InfoMovieState> = handleOperation(
+        operation = {
+            Log.d("Movie", "isMovieInBd: checked")
+            getMovieIdFromBdUseCase(GetId(id))
+        },
+        onSuccess = {
+            val moveIdEntity = it.movieIdEntity
+            if (moveIdEntity != null) {
+                val movieStatus = if (moveIdEntity.entityType != EntityType.ISBOUGHT) {
+                    when (moveIdEntity.entityType) {
+                        EntityType.ISFAVORITE -> MovieStatus.FAVORITE
+                        EntityType.INSTORE -> MovieStatus.INSTORE
+                        else -> MovieStatus.EMPTY
                     }
-                    Log.d("Movie", "isMovieInBd: $movieStatus $moveIdEntity")
-                    cachedScreenState.get().copy(
+                } else {
+                    MovieStatus.BOUGHT
+                }
+                Log.d("Movie", "isMovieInBd: $movieStatus $moveIdEntity")
+                cachedScreenState.updateAndGet {
+                    it.copy(
                         movieStatus = movieStatus,
                         id = moveIdEntity.id.toString(),
                         movieEntity = cachedScreenState.get().movieEntity
                     )
-                } else {
-                    cachedScreenState.updateAndGet {current ->
-                        current.copy(
-                            movieStatus = MovieStatus.EMPTY
-                        )
-                    }
+                }
+            } else {
+                cachedScreenState.updateAndGet { current ->
+                    current.copy(
+                        movieStatus = MovieStatus.EMPTY
+                    )
+                }
+            }
+        }
+    )
+
+    private suspend fun addMovieToDataBaseList(
+        movieType: MovieType,
+        movie: Movie
+    ): Flow<InfoMovieState> = handleOperation(
+        operation = {
+            putMovieToDbUseCase(
+                getMovieInfo(
+                    movie = movie,
+                    movieType = movieType
+                )
+            )
+        },
+        onSuccess = {
+            cachedScreenState.updateAndGet { current ->
+                current.copy(
+                    movieStatus = movieType.toMovieStatus()
+                )
+            }
+        }
+    )
+
+    private suspend fun deleteMovieFromDataBaseList(movie: Movie): Flow<InfoMovieState> =
+        handleOperation(
+            operation = {
+                putMovieToDbUseCase(
+                    getMovieInfo(
+                        movie = movie,
+                        movieType = MovieType.EMPTY
+                    )
+                )
+            },
+            onSuccess = {
+                cachedScreenState.updateAndGet { current ->
+                    current.copy(
+                        movieStatus = MovieType.EMPTY.toMovieStatus()
+                    )
                 }
             }
         )
-        return flow{ cachedScreenState.get() }
-    }
-
-    private suspend fun addMovieToDataBaseList(movieType: MovieType): Flow<InfoMovieState> {
-        Log.d("Movie", "addMovieToFav: $movieType")
-        cachedScreenState.get().movieEntity?.let { movie ->
-            handleOperation(
-                operation = {
-                    putMovieToDbUseCase(
-                        getMovieInfo(
-                            movie = movie,
-                            movieType = movieType
-                        )
-                    )
-                },
-                onSuccess = {
-                    cachedScreenState.updateAndGet { current ->
-                        current.copy(
-                            movieStatus = movieType.toMovieStatus()
-                        )
-                    }
-                }
-            )
-        }
-        return flow{ cachedScreenState.get() }
-    }
-
-    private suspend fun deleteMovieFromDataBaseList(): Flow<InfoMovieState> {
-        cachedScreenState.get().movieEntity?.let { movie ->
-            handleOperation(
-                operation = {
-                    putMovieToDbUseCase(
-                        getMovieInfo(
-                            movie = movie,
-                            movieType = MovieType.EMPTY
-                        )
-                    )
-                },
-                onSuccess = {
-                    cachedScreenState.updateAndGet { current ->
-                        current.copy(
-                            movieStatus = MovieType.EMPTY.toMovieStatus()
-                        )
-                    }
-                }
-            )
-        }
-        return flow{ cachedScreenState.get() }
-    }
 
 
     private suspend fun getMovieInfoById(id: String) = handleOperation(
@@ -153,7 +153,7 @@ class DetailMovieViewModel @Inject constructor(
     )
 
 
-    private fun getQrCode(id: String): Flow<State> {
+    private fun getQrCode(id: String): Flow<InfoMovieState> {
         val bitMatrix: BitMatrix = MultiFormatWriter().encode(
             id, BarcodeFormat.QR_CODE, 512, 512
         )
@@ -168,6 +168,6 @@ class DetailMovieViewModel @Inject constructor(
             }
         }
 
-        return flowState(cachedScreenState.get().copy(qrCode = bitmap))
+        return flow { cachedScreenState.updateAndGet { it.copy(qrCode = bitmap) } }
     }
 }

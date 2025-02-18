@@ -63,6 +63,7 @@ dependencies {
 
     implementation(project(":domain"))
     implementation(project(":data"))
+
     implementation(libs.bundles.based)
     implementation(libs.bundles.dagger.hiltDependencies)
     ksp(libs.bundles.kspDagger.hiltDependencies)

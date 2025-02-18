@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +44,7 @@ import com.example.filmlist.presentation.storeMovies.viewModels.StoreViewModel
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
+import com.example.myapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,14 +90,14 @@ fun StoreScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowLeft,
-                            contentDescription = "BACK",
+                            contentDescription = stringResource(R.string.back_description),
                             tint = Color.Black
                         )
                     }
 
                     Row {
                         Text(
-                            text = "Сумма к оплате:"
+                            text = stringResource(R.string.total_price)
                         )
                         Text(
                             text = String.format("%.2f", storeState?.totalPrice)
@@ -108,7 +110,7 @@ fun StoreScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.ShoppingCart,
-                            contentDescription = "BYU?",
+                            contentDescription = stringResource(R.string.buy_description),
                             tint = Color.Black
                         )
                     }
@@ -148,7 +150,7 @@ fun StoreScreen(
                                     .padding(16.dp)
                             ) {
                                 Text(
-                                    text = "Итого к оплате",
+                                    text = stringResource(R.string.total_amount_to_pay),
                                     fontSize = 20.sp,
                                     color = Color.Gray,
                                     modifier = Modifier.padding(bottom = 8.dp)
@@ -173,7 +175,7 @@ fun StoreScreen(
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Text(
-                                        text = "Оплатить",
+                                        text = stringResource(R.string.to_pay),
                                         fontSize = 18.sp,
                                         color = Color.White
                                     )
@@ -200,7 +202,7 @@ private fun EmptyStoreScreen(onNavigateToBackMain: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "BACK",
+                contentDescription = stringResource(R.string.Back),
                 tint = Color.Black
             )
         }
@@ -210,7 +212,7 @@ private fun EmptyStoreScreen(onNavigateToBackMain: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Ваша корзина пуста",
+                text = stringResource(R.string.your_store_empty),
                 fontSize = 24.sp,
                 color = Color.Gray
             )

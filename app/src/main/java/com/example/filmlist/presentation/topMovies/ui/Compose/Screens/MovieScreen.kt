@@ -2,6 +2,7 @@ package com.example.filmlist.presentation.topMovies.ui.Compose.Screens
 
 import android.Manifest
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,6 +49,7 @@ import com.example.filmlist.presentation.ui_kit.components.MovieList
 import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
+import com.example.myapp.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -109,7 +112,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = "Favorite_screen",
+                        contentDescription = stringResource(R.string.favorite_screen_description),
                         tint = Color.Black
                     )
                 }
@@ -119,7 +122,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.List,
-                        contentDescription = "Library_screen",
+                        contentDescription = stringResource(R.string.library_screen_description),
                         tint = Color.Black
                     )
                 }
@@ -129,7 +132,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "Store_screen",
+                        contentDescription = stringResource(R.string.store_screen_description),
                         tint = Color.Black
                     )
                 }
@@ -139,7 +142,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search_screen",
+                        contentDescription = stringResource(R.string.search_screen_description),
                         tint = Color.Black
                     )
                 }
@@ -176,7 +179,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = "Search_screen",
+                        contentDescription = stringResource(R.string.store_screen_description),
                         tint = Color.Black
                     )
                 }

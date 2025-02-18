@@ -14,7 +14,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,6 +34,7 @@ import com.example.filmlist.presentation.libraryMovies.viewModel.LibraryMoviesVi
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
+import com.example.myapp.R
 
 @Composable
 fun LibraryScreen(
@@ -59,7 +60,7 @@ fun LibraryScreen(
         state = currentState
     ) {
         if (librMovieState?.empty != true) {
-            librMovieState?.movieList?.let {movieList->
+            librMovieState?.movieList?.let { movieList ->
                 libraryListMovie(
                     movieList = movieList,
                     navController = navController
@@ -91,7 +92,7 @@ private fun libraryListMovie(
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "BACK",
+                    contentDescription = stringResource(R.string.Back),
                     tint = Color.Black
                 )
             }
@@ -112,7 +113,7 @@ private fun EmptyLibraryScreen(onNavigateToBackMain: () -> Unit) {
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
-                contentDescription = "BACK",
+                contentDescription = stringResource(R.string.Back),
                 tint = Color.Black
             )
         }
@@ -122,7 +123,7 @@ private fun EmptyLibraryScreen(onNavigateToBackMain: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Ваша библиотека пуста",
+                text = stringResource(R.string.your_library_empty),
                 fontSize = 24.sp,
                 color = Color.Gray
             )

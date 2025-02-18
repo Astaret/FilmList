@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +49,7 @@ import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
 import com.example.filmlist.presentation.ui_kit.components.buttons.DetailNavigationButton
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.detail_movie_card_components.DetailMovieCardDescription
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
+import com.example.myapp.R
 import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
@@ -93,7 +95,7 @@ fun MovieDetailScreen(
                     movieInfoState?.qrCode?.asImageBitmap()?.let {
                         Image(
                             bitmap = it,
-                            contentDescription = "QR Code",
+                            contentDescription = stringResource(R.string.qr_code),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .align(Alignment.Center),
@@ -104,7 +106,7 @@ fun MovieDetailScreen(
                     modifier = Modifier.align(Alignment.TopStart),
                     onClick = { navController.navigateUp() },
                     imageVector = Icons.Default.KeyboardArrowLeft,
-                    description = "Back",
+                    description = stringResource(R.string.Back),
                     color = Color.Black
                 )
                 DetailNavigationButton(
@@ -186,7 +188,7 @@ fun MovieDetailScreen(
                         },
                         imageVector = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Icons.Default.Favorite
                         else Icons.Default.FavoriteBorder,
-                        description = "In favorite",
+                        description = stringResource(R.string.in_favorite_description),
                         color = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Color.Red
                         else Color.Black,
                     )
@@ -196,7 +198,7 @@ fun MovieDetailScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Куплено",
+                            text = stringResource(R.string.bought),
                             modifier = Modifier
                                 .background(Color.Green),
                             color = Color.Black

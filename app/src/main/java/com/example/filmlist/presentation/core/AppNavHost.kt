@@ -32,7 +32,7 @@ fun AppNavHost() {
         composable<SearchScreenRoute> {
             SearchScreen(navController = navController)
             BackHandler {
-                navController.navigate(MainScreenRoute)
+                navController.popBackStack()
             }
         }
 

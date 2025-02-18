@@ -34,11 +34,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.domain.types.MovieType
 import com.example.domain.types.MovieStatus
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
+import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
 import com.example.filmlist.presentation.detailMovies.viewModels.DetailMovieViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
 import com.example.filmlist.presentation.ui_kit.components.buttons.DetailNavigationButton
@@ -53,38 +56,33 @@ fun MovieDetailScreen(
     vm: DetailMovieViewModel = hiltViewModel()
 ) {
 
-    val movieInfoState by vm.state.collectAsState()
-
-    var isActive by remember { mutableStateOf(false) }
-
-    val movie = movieInfoState.movieEntity
-
+    val currentState by vm.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
 
     LaunchedEffect(Unit) {
         vm.receiveEvent(MovieInfoEvent.GetAllInfoAboutMovie(movieId))
     }
 
-    val permissions = remember {
-        mutableStateOf(PermissionRequest())
-    }
+    val permissions = remember { mutableStateOf(PermissionRequest()) }
 
+    var isActive by remember { mutableStateOf(false) }
 
     MainContainer(
         permissionRequest = permissions.value,
-        state = movieInfoState
+        state = currentState
     ) {
+        val movieInfoState = currentState as? InfoMovieState
         Column {
             Box {
                 GlideImage(
-                    imageModel = { movie?.poster },
+                    imageModel = { movieInfoState?.movieEntity?.poster },
                     modifier = Modifier
                         .height(500.dp)
                         .clip(RoundedCornerShape(8.dp))
                 )
 
                 if (isActive) {
-                    Log.d("Movie", "MovieDetailScreen: ${movieInfoState.qrCode}")
-                    movieInfoState.qrCode?.asImageBitmap()?.let {
+                    Log.d("Movie", "MovieDetailScreen: ${movieInfoState?.qrCode}")
+                    movieInfoState?.qrCode?.asImageBitmap()?.let {
                         Image(
                             bitmap = it,
                             contentDescription = "QR Code",
@@ -105,7 +103,6 @@ fun MovieDetailScreen(
                     modifier = Modifier.align(Alignment.BottomStart),
                     onClick = {
                         isActive = !isActive
-                        vm.receiveEvent(MovieInfoEvent.GetQrCode(movieId))
                         permissions.value = PermissionRequest(
                             permissions = listOf(
                                 Manifest.permission.CAMERA
@@ -120,7 +117,7 @@ fun MovieDetailScreen(
                 )
 
                 Text(
-                    text = "${movie?.rating}",
+                    text = "${movieInfoState?.movieEntity?.rating}",
                     fontSize = 15.sp,
                     maxLines = 1,
                     color = Color.Black,
@@ -132,35 +129,35 @@ fun MovieDetailScreen(
                             shape = RoundedCornerShape(5.dp)
                         )
                 )
-                if (movieInfoState.movieStatus != MovieStatus.BOUGHT) {
+                if (movieInfoState?.movieStatus != MovieStatus.BOUGHT) {
                     DetailNavigationButton(
                         modifier = Modifier.align(Alignment.BottomEnd),
                         onClick = {
-                            if (movieInfoState.movieStatus == MovieStatus.INSTORE) {
+                            if (movieInfoState?.movieStatus == MovieStatus.INSTORE) {
                                 vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
                             } else {
                                 vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(MovieType.INSTORE))
                             }
                         },
-                        imageVector = if (movieInfoState.movieStatus != MovieStatus.INSTORE)
+                        imageVector = if (movieInfoState?.movieStatus != MovieStatus.INSTORE)
                             Icons.Default.ShoppingCart
                         else Icons.Default.Check,
-                        description = if (movieInfoState.movieStatus == MovieStatus.INSTORE) "BOUGHT"
+                        description = if (movieInfoState?.movieStatus == MovieStatus.INSTORE) "BOUGHT"
                         else "BUY",
-                        color = if (movieInfoState.movieStatus == MovieStatus.INSTORE) Color.Green
+                        color = if (movieInfoState?.movieStatus == MovieStatus.INSTORE) Color.Green
                         else Color.Black
                     )
                     DetailNavigationButton(
                         modifier = Modifier.align(Alignment.TopEnd),
                         onClick = {
-                            if (movieInfoState.movieStatus == MovieStatus.FAVORITE)
+                            if (movieInfoState?.movieStatus == MovieStatus.FAVORITE)
                                 vm.receiveEvent(MovieInfoEvent.DeleteMovieFromDataBase)
                             else vm.receiveEvent(MovieInfoEvent.AddMovieToDataBase(com.example.domain.types.MovieType.ISFAVORITE))
                         },
-                        imageVector = if (movieInfoState.movieStatus == MovieStatus.FAVORITE) Icons.Default.Favorite
+                        imageVector = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Icons.Default.Favorite
                         else Icons.Default.FavoriteBorder,
                         description = "In favorite",
-                        color = if (movieInfoState.movieStatus == MovieStatus.FAVORITE) Color.Red
+                        color = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Color.Red
                         else Color.Black,
                     )
                 } else {
@@ -182,7 +179,7 @@ fun MovieDetailScreen(
                     }
                 }
             }
-            movie?.let { movie ->
+            movieInfoState?.movieEntity?.let { movie ->
                 DetailMovieCardDescription(movie)
             }
 

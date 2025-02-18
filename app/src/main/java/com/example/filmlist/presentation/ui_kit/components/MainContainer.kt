@@ -14,10 +14,12 @@ fun MainContainer(
     content: @Composable () -> Unit
 ) {
     PermissionHandler(permissionRequest = permissionRequest)
-    content()
-    when(state){
+
+    when( state) {
         is BasedViewModel.State.Error -> ErrorIndicator(state.message)
         BasedViewModel.State.Loading -> LoadingIndicator()
-        is BasedViewModel.State.ScreenState -> Unit
     }
+
+    content()
+
 }

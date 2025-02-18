@@ -46,7 +46,6 @@ class MovieViewModel @Inject constructor(
     private fun loadData(page: Int): TopMovieState {
         handleOperation(
             operation = { loadDataUseCase(getPage(page)) },
-            onError = { handleError(it) },
             onSuccess = {
                 val newList = it.movieList
                 savedStateHandle["movieList"] = state.value.movieList

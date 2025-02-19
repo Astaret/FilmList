@@ -9,13 +9,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ErrorIndicator() {
+fun ErrorIndicator(error: String?) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Column {
             Text("Случилсь непредвиденная ошибка")
+            error?.let { errorText ->
+                Text(errorText)
+            }
             Text("Повторите пожалуйста позже")
         }
     }

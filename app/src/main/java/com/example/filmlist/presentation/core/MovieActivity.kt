@@ -24,7 +24,6 @@ class MovieActivity : ComponentActivity() {
     }
 
 
-
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate(savedInstanceState: Bundle?) {

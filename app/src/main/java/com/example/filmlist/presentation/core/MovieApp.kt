@@ -6,7 +6,7 @@ import com.example.filmlist.utils.di.DaggerApplicationComponent
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class MovieApp:Application() {
+class MovieApp : Application() {
     lateinit var component: ApplicationComponent
 
     override fun onCreate() {

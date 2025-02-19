@@ -1,54 +1,61 @@
 package com.example.filmlist.presentation.searchMovies.viewModels
 
+import androidx.lifecycle.AtomicReference
 import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.load_useCases.GetName
-import com.example.filmlist.domain.usecases.load_useCases.LoadDataFromSearchUseCase
+import com.example.domain.usecases.load_useCases.GetName
+import com.example.domain.usecases.load_useCases.LoadDataFromSearchUseCase
 import com.example.filmlist.presentation.searchMovies.events.SearchEvents
 import com.example.filmlist.presentation.searchMovies.states.SearchState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchMovieViewModel @Inject constructor(
     private val loadDataFromSearchUseCase: LoadDataFromSearchUseCase,
-) : BasedViewModel<SearchState, SearchEvents>(SearchState()) {
+) : BasedViewModel<SearchState, SearchEvents>() {
 
+    override val cachedScreenState: AtomicReference<SearchState> = AtomicReference(SearchState())
 
-    override fun handleEvent(event: SearchEvents): SearchState {
+    override suspend fun handleEvent(event: SearchEvents): Flow<SearchState> {
         return when (event) {
             is SearchEvents.SearchChange -> onSearchQueryChange(event.newSearch)
         }
     }
 
-    private fun onSearchQueryChange(newQuery: String):SearchState {
-        setState {
-            copy(searchQuery = newQuery, isLoading = LoadingState.Succes)
-        }
-        return state.value
+    private fun onSearchQueryChange(newQuery: String): Flow<SearchState> {
+        return flow { emit(cachedScreenState.updateAndGet { it.copy(searchQuery = newQuery) }) }
     }
 
     private fun loadDataFromSearch(query: String) {
-        handleOperation(
-            operation = { loadDataFromSearchUseCase(GetName(query))},
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
-            onSuccess = {
-                val movies = it.movieList
-                state.value.copy(
-                    movieList = movies,
-                    searchResult = if (query.isNotEmpty()) {
-                        movies.filter { it.title.contains(query, ignoreCase = true) }
-                    } else {
-                        movies
-                    },
-                    isLoading = LoadingState.Succes
-                )
-            }
-        )
+        viewModelScope.launch {
+            handleOperation(
+                operation = { loadDataFromSearchUseCase(GetName(query)) },
+                withLoading = false,
+                onSuccess = { result ->
+                    val movies = result.movieList
+                    cachedScreenState.updateAndGet { currentState ->
+                        currentState.copy(
+                            movieList = movies,
+                            searchResult = if (query.isNotBlank()) {
+                                movies.filter { it.title.contains(query, ignoreCase = true) }
+                            } else {
+                                movies
+                            }
+                        )
+                    }
+                }
+            )
+                .flowOn(Dispatchers.IO)
+                .collect {}
+        }
     }
 
     init {
@@ -60,12 +67,12 @@ class SearchMovieViewModel @Inject constructor(
             state
                 .debounce(300)
                 .distinctUntilChanged()
-                .collect { state ->
-                    if (state.searchQuery.isNotEmpty()) {
-                        loadDataFromSearch(state.searchQuery)
-                    } else {
-                        setState {
-                            copy(searchResult = emptyList(), isLoading = LoadingState.Succes)
+                .collect { currentState ->
+                    if (currentState is SearchState) {
+                        if (currentState.searchQuery.isNotEmpty()) {
+                            loadDataFromSearch(currentState.searchQuery)
+                        } else {
+                            cachedScreenState.updateAndGet { it.copy(searchResult = emptyList()) }
                         }
                     }
                 }

@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.filmlist.domain.models.Movie
+import com.example.domain.entities.Movie
 import com.example.filmlist.presentation.core.DetailScreenRoute
 import com.skydoves.landscapist.glide.GlideImage
 

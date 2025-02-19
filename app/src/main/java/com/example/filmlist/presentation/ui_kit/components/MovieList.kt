@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.filmlist.domain.models.Movie
+import com.example.domain.entities.Movie
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 
 @Composable

@@ -3,24 +3,27 @@ package com.example.filmlist.presentation.detailMovies.viewModels
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.util.Log
-import com.example.filmlist.data.local.db.EntityState
-import com.example.filmlist.data.mappers.toMovieStatus
-import com.example.filmlist.domain.states.MovieState
-import com.example.filmlist.domain.usecases.get_useCases.GetId
-import com.example.filmlist.domain.usecases.get_useCases.GetIdForInfo
-import com.example.filmlist.domain.usecases.get_useCases.GetMovieIdFromBdUseCase
-import com.example.filmlist.domain.usecases.get_useCases.GetMovieInfoUseCase
-import com.example.filmlist.domain.usecases.load_useCases.PutMovieToDbUseCase
-import com.example.filmlist.domain.usecases.load_useCases.getMovieInfo
+import androidx.lifecycle.AtomicReference
+import com.example.domain.entities.Movie
+import com.example.domain.types.EntityType
+import com.example.domain.types.MovieStatus
+import com.example.domain.types.MovieType
+import com.example.domain.usecases.get_useCases.GetId
+import com.example.domain.usecases.get_useCases.GetIdForInfo
+import com.example.domain.usecases.get_useCases.GetMovieIdFromBdUseCase
+import com.example.domain.usecases.get_useCases.GetMovieInfoUseCase
+import com.example.domain.usecases.load_useCases.PutMovieToDbUseCase
+import com.example.domain.usecases.load_useCases.getMovieInfo
 import com.example.filmlist.presentation.detailMovies.events.MovieInfoEvent
 import com.example.filmlist.presentation.detailMovies.states.InfoMovieState
-import com.example.filmlist.presentation.detailMovies.states.StatusMovie
+import com.example.filmlist.presentation.toMovieStatus
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
-import com.example.filmlist.presentation.ui_kit.states.LoadingState
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,100 +31,129 @@ class DetailMovieViewModel @Inject constructor(
     private val getMovieInfoUseCase: GetMovieInfoUseCase,
     private val putMovieToDbUseCase: PutMovieToDbUseCase,
     private val getMovieIdFromBdUseCase: GetMovieIdFromBdUseCase
-) : BasedViewModel<InfoMovieState, MovieInfoEvent>(InfoMovieState()) {
+) : BasedViewModel<InfoMovieState, MovieInfoEvent>() {
 
+    override val cachedScreenState: AtomicReference<InfoMovieState> =
+        AtomicReference(InfoMovieState())
 
-    override fun handleEvent(event: MovieInfoEvent): InfoMovieState {
+    override suspend fun handleEvent(event: MovieInfoEvent): Flow<InfoMovieState> {
         return when (event) {
-            is MovieInfoEvent.GetMovieInfo -> getMovieInfoById(event.newId)
-            is MovieInfoEvent.AddMovieToDataBase -> addMovieToDataBaseList(event.state)
-            is MovieInfoEvent.IsMovieInBdCheck -> isMovieInBd(event.id)
-            is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList()
-            is MovieInfoEvent.GetQrCode -> getQrCode(event.id)
+            is MovieInfoEvent.AddMovieToDataBase -> addMovieToDataBaseList(event.state, event.movie)
+            is MovieInfoEvent.DeleteMovieFromDataBase -> deleteMovieFromDataBaseList(event.movie)
             is MovieInfoEvent.GetAllInfoAboutMovie -> getAllInfoAboutMovie(event.id)
         }
     }
-    private fun getAllInfoAboutMovie(id: String): InfoMovieState {
-        isMovieInBd(id.toInt())
-        getMovieInfoById(id)
-        getQrCode(id)
-        return state.value
+
+    private fun getAllInfoAboutMovie(id: String): Flow<InfoMovieState> {
+        return flow {
+
+            getMovieInfoById(id).collect {}
+
+            isMovieInBd(id.toInt()).collect {}
+
+            getQrCode(id).collect {}
+
+            emit(cachedScreenState.get())
+        }
     }
 
-    private fun isMovieInBd(id: Int): InfoMovieState {
-        handleOperation(
-            operation = { getMovieIdFromBdUseCase(GetId(id)) },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
-            onSuccess = {
-                if (it.movieIdEntity != null) {
-                    val statusMovie = if (it.movieIdEntity.entityState != EntityState.ISBOUGHT) {
-                        if (it.movieIdEntity.entityState == EntityState.ISFAVORITE)
-                            StatusMovie.FAVORITE
-                        else
-                            if (it.movieIdEntity.entityState == EntityState.INSTORE)
-                                StatusMovie.INSTORE
-                            else StatusMovie.EMPTY
-                    } else {
-                        StatusMovie.BOUGHT
+    private suspend fun isMovieInBd(id: Int): Flow<InfoMovieState> = handleOperation(
+        operation = {
+            Log.d("Movie", "isMovieInBd: checked")
+            getMovieIdFromBdUseCase(GetId(id))
+        },
+        onSuccess = {
+            val moveIdEntity = it.movieIdEntity
+            if (moveIdEntity != null) {
+                val movieStatus = if (moveIdEntity.entityType != EntityType.ISBOUGHT) {
+                    when (moveIdEntity.entityType) {
+                        EntityType.ISFAVORITE -> MovieStatus.FAVORITE
+                        EntityType.INSTORE -> MovieStatus.INSTORE
+                        else -> MovieStatus.EMPTY
                     }
-                    state.value.copy(
-                        statusMovie = statusMovie,
-                        id = it.movieIdEntity.id.toString(),
-                        movieEntity = getMovieInfoById(it.movieIdEntity.id.toString()).movieEntity
-                    )
                 } else {
-                    state.value.copy(statusMovie = StatusMovie.EMPTY)
+                    MovieStatus.BOUGHT
+                }
+                Log.d("Movie", "isMovieInBd: $movieStatus $moveIdEntity")
+                cachedScreenState.updateAndGet {
+                    it.copy(
+                        movieStatus = movieStatus,
+                        id = moveIdEntity.id.toString(),
+                        movieEntity = cachedScreenState.get().movieEntity
+                    )
+                }
+            } else {
+                cachedScreenState.updateAndGet { current ->
+                    current.copy(
+                        movieStatus = MovieStatus.EMPTY
+                    )
                 }
             }
-        )
-        return state.value
-    }
+        }
+    )
 
-    private fun addMovieToDataBaseList(movieState: MovieState): InfoMovieState {
-        Log.d("Movie", "addMovieToFav: $movieState")
-        handleOperation(
-            operation = { putMovieToDbUseCase(getMovieInfo(state.value.movieEntity, movieState)) },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
-            onSuccess = { state.value.copy(statusMovie = movieState.toMovieStatus()) }
-        )
-        return state.value
-    }
+    private suspend fun addMovieToDataBaseList(
+        movieType: MovieType,
+        movie: Movie
+    ): Flow<InfoMovieState> = handleOperation(
+        operation = {
+            putMovieToDbUseCase(
+                getMovieInfo(
+                    movie = movie,
+                    movieType = movieType
+                )
+            )
+        },
+        onSuccess = {
+            cachedScreenState.updateAndGet { current ->
+                current.copy(
+                    movieStatus = movieType.toMovieStatus()
+                )
+            }
+        }
+    )
 
-    private fun deleteMovieFromDataBaseList(): InfoMovieState {
+    private suspend fun deleteMovieFromDataBaseList(movie: Movie): Flow<InfoMovieState> =
         handleOperation(
             operation = {
                 putMovieToDbUseCase(
                     getMovieInfo(
-                        state.value.movieEntity,
-                        MovieState.EMPTY
+                        movie = movie,
+                        movieType = MovieType.EMPTY
                     )
                 )
             },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
-            onSuccess = { state.value.copy(statusMovie = MovieState.EMPTY.toMovieStatus()) }
-        )
-        return state.value
-    }
-
-
-    private fun getMovieInfoById(id: String): InfoMovieState {
-        Log.d("Movie", "getMovieInfoById: $id")
-        handleOperation(
-            operation = { getMovieInfoUseCase(GetIdForInfo(id.toInt())) },
-            onError = { state.value.copy(isLoading = LoadingState.Error) },
             onSuccess = {
-                InfoMovieState(
-                    id = it.movie.id.toString(),
-                    movieEntity = it.movie,
-                    isLoading = LoadingState.Succes
-                )
+                cachedScreenState.updateAndGet { current ->
+                    current.copy(
+                        movieStatus = MovieType.EMPTY.toMovieStatus()
+                    )
+                }
             }
         )
-        return state.value
-    }
 
 
-    private fun getQrCode(id: String): InfoMovieState {
+    private suspend fun getMovieInfoById(id: String) = handleOperation(
+        operation = {
+            Log.d("Movie", "getMovieInfoById: $id")
+            getMovieInfoUseCase(
+                GetIdForInfo(
+                    id.toInt()
+                )
+            )
+        },
+        onSuccess = {
+            cachedScreenState.updateAndGet { current ->
+                current.copy(
+                    id = it.movie.id.toString(),
+                    movieEntity = it.movie
+                )
+            }
+        }
+    )
+
+
+    private fun getQrCode(id: String): Flow<InfoMovieState> {
         val bitMatrix: BitMatrix = MultiFormatWriter().encode(
             id, BarcodeFormat.QR_CODE, 512, 512
         )
@@ -136,6 +168,6 @@ class DetailMovieViewModel @Inject constructor(
             }
         }
 
-        return state.value.copy(qrCode = bitmap)
+        return flow { cachedScreenState.updateAndGet { it.copy(qrCode = bitmap) } }
     }
 }

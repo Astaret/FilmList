@@ -1,5 +1,6 @@
 package com.example.filmlist.presentation.qrCameraScreen.qr_components
 
+import android.content.Context
 import androidx.annotation.OptIn
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -8,6 +9,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 
 class QrCodeAnalyzer(
+    val context: Context,
     private val onQrCodeScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {
     private val scanner = BarcodeScanning.getClient()
@@ -29,7 +31,5 @@ class QrCodeAnalyzer(
                 imageProxy.close()
             }
     }
-
-
 
 }

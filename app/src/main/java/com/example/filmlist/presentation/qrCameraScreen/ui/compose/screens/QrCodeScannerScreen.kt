@@ -1,6 +1,7 @@
 package com.example.filmlist.presentation.qrCameraScreen.ui.compose.screens
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -40,6 +41,7 @@ fun QrCodeScannerScreen(
     var scannedQr by remember { mutableStateOf<String?>(null) }
     var scanned by remember { mutableStateOf(false) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
 
     val barcodeScanner = remember { BarcodeScanning.getClient() }
 
@@ -59,14 +61,24 @@ fun QrCodeScannerScreen(
     )
 
     Column(modifier = Modifier.fillMaxSize()) {
-        CameraPreview(analyzer = QrCodeAnalyzer { qrCode ->
-            scannedQr = qrCode
-            onQrCodeScanned(qrCode)
+        var lastToastTime by remember { mutableStateOf(0L) }
+        CameraPreview(analyzer = QrCodeAnalyzer(context = context) { qrCode ->
             if (!scanned) {
+                scannedQr = qrCode
+                onQrCodeScanned(qrCode)
                 scannedQr?.let {
-                    navController.navigate(DetailScreenRoute(it.toInt()))
+                    val id = it.toIntOrNull()
+                    if (id != null && id < 999){
+                        navController.navigate(DetailScreenRoute(it.toInt()))
+                        scanned = true
+                    }else{
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime - lastToastTime > 2000){
+                            Toast.makeText(context, "Wrong QR-code, try again", Toast.LENGTH_SHORT).show()
+                            lastToastTime = currentTime
+                        }
+                    }
                 }
-                scanned = true
             }
         })
 

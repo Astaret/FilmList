@@ -43,6 +43,7 @@ import com.example.filmlist.presentation.storeMovies.states.StoreMovState
 import com.example.filmlist.presentation.storeMovies.viewModels.StoreViewModel
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
+import com.example.filmlist.presentation.ui_kit.components.PriceFormatter
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 import com.example.myapp.R
 
@@ -99,9 +100,11 @@ fun StoreScreen(
                         Text(
                             text = stringResource(R.string.total_price)
                         )
-                        Text(
-                            text = String.format("%.2f", storeState?.totalPrice)
-                        )
+                        storeState?.totalPrice?.let{
+                            Text(
+                                text = PriceFormatter.format(it.toFloat())
+                            )
+                        }
                     }
 
 
@@ -121,20 +124,12 @@ fun StoreScreen(
                     state = listState
                 ) {
                     storeState?.let {storeState->
-                        items(storeState.movieList.chunked(2)) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                it.forEach {
-                                    MovieCard(
-                                        movie = it,
-                                        navController = navController,
-                                        moviePrice = it.price,
-                                    )
-                                }
-                            }
+                        items(storeState.movieList) {
+                            MovieCard(
+                                movie = it,
+                                navController = navController,
+                                moviePrice = it.price,
+                            )
                         }
                     }
 
@@ -155,14 +150,16 @@ fun StoreScreen(
                                     color = Color.Gray,
                                     modifier = Modifier.padding(bottom = 8.dp)
                                 )
+                                storeState?.totalPrice?.let{
+                                    Text(
+                                        text = PriceFormatter.format(it.toFloat()),
+                                        fontSize = 32.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Black,
+                                        modifier = Modifier.padding(bottom = 16.dp)
+                                    )
+                                }
 
-                                Text(
-                                    text = "${String.format("%.2f", storeState?.totalPrice)}",
-                                    fontSize = 32.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Black,
-                                    modifier = Modifier.padding(bottom = 16.dp)
-                                )
 
                                 Button(
                                     onClick = {

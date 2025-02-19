@@ -15,21 +15,28 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.domain.entities.Movie
 import com.example.filmlist.presentation.core.MainScreenRoute
 import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
+import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
 import com.example.filmlist.presentation.favoritesMovies.viewModels.FavoriteMoviesViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
+import com.example.myapp.R
 
 @Composable
 fun FavoriteMoviesScreen(
@@ -41,18 +48,27 @@ fun FavoriteMoviesScreen(
         vm.receiveEvent(FavoriteEvent.ShowAllFavorites)
 
     }
-    val favMovieState by vm.state.collectAsState()
-    val movieList = favMovieState.movieList
+    val currentState by vm.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
+
+    var favMovieState by remember { mutableStateOf<FavoriteState?>(null) }
+
+    LaunchedEffect(currentState) {
+        (currentState as? FavoriteState).let {
+            favMovieState = it
+        }
+    }
 
     MainContainer(
-        state = favMovieState
+        state = currentState
     ) {
-        if (favMovieState.empty){
+        if (favMovieState?.empty == true){
             EmptyFavoriteScreen { navController.navigate(MainScreenRoute) }
         }else{
-            favoriteListMovie(
-                movieList = movieList,
-                navController = navController)
+            favMovieState?.movieList?.let {
+                favoriteListMovie(
+                    movieList = it,
+                    navController = navController)
+            }
         }
     }
 
@@ -65,36 +81,38 @@ private fun favoriteListMovie(
 ) {
     val listState = rememberLazyListState()
 
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(
-                onClick =  {navController.navigate(MainScreenRoute)}
-            ){
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "BACK",
-                    tint = Color.Black
-                )
+    Box{
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick =  {navController.navigate(MainScreenRoute)}
+                ){
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(R.string.Back),
+                        tint = Color.Black
+                    )
+                }
+                IconButton(
+                    onClick = { navController.navigate(SearchScreenRoute)}
+                ){
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(R.string.Back),
+                        tint = Color.Black
+                    )
+                }
             }
-            IconButton(
-                onClick = { navController.navigate(SearchScreenRoute)}
-            ){
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "BACK",
-                    tint = Color.Black
-                )
-            }
+            MovieList(
+                movieList = movieList,
+                listState = listState,
+                navController = navController
+            )
         }
-        MovieList(
-            movieList = movieList,
-            listState = listState,
-            navController = navController
-        )
     }
 }
 
@@ -106,7 +124,7 @@ private fun EmptyFavoriteScreen(onNavigateToBackMain: () -> Unit) {
         ){
             Icon(
                 imageVector = Icons.Default.ArrowBack,
-                contentDescription = "BACK",
+                contentDescription = stringResource(R.string.Back),
                 tint = Color.Black
             )
         }
@@ -116,7 +134,7 @@ private fun EmptyFavoriteScreen(onNavigateToBackMain: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Ваш список избранного пуст",
+                text = stringResource(R.string.your_fav_list_is_empty),
                 fontSize = 24.sp,
                 color = Color.Gray
             )

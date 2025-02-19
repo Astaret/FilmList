@@ -2,6 +2,7 @@ package com.example.filmlist.presentation.topMovies.ui.Compose.Screens
 
 import android.Manifest
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,14 +31,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.filmlist.presentation.core.CameraScreenRoute
 import com.example.filmlist.presentation.core.FavoriteScreenRoute
 import com.example.filmlist.presentation.core.LibraryScreenRoute
 import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.core.StoreScreenRoute
+import com.example.filmlist.presentation.topMovies.states.TopMovieState
 import com.example.filmlist.presentation.topMovies.viewModels.MovieViewModel
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
@@ -44,6 +49,7 @@ import com.example.filmlist.presentation.ui_kit.components.MovieList
 import com.example.filmlist.presentation.ui_kit.components.PermissionDialog
 import com.example.filmlist.presentation.ui_kit.components.permissions.PermissionRequest
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
+import com.example.myapp.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -51,18 +57,28 @@ fun MovieScreen(
     viewModel: MovieViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val topMovieState by viewModel.state.collectAsState()
-
-    val movieList = topMovieState.movieList
+    val currentState by viewModel.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
     val listState = rememberLazyListState()
-    var showScanner by remember { mutableStateOf(false) }
-    val isAtEnd = listState.layoutInfo.visibleItemsInfo
-        .lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 3
+    val isAtEnd by remember {
+        derivedStateOf {
+            listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == listState.layoutInfo.totalItemsCount - 1
+        }
+    }
 
+    var showScanner by remember { mutableStateOf(false) }
+    var topMovieState by remember { mutableStateOf<TopMovieState?>(null) }
+
+    val movieList = topMovieState?.movieList
 
     if (showScanner) {
         LaunchedEffect(Unit) {
             navController.navigate(CameraScreenRoute)
+        }
+    }
+    LaunchedEffect(currentState) {
+        val newState = currentState as? TopMovieState
+        if (newState != null) {
+            topMovieState = newState
         }
     }
 
@@ -83,7 +99,7 @@ fun MovieScreen(
 
     MainContainer(
         permissionRequest = permissions.value,
-        state = topMovieState
+        state = currentState
     ) {
         Column {
             Row(
@@ -96,7 +112,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = "Favorite_screen",
+                        contentDescription = stringResource(R.string.favorite_screen_description),
                         tint = Color.Black
                     )
                 }
@@ -106,7 +122,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.List,
-                        contentDescription = "Library_screen",
+                        contentDescription = stringResource(R.string.library_screen_description),
                         tint = Color.Black
                     )
                 }
@@ -116,7 +132,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
-                        contentDescription = "Store_screen",
+                        contentDescription = stringResource(R.string.store_screen_description),
                         tint = Color.Black
                     )
                 }
@@ -126,17 +142,19 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "Search_screen",
+                        contentDescription = stringResource(R.string.search_screen_description),
                         tint = Color.Black
                     )
                 }
             }
             Box(modifier = Modifier.fillMaxSize()) {
-                MovieList(
-                    movieList = movieList,
-                    listState = listState,
-                    navController = navController
-                )
+                movieList?.let {
+                    MovieList(
+                        movieList = movieList,
+                        listState = listState,
+                        navController = navController
+                    )
+                }
                 IconButton(
                     onClick = {
                         permissions.value = PermissionRequest(
@@ -161,7 +179,7 @@ fun MovieScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Info,
-                        contentDescription = "Search_screen",
+                        contentDescription = stringResource(R.string.store_screen_description),
                         tint = Color.Black
                     )
                 }

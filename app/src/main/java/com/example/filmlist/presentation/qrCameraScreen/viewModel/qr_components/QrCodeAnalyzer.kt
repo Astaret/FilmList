@@ -1,4 +1,4 @@
-package com.example.filmlist.presentation.qrCameraScreen.qr_components
+package com.example.filmlist.presentation.qrCameraScreen.viewModel.qr_components
 
 import android.content.Context
 import androidx.annotation.OptIn

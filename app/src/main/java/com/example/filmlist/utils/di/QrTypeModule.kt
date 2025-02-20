@@ -1,8 +1,8 @@
 package com.example.filmlist.utils.di
 
 import com.example.filmlist.presentation.qrCameraScreen.QrFeature
-import com.example.filmlist.presentation.qrCameraScreen.qr_components.GoogleQrFeature
-import com.example.filmlist.presentation.qrCameraScreen.qr_components.HuaweiQrFeature
+import com.example.filmlist.presentation.qrCameraScreen.viewModel.qr_components.GoogleQrFeature
+import com.example.filmlist.presentation.qrCameraScreen.viewModel.qr_components.HuaweiQrFeature
 import com.example.myapp.BuildConfig
 import dagger.Module
 import dagger.Provides

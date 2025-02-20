@@ -11,11 +11,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.domain.entities.Movie
+import com.example.myapp.R
 
 @Composable
 fun DetailMovieCardDescription(movie: Movie) {
@@ -30,43 +32,11 @@ fun DetailMovieCardDescription(movie: Movie) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start
         ) {
-            Text(
-                text = "Название: ${movie.title}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Text(
-                text = "Номер фильма: ${movie.id}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp)
-            )
-            Text(
-                text = "Оригинальный язык: ${movie.origLang}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp)
-            )
-            Text(
-                text = "Оценки: ${movie.rating}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(6.dp)
-            )
-            Text(
-                text = "${movie.overview}",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                overflow = TextOverflow.Visible,
-                modifier = Modifier
-                    .padding(6.dp)
-            )
+            TypicalTextDescription(stringResource(R.string.name, movie.title))
+            TypicalTextDescription(stringResource(R.string.numb_of_film, movie.id))
+            TypicalTextDescription(stringResource(R.string.orig_lang, movie.origLang))
+            TypicalTextDescription(stringResource(R.string.rating_movie, movie.rating))
+            TypicalTextDescription("${movie.overview}")
         }
     }
 

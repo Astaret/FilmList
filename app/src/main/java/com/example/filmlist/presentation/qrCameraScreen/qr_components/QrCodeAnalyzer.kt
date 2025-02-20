@@ -13,17 +13,26 @@ class QrCodeAnalyzer(
     private val onQrCodeScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {
     private val scanner = BarcodeScanning.getClient()
+    private var hasScanned = false
 
     @OptIn(ExperimentalGetImage::class)
     override fun analyze(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image ?: return
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
+        if (hasScanned) {
+            imageProxy.close()
+            return
+        }
+
         scanner.process(image)
             .addOnSuccessListener { barcodes ->
                 for (barcode in barcodes) {
                     barcode.rawValue?.let { qrCode ->
-                        onQrCodeScanned(qrCode)
+                        if (!hasScanned) {
+                            hasScanned = true
+                            onQrCodeScanned(qrCode)
+                        }
                     }
                 }
             }

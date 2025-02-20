@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.filmlist.presentation.core.CameraScreenRoute
 import com.example.filmlist.presentation.core.DetailScreenRoute
 import com.example.filmlist.presentation.qrCameraScreen.qr_components.QrCodeAnalyzer
 import com.example.filmlist.presentation.qrCameraScreen.qr_components.QrCodeViewModel
@@ -60,8 +61,8 @@ fun QrCodeScannerScreen(
         }
     )
 
+
     Column(modifier = Modifier.fillMaxSize()) {
-        var lastToastTime by remember { mutableStateOf(0L) }
         CameraPreview(analyzer = QrCodeAnalyzer(context = context) { qrCode ->
             if (!scanned) {
                 scannedQr = qrCode
@@ -72,11 +73,9 @@ fun QrCodeScannerScreen(
                         navController.navigate(DetailScreenRoute(it.toInt()))
                         scanned = true
                     }else{
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastToastTime > 2000){
-                            Toast.makeText(context, "Wrong QR-code, try again", Toast.LENGTH_SHORT).show()
-                            lastToastTime = currentTime
-                        }
+                        navController.popBackStack()
+                        navController.navigate(CameraScreenRoute)
+                        Toast.makeText(context, "Wrong QR-code, try again", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

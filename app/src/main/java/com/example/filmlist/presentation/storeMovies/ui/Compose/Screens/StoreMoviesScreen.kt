@@ -102,7 +102,7 @@ fun StoreScreen(
                         )
                         storeState?.totalPrice?.let{
                             Text(
-                                text = PriceFormatter.format(it.toFloat())
+                                text = PriceFormatter.format(it)
                             )
                         }
                     }
@@ -152,7 +152,7 @@ fun StoreScreen(
                                 )
                                 storeState?.totalPrice?.let{
                                     Text(
-                                        text = PriceFormatter.format(it.toFloat()),
+                                        text = PriceFormatter.format(it),
                                         fontSize = 32.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.Black,

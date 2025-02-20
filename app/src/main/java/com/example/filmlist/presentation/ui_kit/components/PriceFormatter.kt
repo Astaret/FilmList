@@ -11,5 +11,5 @@ object PriceFormatter {
     }
     private val decimalFormat = DecimalFormat("#,###.00", symbols)
 
-    fun format(price: Float): String = decimalFormat.format(price) + "$"
+    fun format(price: Double): String = decimalFormat.format(price) + "$"
 }

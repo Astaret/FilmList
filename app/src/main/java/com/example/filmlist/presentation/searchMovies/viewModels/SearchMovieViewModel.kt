@@ -10,8 +10,6 @@ import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -64,10 +62,7 @@ class SearchMovieViewModel @Inject constructor(
 
     private fun observeSearchQuery() {
         viewModelScope.launch {
-            state
-                .debounce(300)
-                .distinctUntilChanged()
-                .collect { currentState ->
+            state.collect { currentState ->
                     if (currentState is SearchState) {
                         if (currentState.searchQuery.isNotEmpty()) {
                             loadDataFromSearch(currentState.searchQuery)

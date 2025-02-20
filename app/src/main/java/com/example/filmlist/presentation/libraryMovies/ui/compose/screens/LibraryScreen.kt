@@ -51,8 +51,9 @@ fun LibraryScreen(
     var librMovieState by remember { mutableStateOf<LibraryState?>(null) }
 
     LaunchedEffect(currentState) {
-        (currentState as? LibraryState).let {
-            librMovieState = it
+        val newState = currentState as? LibraryState
+        if (newState != null){
+            librMovieState = newState
         }
     }
 

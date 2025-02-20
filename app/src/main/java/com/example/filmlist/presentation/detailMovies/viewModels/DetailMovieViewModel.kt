@@ -104,7 +104,6 @@ class DetailMovieViewModel @Inject constructor(
                 )
             )
         },
-        withLoading = false,
         onSuccess = {
             cachedScreenState.updateAndGet { current ->
                 current.copy(
@@ -124,7 +123,6 @@ class DetailMovieViewModel @Inject constructor(
                     )
                 )
             },
-            withLoading = false,
             onSuccess = {
                 cachedScreenState.updateAndGet { current ->
                     current.copy(

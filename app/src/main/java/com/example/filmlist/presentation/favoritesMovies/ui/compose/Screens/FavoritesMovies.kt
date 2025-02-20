@@ -53,8 +53,9 @@ fun FavoriteMoviesScreen(
     var favMovieState by remember { mutableStateOf<FavoriteState?>(null) }
 
     LaunchedEffect(currentState) {
-        (currentState as? FavoriteState).let {
-            favMovieState = it
+        val newState = currentState as? FavoriteState
+        if (newState != null){
+            favMovieState = newState
         }
     }
 

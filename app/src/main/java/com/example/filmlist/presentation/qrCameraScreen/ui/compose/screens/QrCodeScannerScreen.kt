@@ -28,9 +28,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.filmlist.presentation.core.CameraScreenRoute
 import com.example.filmlist.presentation.core.DetailScreenRoute
-import com.example.filmlist.presentation.qrCameraScreen.qr_components.QrCodeAnalyzer
-import com.example.filmlist.presentation.qrCameraScreen.qr_components.QrCodeViewModel
+import com.example.filmlist.presentation.qrCameraScreen.events.CameraEvents
 import com.example.filmlist.presentation.qrCameraScreen.ui.compose.camera_components.CameraPreview
+import com.example.filmlist.presentation.qrCameraScreen.viewModel.QrCodeViewModel
+import com.example.filmlist.presentation.qrCameraScreen.viewModel.qr_components.QrCodeAnalyzer
 import com.google.mlkit.vision.barcode.BarcodeScanning
 
 @Composable
@@ -51,12 +52,12 @@ fun QrCodeScannerScreen(
         onResult = { uri ->
             if (uri != null) {
                 imageUri = uri
-                qrCodeViewModel.processImageFromGallery(uri, barcodeScanner) { qrCode ->
+                qrCodeViewModel.receiveEvent(CameraEvents.ProcessImageFromGallery(uri, barcodeScanner) { qrCode ->
                     if (!scanned) {
                         scanned = true
                         navController.navigate(DetailScreenRoute(qrCode.toInt()))
                     }
-                }
+                })
             }
         }
     )

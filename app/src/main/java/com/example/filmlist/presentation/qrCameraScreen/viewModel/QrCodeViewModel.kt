@@ -1,6 +1,7 @@
 package com.example.filmlist.presentation.qrCameraScreen.viewModel
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AtomicReference
 import androidx.lifecycle.ViewModel
 import com.example.filmlist.presentation.core.DetailScreenRoute
@@ -42,6 +43,7 @@ class QrCodeViewModel @Inject constructor(
     }
 
     private fun isQrCorrect(qrCodeInfo: String): Flow<CameraState> {
+        Log.d("Movie", "isQrCorrect: caused by $qrCodeInfo")
         val id = qrCodeInfo.toIntOrNull()
         return if (id != null && id < 999){
             flow { cachedScreenState.updateAndGet{it.copy(isCorrect = true)} }

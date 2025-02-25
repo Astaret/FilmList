@@ -24,4 +24,9 @@
     <string name="qr_code">QR Code</string>
     <string name="bought">Куплено</string>
 
+    <string name="name">Название: %1$s</string>
+    <string name="numb_of_film">Номер фильма: %1$s</string>
+    <string name="orig_lang">Оригинальный язык: %1$s</string>
+    <string name="rating_movie">Оценки: %1$s</string>
+    <string name="priceIs">цена = </string>
 </resources>

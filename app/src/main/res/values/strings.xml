@@ -23,6 +23,5 @@
     <string name="your_fav_list_is_empty">Ваш список избранного пуст</string>
     <string name="qr_code">QR Code</string>
     <string name="bought">Куплено</string>
-    <string name="priceIs">цена = </string>
 
 </resources>

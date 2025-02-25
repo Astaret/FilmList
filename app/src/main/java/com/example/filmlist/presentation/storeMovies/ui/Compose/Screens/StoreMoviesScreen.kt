@@ -65,8 +65,9 @@ fun StoreScreen(
     }
 
     LaunchedEffect(currentState) {
-        (currentState as? StoreMovState).let {
-            storeState = it
+        val newState = currentState as? StoreMovState
+        if (newState != null){
+            storeState = newState
         }
     }
 

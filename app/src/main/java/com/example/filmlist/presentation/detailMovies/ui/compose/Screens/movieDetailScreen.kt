@@ -74,8 +74,9 @@ fun MovieDetailScreen(
     }
 
     LaunchedEffect(currentState) {
-        (currentState as? InfoMovieState).let {
-            movieInfoState = it
+        val newState = currentState as? InfoMovieState
+        if (newState != null){
+            movieInfoState = newState
         }
     }
 

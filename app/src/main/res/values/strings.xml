@@ -4,4 +4,29 @@
     <string name="overview"> %s</string>
     <string name="lang"> %s</string>
     <string name="rating">рейтинг: %s</string>
+    <string name="search_movies">Search movies</string>
+    <string name="Back">Назад</string>
+
+    <string name="favorite_screen_description">Favorite_screen</string>
+    <string name="library_screen_description">Library_screen</string>
+    <string name="store_screen_description">Store_screen</string>
+    <string name="search_screen_description">Search_screen</string>
+    <string name="back_description">BACK</string>
+    <string name="in_favorite_description">In favorite</string>
+
+    <string name="total_price">Сумма к оплате:</string>
+    <string name="buy_description">Buy?</string>
+    <string name="total_amount_to_pay">Итого к оплате</string>
+    <string name="to_pay">Оплатить</string>
+    <string name="your_store_empty">Ваша корзина пуста</string>
+    <string name="your_library_empty">Ваша библиотека пуста</string>
+    <string name="your_fav_list_is_empty">Ваш список избранного пуст</string>
+    <string name="qr_code">QR Code</string>
+    <string name="bought">Куплено</string>
+
+    <string name="name">Название: %1$s</string>
+    <string name="numb_of_film">Номер фильма: %1$s</string>
+    <string name="orig_lang">Оригинальный язык: %1$s</string>
+    <string name="rating_movie">Оценки: %1$s</string>
+    <string name="priceIs">цена = </string>
 </resources>

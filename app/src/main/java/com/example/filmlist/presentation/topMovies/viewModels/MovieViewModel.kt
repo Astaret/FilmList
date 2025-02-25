@@ -66,10 +66,20 @@ class MovieViewModel @Inject constructor(
         val currentPage = cachedScreenState.get().currentPage
         val totalPages = cachedScreenState.get().totalPages
 
-        Log.d("Movie", "loadNextPage: ${cachedScreenState.get().totalPages} ")
+
+        Log.d("Movie", "TotalPages: ${cachedScreenState.get().totalPages} ")
         Log.d("Movie", "loadNextPage: ${cachedScreenState.get().currentPage} ")
+
         if (currentPage < totalPages) {
+            Log.d(
+                "Movie",
+                "loadNextPage from MovieView: success!!! start loading next pages data..."
+            )
             return loadData(currentPage + 1)
+        } else if (currentPage == totalPages) {
+            Log.d("Movie",
+                "loadNextPage from MovieView: error!!! downloading new totalpages...")
+            return loadPage()
         } else {
             return flow { cachedScreenState.get() }
         }

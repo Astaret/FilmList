@@ -1,6 +1,7 @@
 package com.example.filmlist.presentation.searchMovies.ui.compose.Screens
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +19,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -32,6 +37,8 @@ import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
 import com.example.myapp.R
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -42,8 +49,13 @@ fun SearchScreen(
 ) {
     val currentState by vm.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
 
+
     LaunchedEffect(Unit) {
         vm.receiveEvent(SearchEvents.SearchChange(""))
+    }
+
+    BackHandler {
+        navController.popBackStack()
     }
 
     MainContainer(
@@ -51,7 +63,8 @@ fun SearchScreen(
     ) {
         if (currentState is SearchState) {
             val searchState = currentState as SearchState
-            SearchScreen(
+
+            SearchContent(
                 searchQuery = searchState.searchQuery,
                 searchResults = searchState.searchResult,
                 navController = navController,
@@ -63,17 +76,29 @@ fun SearchScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchScreen(
+private fun SearchContent(
     searchQuery: String,
     searchResults: List<Movie>,
     navController: NavController,
     onSearchQueryChange: (String) -> Unit
 ) {
+    var isActive by remember { mutableStateOf(false) }
+    var localSearchQuery by remember { mutableStateOf(searchQuery) }
+
+    LaunchedEffect(localSearchQuery) {
+        snapshotFlow { localSearchQuery }
+            .debounce(200)
+            .distinctUntilChanged()
+            .collect{
+                onSearchQueryChange(it)
+            }
+    }
+
     Box {
         SearchBar(
-            query = searchQuery,
-            onQueryChange = onSearchQueryChange,
-            onSearch = {},
+            query = localSearchQuery,
+            onQueryChange = { newValue -> localSearchQuery = newValue },
+            onSearch = {  },
             placeholder = {
                 Text(text = stringResource(R.string.search_movies))
             },
@@ -105,8 +130,8 @@ private fun SearchScreen(
                     }
                 }
             },
-            active = true,
-            onActiveChange = {},
+            active = isActive,
+            onActiveChange = { isActive = it },
             tonalElevation = 0.dp
         )
     }

@@ -2,6 +2,9 @@ package com.example.filmlist.presentation.detailMovies.ui.compose.Screens
 
 import android.Manifest
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -81,132 +84,140 @@ fun MovieDetailScreen(
         state = currentState
     ) {
         Column {
-            Box {
-                GlideImage(
-                    imageModel = { movieInfoState?.movieEntity?.poster },
-                    modifier = Modifier
-                        .height(500.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                )
-
-                if (isActive) {
-                    Log.d("Movie", "MovieDetailScreen: ${movieInfoState?.qrCode}")
-                    movieInfoState?.qrCode?.asImageBitmap()?.let {
-                        Image(
-                            bitmap = it,
-                            contentDescription = stringResource(R.string.qr_code),
+            if (movieInfoState != null){
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Box {
+                        GlideImage(
+                            imageModel = { movieInfoState?.movieEntity?.poster },
                             modifier = Modifier
+                                .height(500.dp)
                                 .clip(RoundedCornerShape(8.dp))
-                                .align(Alignment.Center),
                         )
-                    }
-                }
-                DetailNavigationButton(
-                    modifier = Modifier.align(Alignment.TopStart),
-                    onClick = { navController.navigateUp() },
-                    imageVector = Icons.Default.KeyboardArrowLeft,
-                    description = stringResource(R.string.Back),
-                    color = Color.Black
-                )
-                DetailNavigationButton(
-                    modifier = Modifier.align(Alignment.BottomStart),
-                    onClick = {
-                        isActive = !isActive
-                        permissions.value = PermissionRequest(
-                            permissions = listOf(
-                                Manifest.permission.CAMERA
-                            ),
-                            permissionDialog = { PermissionDialog() }
-                        )
-                        Log.d("Movie", "MovieDetailScreen: ${permissions.value}")
-                    },
-                    imageVector = Icons.Default.Share,
-                    description = "ShareQr",
-                    color = Color.Black
-                )
 
-                Text(
-                    text = "${movieInfoState?.movieEntity?.rating}",
-                    fontSize = 15.sp,
-                    maxLines = 1,
-                    color = Color.Black,
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .align(Alignment.TopCenter)
-                        .background(
-                            color = Color.Green.copy(alpha = 0.7f),
-                            shape = RoundedCornerShape(5.dp)
-                        )
-                )
-                if (status != MovieStatus.BOUGHT) {
-                    DetailNavigationButton(
-                        modifier = Modifier.align(Alignment.BottomEnd),
-                        onClick = {
-                            movieInfoState?.movieEntity?.let { movie ->
-                                if (movieInfoState?.movieStatus == MovieStatus.INSTORE) {
-                                    vm.receiveEvent(
-                                        MovieInfoEvent.DeleteMovieFromDataBase(
-                                            movie = movie
-                                        )
-                                    )
-                                } else {
-                                    vm.receiveEvent(
-                                        MovieInfoEvent.AddMovieToDataBase(
-                                            state = MovieType.INSTORE,
-                                            movie = movie
-                                        )
-                                    )
-                                }
-                            }
-                        },
-                        imageVector = if (movieInfoState?.movieStatus != MovieStatus.INSTORE)
-                            Icons.Default.ShoppingCart
-                        else Icons.Default.Check,
-                        description = if (movieInfoState?.movieStatus == MovieStatus.INSTORE) "BOUGHT"
-                        else "BUY",
-                        color = if (movieInfoState?.movieStatus == MovieStatus.INSTORE) Color.Green
-                        else Color.Black
-                    )
-                    DetailNavigationButton(
-                        modifier = Modifier.align(Alignment.TopEnd),
-                        onClick = {
-                            movieInfoState?.movieEntity?.let { movie ->
-                                if (movieInfoState?.movieStatus == MovieStatus.FAVORITE)
-                                    vm.receiveEvent(
-                                        MovieInfoEvent.DeleteMovieFromDataBase(
-                                            movie = movie
-                                        )
-                                    )
-                                else vm.receiveEvent(
-                                    MovieInfoEvent.AddMovieToDataBase(
-                                        state = MovieType.ISFAVORITE,
-                                        movie = movie
-                                    )
+                        if (isActive) {
+                            Log.d("Movie", "MovieDetailScreen: ${movieInfoState?.qrCode}")
+                            movieInfoState?.qrCode?.asImageBitmap()?.let {
+                                Image(
+                                    bitmap = it,
+                                    contentDescription = stringResource(R.string.qr_code),
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .align(Alignment.Center),
                                 )
                             }
-                        },
-                        imageVector = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Icons.Default.Favorite
-                        else Icons.Default.FavoriteBorder,
-                        description = stringResource(R.string.in_favorite_description),
-                        color = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Color.Red
-                        else Color.Black,
-                    )
-                } else {
-                    Row(
-                        modifier = Modifier.align(Alignment.BottomEnd),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.bought),
-                            modifier = Modifier
-                                .background(Color.Green),
+                        }
+                        DetailNavigationButton(
+                            modifier = Modifier.align(Alignment.TopStart),
+                            onClick = { navController.navigateUp() },
+                            imageVector = Icons.Default.KeyboardArrowLeft,
+                            description = stringResource(R.string.Back),
                             color = Color.Black
                         )
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "BOUGHT",
-                            tint = Color.Green,
+                        DetailNavigationButton(
+                            modifier = Modifier.align(Alignment.BottomStart),
+                            onClick = {
+                                isActive = !isActive
+                                permissions.value = PermissionRequest(
+                                    permissions = listOf(
+                                        Manifest.permission.CAMERA
+                                    ),
+                                    permissionDialog = { PermissionDialog() }
+                                )
+                                Log.d("Movie", "MovieDetailScreen: ${permissions.value}")
+                            },
+                            imageVector = Icons.Default.Share,
+                            description = "ShareQr",
+                            color = Color.Black
                         )
+
+                        Text(
+                            text = "${movieInfoState?.movieEntity?.rating}",
+                            fontSize = 15.sp,
+                            maxLines = 1,
+                            color = Color.Black,
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .align(Alignment.TopCenter)
+                                .background(
+                                    color = Color.Green.copy(alpha = 0.7f),
+                                    shape = RoundedCornerShape(5.dp)
+                                )
+                        )
+                        if (status != MovieStatus.BOUGHT) {
+                            DetailNavigationButton(
+                                modifier = Modifier.align(Alignment.BottomEnd),
+                                onClick = {
+                                    movieInfoState?.movieEntity?.let { movie ->
+                                        if (movieInfoState?.movieStatus == MovieStatus.INSTORE) {
+                                            vm.receiveEvent(
+                                                MovieInfoEvent.DeleteMovieFromDataBase(
+                                                    movie = movie
+                                                )
+                                            )
+                                        } else {
+                                            vm.receiveEvent(
+                                                MovieInfoEvent.AddMovieToDataBase(
+                                                    state = MovieType.INSTORE,
+                                                    movie = movie
+                                                )
+                                            )
+                                        }
+                                    }
+                                },
+                                imageVector = if (movieInfoState?.movieStatus != MovieStatus.INSTORE)
+                                    Icons.Default.ShoppingCart
+                                else Icons.Default.Check,
+                                description = if (movieInfoState?.movieStatus == MovieStatus.INSTORE) "BOUGHT"
+                                else "BUY",
+                                color = if (movieInfoState?.movieStatus == MovieStatus.INSTORE) Color.Green
+                                else Color.Black
+                            )
+                            DetailNavigationButton(
+                                modifier = Modifier.align(Alignment.TopEnd),
+                                onClick = {
+                                    movieInfoState?.movieEntity?.let { movie ->
+                                        if (movieInfoState?.movieStatus == MovieStatus.FAVORITE)
+                                            vm.receiveEvent(
+                                                MovieInfoEvent.DeleteMovieFromDataBase(
+                                                    movie = movie
+                                                )
+                                            )
+                                        else vm.receiveEvent(
+                                            MovieInfoEvent.AddMovieToDataBase(
+                                                state = MovieType.ISFAVORITE,
+                                                movie = movie
+                                            )
+                                        )
+                                    }
+                                },
+                                imageVector = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Icons.Default.Favorite
+                                else Icons.Default.FavoriteBorder,
+                                description = stringResource(R.string.in_favorite_description),
+                                color = if (movieInfoState?.movieStatus == MovieStatus.FAVORITE) Color.Red
+                                else Color.Black,
+                            )
+                        } else {
+                            Row(
+                                modifier = Modifier.align(Alignment.BottomEnd),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.bought),
+                                    modifier = Modifier
+                                        .background(Color.Green),
+                                    color = Color.Black
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "BOUGHT",
+                                    tint = Color.Green,
+                                )
+                            }
+                        }
                     }
                 }
             }

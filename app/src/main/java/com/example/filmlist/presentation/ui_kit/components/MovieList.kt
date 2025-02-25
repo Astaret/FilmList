@@ -1,13 +1,12 @@
 package com.example.filmlist.presentation.ui_kit.components
-
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.example.domain.entities.Movie
 import com.example.filmlist.presentation.ui_kit.components.movie_cards.MovieCard
@@ -20,19 +19,13 @@ fun MovieList(
 ) {
     LazyColumn(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(Color.LightGray)
+        ,
         state = listState
     ) {
-        items(movieList.chunked(2)) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                it.forEach {
-                    MovieCard(movie = it, navController = navController)
-                }
-            }
+        items(movieList) {
+            MovieCard(movie = it, navController = navController)
         }
     }
 }

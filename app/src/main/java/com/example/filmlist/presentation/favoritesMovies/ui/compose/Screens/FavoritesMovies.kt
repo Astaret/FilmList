@@ -7,88 +7,127 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.filmlist.domain.models.Movie
+import com.example.domain.entities.Movie
+import com.example.filmlist.presentation.core.MainScreenRoute
+import com.example.filmlist.presentation.core.SearchScreenRoute
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
+import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
 import com.example.filmlist.presentation.favoritesMovies.viewModels.FavoriteMoviesViewModel
+import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
+import com.example.filmlist.presentation.ui_kit.components.MainContainer
 import com.example.filmlist.presentation.ui_kit.components.MovieList
+import com.example.myapp.R
 
 @Composable
-fun favoriteMoviesScreen(
+fun FavoriteMoviesScreen(
     vm: FavoriteMoviesViewModel = hiltViewModel(),
-    navController: NavController,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToBackMain: () -> Unit
+    navController: NavController
 ) {
 
     LaunchedEffect(Unit) {
-        vm.send(FavoriteEvent.showAllFavorites)
+        vm.receiveEvent(FavoriteEvent.ShowAllFavorites)
 
     }
-    val favMovieState by vm.favState.collectAsState()
-    val movieList = favMovieState.movieList
+    val currentState by vm.state.collectAsStateWithLifecycle(initialValue = BasedViewModel.State.Loading)
 
-    if (!favMovieState.empty){
-        favoriteListMovie(
-            movieList = movieList,
-            navController = navController,
-            onNavigateToSearch = onNavigateToSearch,
-            onNavigateToBackMain = onNavigateToBackMain)
-    }else{
-        EmptyScreen(onNavigateToBackMain)
+    var favMovieState by remember { mutableStateOf<FavoriteState?>(null) }
+
+    LaunchedEffect(currentState) {
+        val newState = currentState as? FavoriteState
+        if (newState != null){
+            favMovieState = newState
+        }
+    }
+
+    MainContainer(
+        state = currentState
+    ) {
+        if (favMovieState?.empty == true){
+            EmptyFavoriteScreen { navController.navigate(MainScreenRoute) }
+        }else{
+            favMovieState?.movieList?.let {
+                favoriteListMovie(
+                    movieList = it,
+                    navController = navController)
+            }
+        }
     }
 
 }
 
 @Composable
-fun favoriteListMovie(
+private fun favoriteListMovie(
     movieList: List<Movie>,
     navController: NavController,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToBackMain: () -> Unit
 ) {
     val listState = rememberLazyListState()
 
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(
-                onClick = { onNavigateToBackMain() }) {
-                Text(text = "◀")
+    Box{
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick =  {navController.navigate(MainScreenRoute)}
+                ){
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = stringResource(R.string.Back),
+                        tint = Color.Black
+                    )
+                }
+                IconButton(
+                    onClick = { navController.navigate(SearchScreenRoute)}
+                ){
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = stringResource(R.string.Back),
+                        tint = Color.Black
+                    )
+                }
             }
-            Button(
-                onClick = { onNavigateToSearch() }) {
-                Text(text = "\uD83D\uDD0E")
-            }
+            MovieList(
+                movieList = movieList,
+                listState = listState,
+                navController = navController
+            )
         }
-        MovieList(
-            movieList = movieList,
-            listState = listState,
-            navController = navController
-        )
     }
 }
 
 @Composable
-fun EmptyScreen(onNavigateToBackMain: () -> Unit) {
+private fun EmptyFavoriteScreen(onNavigateToBackMain: () -> Unit) {
     Column {
-        Button(
-            onClick = { onNavigateToBackMain() }) {
-            Text(text = "◀")
+        IconButton(
+            onClick = { onNavigateToBackMain() }
+        ){
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = stringResource(R.string.Back),
+                tint = Color.Black
+            )
         }
         Box(
             modifier = Modifier
@@ -96,7 +135,7 @@ fun EmptyScreen(onNavigateToBackMain: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Ваш список избранного пуст",
+                text = stringResource(R.string.your_fav_list_is_empty),
                 fontSize = 24.sp,
                 color = Color.Gray
             )

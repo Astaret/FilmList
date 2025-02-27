@@ -1,18 +1,18 @@
 package com.example.filmlist.presentation.topMovies.viewModels
 
 import android.util.Log
+import androidx.lifecycle.AtomicReference
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.GetTotalPagesUseCase
-import com.example.filmlist.domain.usecases.LoadDataUseCase
+import com.example.domain.usecases.get_useCases.GetTotalPagesUseCase
+import com.example.domain.usecases.get_useCases.Params
+import com.example.domain.usecases.load_useCases.LoadDataUseCase
+import com.example.domain.usecases.load_useCases.getPage
 import com.example.filmlist.presentation.topMovies.states.TopMovieState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import com.example.filmlist.presentation.ui_kit.events.PagingEvents
-import com.example.filmlist.presentation.ui_kit.events.loadingData
-import com.example.filmlist.presentation.ui_kit.events.loadingNextPage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,53 +22,66 @@ class MovieViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : BasedViewModel<TopMovieState, PagingEvents>() {
 
+
+    override val cachedScreenState: AtomicReference<TopMovieState> =
+        AtomicReference(TopMovieState())
+
     private var page: Int
         get() = savedStateHandle["currentPage"] ?: 1
         set(value) {
             savedStateHandle["currentPage"] = value
         }
 
-    private val _moviesState = MutableStateFlow(
-        TopMovieState(
-            movieList = savedStateHandle["movieList"] ?: emptyList(),
-            currentPage = page,
-            totalPages = savedStateHandle["totalPages"] ?: 2
-        )
+
+    override suspend fun handleEvent(event: PagingEvents): Flow<TopMovieState> {
+        return when (event) {
+            is PagingEvents.loadingData -> loadData(page)
+            is PagingEvents.loadingNextPage -> loadNextPage()
+            is PagingEvents.loadingTotalPages -> loadPage()
+        }
+    }
+
+    private suspend fun loadPage(): Flow<TopMovieState> = handleOperation(
+        operation = { getTotalPagesUseCase(Params) },
+        onSuccess = { cachedScreenState.get().copy(totalPages = it.pages) }
     )
-    val movieState = _moviesState
 
-    override fun send(event: PagingEvents) {
-        when (event) {
-            is loadingData -> loadData(page)
-            is loadingNextPage -> loadNextPage()
+    private suspend fun loadData(page: Int): Flow<TopMovieState> = handleOperation(
+        operation = { loadDataUseCase(getPage(page)) },
+        onSuccess = {
+            val newList = it.movieList
+            savedStateHandle["movieList"] = cachedScreenState.get().movieList
+            savedStateHandle["currentPage"] = page
+            savedStateHandle["totalPages"] = cachedScreenState.get().totalPages
+            Log.d("Movie", "loadData: SUCCES ${cachedScreenState.get().movieList}")
+            cachedScreenState.get().copy(
+                movieList = (cachedScreenState.get().movieList + newList).distinctBy { it.id },
+                currentPage = page,
+                totalPages = cachedScreenState.get().totalPages
+            )
         }
-    }
+    )
 
-    private fun loadData(page: Int) {
-        viewModelScope.launch {
-            try {
-                val newMovies = loadDataUseCase.loadData(page)
-                val totalPages = getTotalPagesUseCase.getTotalPages()
-                _moviesState.value = _moviesState.value.copy(
-                    movieList = _moviesState.value.movieList + newMovies,
-                    currentPage = page,
-                    totalPages = totalPages
-                )
-                savedStateHandle["movieList"] = _moviesState.value.movieList
-                savedStateHandle["currentPage"] = page
-                savedStateHandle["totalPages"] = totalPages
-                Log.d("Movie", "loadData -> ${_moviesState.value.movieList} ")
-            } catch (e: Exception) {
-                Log.d("Movie", "loadData: FAILED $e")
-            }
-            Log.d("Movie", "loadData: SUCCESS!")
-        }
-    }
+    private suspend fun loadNextPage(): Flow<TopMovieState> {
+        val currentPage = cachedScreenState.get().currentPage
+        val totalPages = cachedScreenState.get().totalPages
 
-    private fun loadNextPage() {
-        if (_moviesState.value.currentPage < _moviesState.value.totalPages) {
-            page += 1
-            loadData(page)
+
+        Log.d("Movie", "TotalPages: ${cachedScreenState.get().totalPages} ")
+        Log.d("Movie", "loadNextPage: ${cachedScreenState.get().currentPage} ")
+
+        if (currentPage < totalPages) {
+            Log.d(
+                "Movie",
+                "loadNextPage from MovieView: success!!! start loading next pages data..."
+            )
+            return loadData(currentPage + 1)
+        } else if (currentPage == totalPages) {
+            Log.d("Movie",
+                "loadNextPage from MovieView: error!!! downloading new totalpages...")
+            return loadPage()
+        } else {
+            return flow { cachedScreenState.get() }
         }
     }
 }

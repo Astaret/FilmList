@@ -1,54 +1,47 @@
 package com.example.filmlist.presentation.favoritesMovies.viewModels
 
-import android.util.Log
-import androidx.lifecycle.viewModelScope
-import com.example.filmlist.domain.usecases.GetFavoriteMovieUseCase
+import androidx.lifecycle.AtomicReference
+import com.example.domain.types.ListMovieType
+import com.example.domain.usecases.get_useCases.GetMovieListFromBdUseCase
+import com.example.domain.usecases.get_useCases.getListMovieState
 import com.example.filmlist.presentation.favoritesMovies.events.FavoriteEvent
 import com.example.filmlist.presentation.favoritesMovies.states.FavoriteState
-import com.example.filmlist.presentation.searchMovies.states.SearchState
 import com.example.filmlist.presentation.ui_kit.ViewModels.BasedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteMoviesViewModel @Inject constructor(
-    private val getFavoriteMovieUseCase: GetFavoriteMovieUseCase
-):BasedViewModel<FavoriteState, FavoriteEvent>() {
+    private val getMovieListFromBdUseCase: GetMovieListFromBdUseCase
+) : BasedViewModel<FavoriteState, FavoriteEvent>() {
 
-    private val _favState = MutableStateFlow(FavoriteState())
-    val favState: StateFlow<FavoriteState> = _favState
+    override val cachedScreenState: AtomicReference<FavoriteState> = AtomicReference(FavoriteState())
 
-
-    override fun send(event: FavoriteEvent) {
-        when(event){
-            is FavoriteEvent.deleteFromFavorite -> deleteFromFavorite()
-            is FavoriteEvent.showAllFavorites -> showAllFavorites()
+    override suspend fun handleEvent(event: FavoriteEvent): Flow<FavoriteState> {
+        return when (event) {
+            is FavoriteEvent.DeleteFromFavorite -> deleteFromFavorite()
+            is FavoriteEvent.ShowAllFavorites -> showAllFavorites()
         }
     }
 
-    private fun showAllFavorites(){
-        viewModelScope.launch {
-            val updatedMovieList = getFavoriteMovieUseCase.getFavoriteMovie()
-            Log.d("Movie", "showAllFavorites: $updatedMovieList")
-            if (updatedMovieList.isNotEmpty()){
-                _favState.value = _favState.value.copy(
-                    movieList = updatedMovieList,
-                    empty = false
+    private suspend fun showAllFavorites(): Flow<FavoriteState> = handleOperation(
+            operation = {
+                getMovieListFromBdUseCase(
+                    getListMovieState(ListMovieType.ISFAVORITE)
                 )
-                Log.d("Movie", "showAllFavorites: ${_favState.value}")
-
-            } else{
-                _favState.value = _favState.value.copy(
-                    empty = true
+            },
+            onSuccess = {
+                cachedScreenState.get().copy(
+                    movieList = it.listMovies,
+                    empty = it.listMovies.isEmpty()
                 )
             }
-        }
+        )
+    private fun deleteFromFavorite(): Flow<FavoriteState> {
+        return  flow{ cachedScreenState.get() }
     }
 
-    private fun deleteFromFavorite(){
-
-    }
 }
+
